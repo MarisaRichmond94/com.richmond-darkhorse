@@ -1,0 +1,38 @@
+.hbox{
+	-fx-background-color: LIGHTSALMON;
+	-fx-alignment: center;
+	-fx-background-insets: 0,0,0,0;
+	-fx-padding: 10,10,10,10;
+}
+
+.text{
+	-fx-font: 25px Georgia;
+}
+
+.gridpane{
+	-fx-alignment: center;
+	-fx-background-insets: 0,0,0,0;
+	-fx-padding: 100,100,100,100;
+}
+
+.textfield{
+	-fx-font: 25px Georgia;	
+}
+
+.failedlogin{
+	-fx-font: 25px Georgia;
+	-fx-fill: red;
+}
+
+.addbutton{
+	-fx-font: 25px Georgia;
+	-fx-alignment: center;
+	-fx-labelpadding: 10,10,10,10;
+	-fx-background-color: #CCCCCC;
+}
+
+.button:hover {
+    -fx-background-color: #808080;
+}
+
+@charset "UTF-8";

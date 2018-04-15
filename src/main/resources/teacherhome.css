@@ -1,0 +1,55 @@
+.bottombar{
+	-fx-background-color: LIGHTSALMON;
+	-fx-alignment: center;
+	-fx-background-insets: 0,0,0,0;
+	-fx-padding: 10,10,10,10;
+}
+
+.label{
+	-fx-font: 25px Georgia;
+}
+
+.title{
+	-fx-font: 50px Georgia;
+}
+
+.super-title{
+	-fx-font: 150px Georgia;	
+	-fx-text-alignment: center;
+	-fx-text-fill: #b30000;
+}
+
+.gridpane{
+	-fx-alignment: center;
+	-fx-background-insets: 10,10,10,10;
+	-fx-padding: 10,0,0,10;
+}
+
+.topbar{
+	-fx-background-color: LIGHTSALMON;
+	-fx-background-insets: 0,0,0,0;
+	-fx-padding: 10,10,10,10;
+	-fx-spacing: 550;
+	-fx-alignment: center;
+}
+
+.sidebar{
+	-fx-background-color: #CCCCCC;
+	-fx-spacing: 10;	
+	-fx-background-insets: 0,0,0,0;
+	-fx-padding: 10,10,10,10;
+	-fx-alignment: center;
+}
+
+.addbutton{
+	-fx-font: 50px Georgia;
+	-fx-alignment: center;
+	-fx-labelpadding: 10,10,10,10;
+	-fx-background-color: #CCCCCC;
+}
+
+.button:hover {
+    -fx-background-color: #808080;
+}
+
+@charset "UTF-8";

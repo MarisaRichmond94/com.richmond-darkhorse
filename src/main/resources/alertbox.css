@@ -1,0 +1,11 @@
+.alertbox{
+	-fx-alignment: center;	
+}
+.message{
+	-fx-font: 25px Georgia;
+	-fx-font-color: red;	
+}
+.button{
+	
+}
+@charset "UTF-8";
