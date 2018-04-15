@@ -62,11 +62,11 @@ public class ModifyClassroom {
 	    ColumnConstraints columnThree = new ColumnConstraints();
 	    columnThree.setPercentWidth(33.3);
 	    modifyClassroomLayout.getColumnConstraints().addAll(columnOne,columnTwo,columnThree);
-	    modifyClassroomLayout.getStyleClass().add("gridpane");
+	    modifyClassroomLayout.getStyleClass().add("modulargridpane");
 		
 		//Grid Pane - Icon
 	    ImageView classroomViewer = new ImageView();
-	    Image classroom = new Image("classroom.png");
+	    Image classroom = new Image("images/classroom.png");
 	    classroomViewer.setImage(classroom);
 	    classroomViewer.setPreserveRatio(true);
 	    classroomViewer.setFitHeight(150);
@@ -181,7 +181,7 @@ public class ModifyClassroom {
 	    
 		//Grid Pane - Write Button
 	    ImageView writeViewer = new ImageView();
-	    Image write = new Image("write.png");
+	    Image write = new Image("images/write.png");
 	    writeViewer.setImage(write);
 	    writeViewer.setPreserveRatio(true);
 	    writeViewer.setFitHeight(150);
@@ -216,7 +216,7 @@ public class ModifyClassroom {
 	    Label editLabel = new Label("edit");
 	    editLabel.getStyleClass().add("label");
 	    ImageView editViewer = new ImageView();
-	    Image edit = new Image("edit.png");
+	    Image edit = new Image("images/edit.png");
 	    editViewer.setImage(edit);
 	    editViewer.setPreserveRatio(true);
 	    editViewer.setFitHeight(150);
@@ -233,7 +233,7 @@ public class ModifyClassroom {
 	    
 		//Grid Pane - Delete Button
 	    ImageView trashViewer = new ImageView();
-	    Image trash = new Image("trash.png");
+	    Image trash = new Image("images/trash.png");
 	    trashViewer.setImage(trash);
 	    trashViewer.setPreserveRatio(true);
 	    trashViewer.setFitHeight(150);
@@ -291,7 +291,7 @@ public class ModifyClassroom {
 	    modifyClassroomLayout.add(cancel,1,8);
 	    GridPane.setHalignment(cancel,HPos.CENTER);
 	    GridPane.setConstraints(cancel,1,8,2,1);
-	    modifyClassroomLayout.getStylesheets().add("modifycenter.css");
+	    modifyClassroomLayout.getStylesheets().add("css/admin.css");
 		
 		Scene modifyClassroomScene = new Scene(modifyClassroomLayout);
 		stage.setScene(modifyClassroomScene);

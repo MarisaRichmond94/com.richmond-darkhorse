@@ -1,21 +1,21 @@
 package com.richmond.darkhorse.ProjectSB.gui.component;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import com.richmond.darkhorse.ProjectSB.Admin;
 import com.richmond.darkhorse.ProjectSB.middleman.CreateNewCenter;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
-import javafx.scene.image.Image;
-import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.scene.control.TextField;
-import javafx.geometry.HPos;
 import javafx.beans.binding.*;
 
-public class AddCenter {
+public class AddCenter implements AdminLayout {
 	 
 	private Admin admin;
 	
@@ -27,107 +27,46 @@ public class AddCenter {
 		Stage stage = new Stage();
 		stage.initModality(Modality.APPLICATION_MODAL);
 		stage.setTitle("Create New Center");
-		
-		//Grid Pane
-		GridPane addCenterLayout = new GridPane();
-		addCenterLayout.setVgap(10);
-		addCenterLayout.setHgap(10);
-		ColumnConstraints columnOne = new ColumnConstraints();
-		columnOne.setPercentWidth(33.3);
-	    ColumnConstraints columnTwo = new ColumnConstraints();
-	    columnTwo.setPercentWidth(33.3);
-	    ColumnConstraints columnThree = new ColumnConstraints();
-	    columnThree.setPercentWidth(33.3);
-	    addCenterLayout.getColumnConstraints().addAll(columnOne,columnTwo,columnThree);
-	    addCenterLayout.getStyleClass().add("gridpane");
-		
-	    //Grid Pane - Icon
-	    ImageView centerViewer = new ImageView();
-	    Image centerIcon = new Image("center.png");
-	    centerViewer.setImage(centerIcon);
-	    centerViewer.setPreserveRatio(true);
-	    centerViewer.setFitHeight(200);
-	    
-		//Grid Pane - Title
-	    Label title = new Label("Create New \nCenter");
-	    title.getStyleClass().add("title");
-	    
-	    //Grid Pane - Center Name
-	    Label centerName = new Label("Center name:");
-	    centerName.getStyleClass().add("label");
-	    TextField nameField = new TextField();
-	    nameField.setPromptText("center name");
-	    nameField.getStyleClass().add("textfield");
-	    
-	    //Grid Pane - Abbreviated Name
-	    Label abbreviatedName = new Label("Abbreviated Name:");
-	    abbreviatedName.getStyleClass().add("label");
-	    TextField abbreviatedNameField = new TextField();
-	    abbreviatedNameField.setPromptText("abbreviated name");
-	    abbreviatedNameField.getStyleClass().add("textfield");
-	    
-	    //Grid Pane - License Name
-	    Label licenseName = new Label("Name on license:");
-	    licenseName.getStyleClass().add("label");
-	    TextField licenseNameField = new TextField();
-	    licenseNameField.setPromptText("name on license");
-	    licenseNameField.getStyleClass().add("textfield");
-	    
-	    //Grid Pane - License Number
-	    Label licenseNumber = new Label("License number:");
-	    licenseNumber.getStyleClass().add("label");
-	    TextField licenseNumberField = new TextField();
-	    licenseNumberField.setPromptText("license number");
-	    licenseNumberField.getStyleClass().add("textfield");
-	    
-	    //Grid Pane - Address
-	    Label address = new Label("Address:");
-	    address.getStyleClass().add("label");
-	    TextField addressField = new TextField();
-	    addressField.setPromptText("address");
-	    addressField.getStyleClass().add("textfield");
-	    
-	    //Grid Pane - City
-	    Label city = new Label("City:");
-	    city.getStyleClass().add("label");
-	    TextField cityField = new TextField();
-	    cityField.setPromptText("city ");
-	    cityField.getStyleClass().add("textfield");
-	    
-	    //Grid Pane - County
-	    Label county = new Label("County:");
-	    county.getStyleClass().add("label");
-	    TextField countyField = new TextField();
-	    countyField.setPromptText("county");
-	    countyField.getStyleClass().add("textfield");
-	    
-	    //Grid Pane - Create Button
+		GridPane addCenterLayout = buildGridPane(stage);
+		Scene createCenterScene = new Scene(addCenterLayout);
+		stage.setScene(createCenterScene);
+		stage.showAndWait();
+	}
+	
+	/**
+	 * Builds the layout for AddCenter
+	 * @param stage - the current stage
+	 * @return a GridPane layout
+	 */
+	private GridPane buildGridPane(Stage stage) {
+		GridPane gridpane = new GridPane();
+		setConstraints(gridpane,3,0,10,10,"modulargridpane");
+		ImageView centerViewer = createImageWithFitHeight("images/center.png",200);
+		Label title = createLabel("Create New \nCenter","title");
+		List<String> labelNames = new ArrayList<>();
+		labelNames.addAll(Arrays.asList("Center name:","Abbreviated Name:","Name on license:","License number:","Address:","City:","County:"));
+		List<Label> labels = populateLabels(labelNames,"label");
+		List<String> textFieldPrompts = new ArrayList<>();
+		textFieldPrompts.addAll(Arrays.asList("center name","abbreviated name","name on license","license number","address","city","county"));
+		List<TextField> textFields = populateTextFields(textFieldPrompts,"textfield",0);
 	    Button createCenterButton = new Button("Create Center");
 	    createCenterButton.getStyleClass().add("button");
 	    createCenterButton.disableProperty().bind(
-	    	    Bindings.isEmpty(nameField.textProperty())
-	    	    .or(Bindings.isEmpty(licenseNameField.textProperty()))
-	    	    .or(Bindings.isEmpty(licenseNumberField.textProperty()))
-	    	    .or(Bindings.isEmpty(addressField.textProperty()))
-	    	    .or(Bindings.isEmpty(cityField.textProperty()))
-	    	    .or(Bindings.isEmpty(countyField.textProperty()))
+	    	    Bindings.isEmpty(textFields.get(0).textProperty())
+	    	    .or(Bindings.isEmpty(textFields.get(2).textProperty()))
+	    	    .or(Bindings.isEmpty(textFields.get(3).textProperty()))
+	    	    .or(Bindings.isEmpty(textFields.get(4).textProperty()))
+	    	    .or(Bindings.isEmpty(textFields.get(5).textProperty()))
+	    	    .or(Bindings.isEmpty(textFields.get(6).textProperty()))
 	    	);
 	    createCenterButton.setOnAction(e -> {
-	    		boolean isAcceptable = isAcceptable(licenseNumberField,licenseNumberField.getText());
+	    		boolean isAcceptable = isAcceptable(textFields.get(3).getText());
 	    		if(isAcceptable == false) {
 	    			Label nonIntWarning = new Label("License # must be at least 5 #'s long, and the first 4 characters must be #'s");
 	    			nonIntWarning.setTextFill(Color.RED);
-	    			addCenterLayout.add(nonIntWarning, 1, 9);
-	    			GridPane.setHalignment(nonIntWarning, HPos.CENTER);
-	    			GridPane.setConstraints(nonIntWarning, 0, 9, 3, 1);
+	    			placeNodeSpan(gridpane,nonIntWarning,0,9,3,1,"center",null);
 	    		}else {
-		    		String centerNameText = nameField.getText();
-		    		String abbrviatedNameText = abbreviatedNameField.getText();
-		    		String licenseNameText = licenseNameField.getText();
-		    		String licenseNumberText = licenseNumberField.getText();
-		    		String addressText = addressField.getText();
-		    		String cityText = cityField.getText();
-		    		String countyText = countyField.getText();
+		    		String centerNameText = textFields.get(0).getText(), abbrviatedNameText = textFields.get(1).getText(), licenseNameText = textFields.get(2).getText(), licenseNumberText = textFields.get(3).getText(), addressText = textFields.get(4).getText(), cityText = textFields.get(5).getText(), countyText = textFields.get(6).getText();
 		    		Thread createNewCenter = new Thread(new CreateNewCenter(centerNameText,abbrviatedNameText,licenseNameText,licenseNumberText,addressText,cityText,countyText,admin));
 		    	    	createNewCenter.start();	
 		    		stage.close();
@@ -135,56 +74,23 @@ public class AddCenter {
 	    });
 	    Button cancelButton = new Button("Cancel");
 	    cancelButton.getStyleClass().add("button");
-	    cancelButton.setOnAction(e -> {
-	    		stage.close();
-	    });
-	    
-	    //Grid Pane - Layout
-	    addCenterLayout.add(centerViewer, 0, 0);
-	    GridPane.setHalignment(centerViewer, HPos.CENTER);
-	    addCenterLayout.add(title, 1, 0);
-	    GridPane.setConstraints(title,1,0,2,1);
-	    GridPane.setHalignment(title, HPos.CENTER);
-	    addCenterLayout.add(centerName, 0, 1);
-	    GridPane.setHalignment(centerName, HPos.RIGHT);
-	    addCenterLayout.add(nameField, 1, 1);
-	    GridPane.setConstraints(nameField,1,1,2,1);
-	    addCenterLayout.add(abbreviatedName, 0, 2);
-	    GridPane.setHalignment(abbreviatedName, HPos.RIGHT);
-	    addCenterLayout.add(abbreviatedNameField, 1, 2);
-	    GridPane.setConstraints(abbreviatedNameField, 1, 2, 2, 1);
-	    addCenterLayout.add(licenseName, 0, 3);
-	    GridPane.setHalignment(licenseName, HPos.RIGHT);
-	    addCenterLayout.add(licenseNameField, 1, 3);
-	    GridPane.setConstraints(licenseNameField,1,3,2,1);
-	    addCenterLayout.add(licenseNumber, 0, 4);
-	    GridPane.setHalignment(licenseNumber, HPos.RIGHT);
-	    addCenterLayout.add(licenseNumberField, 1, 4);
-	    GridPane.setConstraints(licenseNumberField,1,4,2,1);
-	    addCenterLayout.add(address, 0, 5);
-	    GridPane.setHalignment(address, HPos.RIGHT);
-	    addCenterLayout.add(addressField, 1, 5);
-	    GridPane.setConstraints(addressField,1,5,2,1);
-	    addCenterLayout.add(city, 0, 6);
-	    GridPane.setHalignment(city, HPos.RIGHT);
-	    addCenterLayout.add(cityField, 1, 6);
-	    GridPane.setConstraints(cityField,1,6,2,1);
-	    addCenterLayout.add(county, 0, 7);
-	    GridPane.setHalignment(county, HPos.RIGHT);
-	    addCenterLayout.add(countyField, 1, 7);
-	    GridPane.setConstraints(countyField,1,7,2,1);
-	    addCenterLayout.add(createCenterButton, 1, 8);
-	    GridPane.setHalignment(createCenterButton, HPos.CENTER);
-	    addCenterLayout.add(cancelButton, 2, 8);
-	    GridPane.setHalignment(cancelButton, HPos.CENTER);
-		addCenterLayout.getStylesheets().add("addcenter.css");
-		
-		Scene createCenterScene = new Scene(addCenterLayout);
-		stage.setScene(createCenterScene);
-		stage.showAndWait();
+	    cancelButton.setOnAction(e -> stage.close());
+	    placeNode(gridpane,centerViewer,0,0,"center",null);
+	    placeNodeSpan(gridpane,title,1,0,2,1,"center",null);
+	    populateGridPane(gridpane,labels,textFields,1);
+	    placeNode(gridpane,createCenterButton,1,8,"center",null);
+	    placeNode(gridpane,cancelButton,2,8,"center",null);
+	    gridpane.getStylesheets().add("css/admin.css");
+	    return gridpane;
 	}
 	
-	private boolean isAcceptable(TextField licenseNumberField,String licenseNumber) {
+	/**
+	 * Determines whether or not the provided license number is at least four-digits long and contains only number literals (for the first 4 digits) by parsing the
+	 * provided number String and passing the first four digits through a number check method (isNumber)
+	 * @param licenseNumber - the license number provided by the user 
+	 * @return true if the provided license number is at least 4 digits long and false if the try clause throws an indexOutOfBoundsException 
+	 */
+	private boolean isAcceptable(String licenseNumber) {
 		try{
 			int a = Character.digit(licenseNumber.charAt(0), 10);
 			String aString = Integer.toString(a);
@@ -196,23 +102,22 @@ public class AddCenter {
 		    	String dString = Integer.toString(d);
 	    		String number = aString + bString + cString + dString;
 	    		boolean status = isNumber(number);
-	    		if(status == true) {
-	    			return true;
-	    		}
-		}catch(IndexOutOfBoundsException e) {
-			return false;
-		}
+	    		if(status == true) {return true;}
+		}catch(IndexOutOfBoundsException e) {return false;}
     		return false;
 	}
 	
-	private boolean isNumber(String number) {
+	/**
+	 * Checks to see if the passed String contains only numbers
+	 * @param number - String potentially containing numbers
+	 * @return true if the String only contains numbers and false if the String contains any Characters
+	 */
+	private boolean isNumber(String number) throws NumberFormatException{
 		try{
 			@SuppressWarnings("unused")
 			int possibleNumber = Integer.parseInt(number);
 			return true;
-		}catch(NumberFormatException e) {
-		}
-		return false;
+		}catch(NumberFormatException e) {return false;}
 	}
 	
 }

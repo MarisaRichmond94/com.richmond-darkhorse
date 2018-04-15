@@ -25,7 +25,7 @@ public interface SceneFormatter {
 	 * @param columnCount - the desired number of columns that will go into the GridPane
 	 * @param rowCount - the desired number of rows that will go into the GridPane
 	 */
-	public default void setConstraints(GridPane gridpane,int columnCount,int rowCount,int vGap,int hGap) {
+	public default void setConstraints(GridPane gridpane,int columnCount,int rowCount,int vGap,int hGap,String cssTag) {
 		if(vGap != 0) {gridpane.setVgap(vGap);}
 		if(hGap != 0) {gridpane.setHgap(hGap);}
 		List<ColumnConstraints> columns = new ArrayList<>();
@@ -51,7 +51,7 @@ public interface SceneFormatter {
 		for(RowConstraints row: rows) {
 			gridpane.getRowConstraints().add(row);
 		}
-		gridpane.getStyleClass().add("gridpane");
+		gridpane.getStyleClass().add(cssTag);
 	}
 	
 	/**

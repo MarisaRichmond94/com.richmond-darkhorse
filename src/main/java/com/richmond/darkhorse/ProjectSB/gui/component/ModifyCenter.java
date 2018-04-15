@@ -1,29 +1,30 @@
 package com.richmond.darkhorse.ProjectSB.gui.component;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import com.richmond.darkhorse.ProjectSB.Admin;
 import com.richmond.darkhorse.ProjectSB.Center;
 import com.richmond.darkhorse.ProjectSB.middleman.ModifyExistingCenter;
-import javafx.geometry.HPos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
-public class ModifyCenter {
+public class ModifyCenter implements AdminLayout{
 
 	private Admin admin;
 	private Center center;
-	private String theCenterName, theLicenseName, theAddress, theCity, theCounty;
+	private String theCenterName, abbreviatedName = "", theLicenseName, theAddress, theCity, theCounty;
 	
 	public ModifyCenter(Admin admin,Center center) { 
 		this.admin = admin;
 		this.center = center;
 		this.theCenterName = center.getCenterName();
+		if(center.getAbbreviatedName() != null) {this.abbreviatedName = center.getAbbreviatedName();}
 		this.theLicenseName = center.getLicenseName();
 		this.theAddress = center.getAddress();
 		this.theCity = center.getCity();
@@ -34,210 +35,97 @@ public class ModifyCenter {
 		Stage stage = new Stage();
 		stage.initModality(Modality.APPLICATION_MODAL);
 		stage.setTitle(center.getCenterName());
-		
-		//Grid Pane
-		GridPane modifyCenterLayout = new GridPane();
-		modifyCenterLayout.setVgap(10);
-		modifyCenterLayout.setHgap(10);
-		ColumnConstraints columnOne = new ColumnConstraints();
-		columnOne.setPercentWidth(33.3);
-	    ColumnConstraints columnTwo = new ColumnConstraints();
-	    columnTwo.setPercentWidth(33.3);
-	    ColumnConstraints columnThree = new ColumnConstraints();
-	    columnThree.setPercentWidth(33.3);
-	    modifyCenterLayout.getColumnConstraints().addAll(columnOne,columnTwo,columnThree);
-	    modifyCenterLayout.getStyleClass().add("gridpane");
-		
-	    //Grid Pane - Icon
-	    ImageView centerViewer = new ImageView();
-	    Image centerIcon = new Image("center.png");
-	    centerViewer.setImage(centerIcon);
-	    centerViewer.setPreserveRatio(true);
-	    centerViewer.setFitHeight(150);
-	    
-	    //Grid Pane - Title
-	    Label title = new Label("Modify Center");
-	    title.getStyleClass().add("title");
-	    
-	    //Grid Pane - Center Name
-	    Label centerName = new Label("Center name:");
-	    centerName.getStyleClass().add("label");
-	    TextField nameField = new TextField();
-	    nameField.setPromptText(center.getCenterName());
-	    nameField.setDisable(true);
-	    nameField.getStyleClass().add("textfield");
-	    
-	    //Grid Pane - Abbreviated Name
-	    Label abbreviatedName = new Label("Abbreviated Name:");
-	    abbreviatedName.getStyleClass().add("label");
-	    TextField abbreviatedNameField = new TextField();
-	    abbreviatedNameField.setPromptText(center.getAbbreviatedName());
-	    abbreviatedNameField.setDisable(true);
-	    abbreviatedNameField.getStyleClass().add("textfield");
-	    
-	    //Grid Pane - License Name
-	    Label licenseName = new Label("Name on license:");
-	    licenseName.getStyleClass().add("label");
-	    TextField licenseNameField = new TextField();
-	    licenseNameField.setPromptText(center.getLicenseName());
-	    licenseNameField.setDisable(true);
-	    licenseNameField.getStyleClass().add("textfield");
-	    
-	    //Grid Pane - License Number
-	    Label licenseNumber = new Label("License number:");
-	    licenseNumber.getStyleClass().add("label");
-	    TextField licenseNumberField = new TextField();
-	    licenseNumberField.setPromptText(center.getLicenseNumber());
-	    licenseNumberField.setDisable(true);
-	    licenseNumberField.getStyleClass().add("textfield");
-	    
-	    //Grid Pane - Address 
-	    Label address = new Label("Address:");
-	    address.getStyleClass().add("label");
-	    TextField addressField = new TextField();
-	    addressField.setPromptText(center.getAddress());
-	    addressField.setDisable(true);
-	    addressField.getStyleClass().add("textfield");
-	    
-	    //Grid Pane - City
-	    Label city = new Label("City:");
-	    city.getStyleClass().add("label");
-	    TextField cityField = new TextField();
-	    cityField.setPromptText(center.getCity());
-	    cityField.setDisable(true);
-	    cityField.getStyleClass().add("textfield");
-	    
-	    //Grid Pane - County
-	    Label county = new Label("County:");
-	    county.getStyleClass().add("label");
-	    TextField countyField = new TextField();
-	    countyField.setPromptText(center.getCounty());
-	    countyField.setDisable(true);
-	    countyField.getStyleClass().add("textfield");
-	    
-	    //Grid Pane - Write Button
-	    ImageView writeViewer = new ImageView();
-	    Image write = new Image("write.png");
-	    writeViewer.setImage(write);
-	    writeViewer.setPreserveRatio(true);
-	    writeViewer.setFitHeight(150);
-	    ImageButton writeButton = new ImageButton(writeViewer);
-	    writeButton.setOnAction(e -> {
-		    	String centerNameText = nameField.getText();	
-		    	String abbreviatedNameText = abbreviatedNameField.getText();
-		    	String licenseNameText = licenseNameField.getText();
-		    	String addressText = addressField.getText();
-		    	String cityText = cityField.getText();
-		    	String countyText = countyField.getText();
-	    		if(nameField.getText().trim().isEmpty()) {centerNameText = theCenterName;}
-	    		if(licenseNameField.getText().trim().isEmpty()) {licenseNameText = theLicenseName;}
-	    		if(addressField.getText().trim().isEmpty()) {addressText = theAddress;}
-	    		if(cityField.getText().trim().isEmpty()) {cityText = theCity;}
-	    		if(countyField.getText().trim().isEmpty()) {countyText = theCounty;}
-	    		Thread modifyExistingCenter = new Thread(new ModifyExistingCenter(center,centerNameText,abbreviatedNameText,licenseNameText,addressText,cityText,countyText,admin));
-	    	    	modifyExistingCenter.start();	
-	    		stage.close();
-	    });
+		GridPane modifyCenterLayout = buildGridPane(stage);
+		Scene modifyCenterScene = new Scene(modifyCenterLayout);
+		stage.setScene(modifyCenterScene);
+		stage.showAndWait();
+	}
+	
+	/**
+	 * Builds the GridPane layout
+	 * @param stage - the current stage
+	 * @return a GridPane layout
+	 */
+	private GridPane buildGridPane(Stage stage) {
+		GridPane gridpane = new GridPane();
+		setConstraints(gridpane,3,0,10,10,"modulargridpane");
+		ImageView centerViewer = createImageWithFitHeight("images/center.png",200);
+		Label title = createLabel("Modify Center","title");
+		List<String> labelNames = new ArrayList<>();
+		labelNames.addAll(Arrays.asList("Center name:","Abbreviated Name:","Name on license:","License number:","Address:","City:","County:"));
+		List<Label> labels = populateLabels(labelNames,"label");
+		List<String> textFieldPrompts = new ArrayList<>();
+		textFieldPrompts.addAll(Arrays.asList(center.getCenterName(),center.getAbbreviatedName(),center.getLicenseName(),center.getLicenseNumber(),center.getAddress(),center.getCity(),center.getCounty()));
+		List<TextField> textFields = populateTextFields(textFieldPrompts,"textfield",0);
+		ImageButton writeButton = new ImageButton(createImageWithFitHeight("images/write.png",100));
+	    writeButton.setOnAction(e -> write(stage,textFields));
 	    writeButton.setVisible(false);
-	    Label writeLabel = new Label("write");
+	    Label writeLabel = createLabel("write","label");
 	    writeLabel.setVisible(false);
-	    writeLabel.getStyleClass().add("label");
-	    
-	    //Grid Pane - Edit Button
-	    Label editLabel = new Label("edit");
-	    editLabel.getStyleClass().add("label");
-	    ImageView editViewer = new ImageView();
-	    Image edit = new Image("edit.png");
-	    editViewer.setImage(edit);
-	    editViewer.setPreserveRatio(true);
-	    editViewer.setFitHeight(150);
-	    ImageButton editButton = new ImageButton(editViewer);
-	    editButton.setOnAction(e -> {
-	    		nameField.setDisable(false);
-	    		abbreviatedNameField.setDisable(false);
-	    		licenseNameField.setDisable(false);
-	    		addressField.setDisable(false);
-	    		cityField.setDisable(false);
-	    		countyField.setDisable(false);
-	    		writeButton.setVisible(true);
-	    		writeLabel.setVisible(true);
-	    		editButton.setVisible(false);
-	    		editLabel.setVisible(false);
-	    });
-	    
-	    //Grid Pane - Delete Button
-	    ImageView trashViewer = new ImageView();
-	    Image trash = new Image("trash.png");
-	    trashViewer.setImage(trash);
-	    trashViewer.setPreserveRatio(true);
-	    trashViewer.setFitHeight(150);
-	    ImageButton trashButton = new ImageButton(trashViewer);
+	    Label editLabel = createLabel("edit","label");
+	    ImageButton editButton = new ImageButton(createImageWithFitHeight("images/edit.png",100));
+	    editButton.setOnAction(e -> edit(textFields,writeButton,editButton,writeLabel,editLabel));
+	    ImageButton trashButton = new ImageButton(createImageWithFitHeight("images/trash.png",100));
 	    trashButton.setOnAction(e -> {
 	    		admin.deleteCenter(center);
 	    		stage.close();
 	    	});
-	    Label trashLabel = new Label("delete");
-	    trashLabel.getStyleClass().add("label");
-	    
-	    //Grid Pane - Cancel Button
+	    Label trashLabel = createLabel("delete","label");
 	    Button cancel = new Button("cancel");
 	    cancel.setOnAction(e -> stage.close());
 	    cancel.getStyleClass().add("button");
-	    
-	    //Grid Pane - Layout
-	    modifyCenterLayout.add(centerViewer, 0, 0);
-	    GridPane.setHalignment(centerViewer, HPos.CENTER);
-	    modifyCenterLayout.add(title, 1, 0);
-	    GridPane.setConstraints(title,1,0,2,1);
-	    GridPane.setHalignment(title, HPos.CENTER);
-	    modifyCenterLayout.add(centerName, 0, 1);
-	    GridPane.setHalignment(centerName, HPos.RIGHT);
-	    modifyCenterLayout.add(nameField, 1, 1);
-	    GridPane.setConstraints(nameField,1,1,2,1);
-	    modifyCenterLayout.add(abbreviatedName, 0, 2);
-	    GridPane.setHalignment(abbreviatedName, HPos.RIGHT);
-	    modifyCenterLayout.add(abbreviatedNameField, 1, 2);
-	    GridPane.setConstraints(abbreviatedNameField,1,2,2,1);
-	    modifyCenterLayout.add(licenseName, 0, 3);
-	    GridPane.setHalignment(licenseName, HPos.RIGHT);
-	    modifyCenterLayout.add(licenseNameField, 1, 3);
-	    GridPane.setConstraints(licenseNameField,1,3,2,1);
-	    modifyCenterLayout.add(licenseNumber, 0, 4);
-	    GridPane.setHalignment(licenseNumber, HPos.RIGHT);
-	    modifyCenterLayout.add(licenseNumberField, 1, 4);
-	    GridPane.setConstraints(licenseNumberField,1,4,2,1);
-	    modifyCenterLayout.add(address, 0, 5);
-	    GridPane.setHalignment(address, HPos.RIGHT);
-	    modifyCenterLayout.add(addressField, 1, 5);
-	    GridPane.setConstraints(addressField,1,5,2,1);
-	    modifyCenterLayout.add(city, 0, 6);
-	    GridPane.setHalignment(city, HPos.RIGHT);
-	    modifyCenterLayout.add(cityField, 1, 6);
-	    GridPane.setConstraints(cityField,1,6,2,1);
-	    modifyCenterLayout.add(county, 0, 7);
-	    GridPane.setHalignment(county, HPos.RIGHT);
-	    modifyCenterLayout.add(countyField, 1, 7);
-	    GridPane.setConstraints(countyField,1,7,2,1);
-	    modifyCenterLayout.add(editButton, 1, 8);
-	    GridPane.setHalignment(editButton, HPos.CENTER);
-	    modifyCenterLayout.add(writeButton, 1, 8);
-	    GridPane.setHalignment(writeButton, HPos.CENTER);
-	    modifyCenterLayout.add(trashButton, 2, 8);
-	    GridPane.setHalignment(trashButton, HPos.CENTER);
-	    modifyCenterLayout.add(editLabel, 1, 9);
-	    GridPane.setHalignment(editLabel, HPos.CENTER);
-	    modifyCenterLayout.add(writeLabel, 1, 9);
-	    GridPane.setHalignment(writeLabel, HPos.CENTER);
-	    modifyCenterLayout.add(trashLabel, 2, 9);
-	    GridPane.setHalignment(trashLabel, HPos.CENTER);
-	    modifyCenterLayout.add(cancel, 1, 10);
-	    GridPane.setHalignment(cancel, HPos.CENTER);
-	    GridPane.setConstraints(cancel, 1, 10, 2, 1);
-	    modifyCenterLayout.getStylesheets().add("modifycenter.css");
-		
-		Scene modifyCenterScene = new Scene(modifyCenterLayout);
-		stage.setScene(modifyCenterScene);
-		stage.showAndWait();
+	    placeNode(gridpane,centerViewer,0,0,"center",null);
+	    placeNodeSpan(gridpane,title,1,0,2,1,"center",null);
+	    populateGridPane(gridpane,labels,textFields,1);
+	    placeNode(gridpane,editButton,1,8,"center",null);
+	    placeNode(gridpane,writeButton,1,8,"center",null);
+	    placeNode(gridpane,trashButton,2,8,"center",null);
+	    placeNode(gridpane,editLabel,1,9,"center",null);
+	    placeNode(gridpane,writeLabel,1,9,"center",null);
+	    placeNode(gridpane,trashLabel,2,9,"center",null);
+	    placeNodeSpan(gridpane,cancel,1,10,2,1,"center",null);
+	    gridpane.getStylesheets().add("css/admin.css");
+	    return gridpane;
+	}
+	
+	/**
+	 * Gets the text from each text field in the List. If the text field is empty, gets the current value stored in the center and submits all necessary fields to 
+	 * the thread in order to modify the existing center. Once completed, the stage closes
+	 * @param stage - the current stage
+	 * @param textFields - a list of text fields with valuable input 
+	 */
+	private void write(Stage stage,List<TextField> textFields) {
+		String centerNameText = textFields.get(0).getText(), abbreviatedNameText = textFields.get(1).getText(), licenseNameText = textFields.get(2).getText(), addressText = textFields.get(3).getText(), cityText = textFields.get(4).getText(), countyText = textFields.get(5).getText();
+		if(textFields.get(0).getText().trim().isEmpty()) {centerNameText = theCenterName;}
+		if(textFields.get(1).getText().trim().isEmpty()) {abbreviatedNameText = abbreviatedName;}
+		if(textFields.get(2).getText().trim().isEmpty()) {licenseNameText = theLicenseName;}
+		if(textFields.get(3).getText().trim().isEmpty()) {addressText = theAddress;}
+		if(textFields.get(4).getText().trim().isEmpty()) {cityText = theCity;}
+		if(textFields.get(5).getText().trim().isEmpty()) {countyText = theCounty;}
+		Thread modifyExistingCenter = new Thread(new ModifyExistingCenter(center,centerNameText,abbreviatedNameText,licenseNameText,addressText,cityText,countyText,admin));
+	    	modifyExistingCenter.start();	
+		stage.close();
+	}
+	
+	/**
+	 * Enters the program into edit-mode by revealing the write button and enabling all text fields for typing
+	 * @param textFields - the list of text fields to be enabled
+	 * @param writeButton - the button necessary for writing changes
+	 * @param editButton - the button that allows the user to enter into edit mode
+	 * @param writeLabel 
+	 * @param editLabel
+	 */
+	private void edit(List<TextField> textFields,Button writeButton,Button editButton,Label writeLabel,Label editLabel) {
+		textFields.get(0).setDisable(false);
+		textFields.get(1).setDisable(false);
+		textFields.get(2).setDisable(false);
+		textFields.get(3).setDisable(false);
+		textFields.get(4).setDisable(false);
+		textFields.get(5).setDisable(false);
+		writeButton.setVisible(true);
+		writeLabel.setVisible(true);
+		editButton.setVisible(false);
+		editLabel.setVisible(false);
 	}
 	
 }

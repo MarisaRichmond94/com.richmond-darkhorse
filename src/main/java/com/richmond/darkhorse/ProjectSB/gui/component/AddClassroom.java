@@ -50,11 +50,11 @@ public class AddClassroom {
 	    ColumnConstraints columnThree = new ColumnConstraints();
 	    columnThree.setPercentWidth(33.3);
 	    addClassroomLayout.getColumnConstraints().addAll(columnOne,columnTwo,columnThree);
-	    addClassroomLayout.getStyleClass().add("gridpane");
+	    addClassroomLayout.getStyleClass().add("modulargridpane");
 		
 		//Grid Pane - Icon
 	    ImageView classroomViewer = new ImageView();
-	    Image classroomIcon = new Image("classroom.png");
+	    Image classroomIcon = new Image("images/classroom.png");
 	    classroomViewer.setImage(classroomIcon);
 	    classroomViewer.setPreserveRatio(true);
 	    classroomViewer.setFitHeight(200);
@@ -220,7 +220,7 @@ public class AddClassroom {
 	    GridPane.setHalignment(createClassroomButton, HPos.CENTER);
 	    addClassroomLayout.add(cancelButton, 2, 6);
 	    GridPane.setHalignment(cancelButton, HPos.LEFT);
-	    addClassroomLayout.getStylesheets().add("addclassroom.css");
+	    addClassroomLayout.getStylesheets().add("css/admin.css");
 		
 		Scene createClassroomScene = new Scene(addClassroomLayout);
 		stage.setScene(createClassroomScene);

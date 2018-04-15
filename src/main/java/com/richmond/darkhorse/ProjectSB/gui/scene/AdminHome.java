@@ -23,7 +23,7 @@ public class AdminHome extends Scene implements AdminLayout{
 		GridPane centerPane = buildCenterPane();
 		BorderPane adminHomeLayout = layout;
 		setBorderPane(adminHomeLayout,centerPane,null,leftPane,topPane,bottomPane);
-		adminHomeLayout.getStylesheets().add("adminhome.css");
+		adminHomeLayout.getStylesheets().add("css/admin.css");
 	}
 	
 	/**
@@ -32,8 +32,8 @@ public class AdminHome extends Scene implements AdminLayout{
 	 */
 	public GridPane buildCenterPane() {
 		GridPane centerPane = new GridPane();
-		setConstraints(centerPane,1,0,10,10);
-		ImageView welcomeViewer = createImageWithFitHeight("welcome.png",125);
+		setConstraints(centerPane,1,0,10,10,"gridpane");
+		ImageView welcomeViewer = createImageWithFitHeight("images/welcome.png",125);
 		ImageView iconViewer = createImageWithFitHeight("admin.png",450);
 		placeNode(centerPane,welcomeViewer,0,0,"center",null);
 		placeNode(centerPane,iconViewer,0,1,"center",null);

@@ -49,11 +49,11 @@ public class ModifyDirector {
 		ColumnConstraints columnThree = new ColumnConstraints();
 		columnThree.setPercentWidth(33.3);
 		modifyDirectorLayout.getColumnConstraints().addAll(columnOne,columnTwo,columnThree);
-	    modifyDirectorLayout.getStyleClass().add("gridpane");
+	    modifyDirectorLayout.getStyleClass().add("modulargridpane");
 		
 		//Grid Pane - Icon
 		ImageView directorViewer = new ImageView();
-		Image directorIcon = new Image("director.png");
+		Image directorIcon = new Image("images/director.png");
 		directorViewer.setImage(directorIcon);
 		directorViewer.setPreserveRatio(true);
 		directorViewer.setFitHeight(150);
@@ -115,7 +115,7 @@ public class ModifyDirector {
 		
 		//Grid Pane - Write Button
 		ImageView writeViewer = new ImageView();
-		Image write = new Image("write.png");
+		Image write = new Image("images/write.png");
 		writeViewer.setImage(write);
 		writeViewer.setPreserveRatio(true);
 		writeViewer.setFitHeight(150);
@@ -147,7 +147,7 @@ public class ModifyDirector {
 		Label editLabel = new Label("edit");
 		editLabel.getStyleClass().add("label");
 		ImageView editViewer = new ImageView();
-		Image edit = new Image("edit.png");
+		Image edit = new Image("images/edit.png");
 		editViewer.setImage(edit);
 		editViewer.setPreserveRatio(true);
 		editViewer.setFitHeight(150);
@@ -165,7 +165,7 @@ public class ModifyDirector {
 		
 		//Grid Pane - Delete Button
 		ImageView trashViewer = new ImageView();
-		Image trash = new Image("trash.png");
+		Image trash = new Image("images/trash.png");
 		trashViewer.setImage(trash);
 		trashViewer.setPreserveRatio(true);
 		trashViewer.setFitHeight(150);
@@ -219,7 +219,7 @@ public class ModifyDirector {
 		modifyDirectorLayout.add(cancel, 1, 8);
 		GridPane.setHalignment(cancel, HPos.CENTER);
 		GridPane.setConstraints(cancel, 1, 8, 2, 1);
-		modifyDirectorLayout.getStylesheets().add("modifycenter.css");
+		modifyDirectorLayout.getStylesheets().add("css/admin.css");
 			
 		Scene modifyDirectorScene = new Scene(modifyDirectorLayout);
 		stage.setScene(modifyDirectorScene);

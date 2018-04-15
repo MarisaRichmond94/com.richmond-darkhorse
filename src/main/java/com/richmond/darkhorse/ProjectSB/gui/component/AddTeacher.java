@@ -43,11 +43,11 @@ public class AddTeacher {
 	    ColumnConstraints columnThree = new ColumnConstraints();
 	    columnThree.setPercentWidth(33.3);
 	    addTeacherLayout.getColumnConstraints().addAll(columnOne,columnTwo,columnThree);
-	    addTeacherLayout.getStyleClass().add("gridpane");
+	    addTeacherLayout.getStyleClass().add("modulargridpane");
 		
 		//GridPane - Icon
 	    ImageView teacherViewer = new ImageView();
-	    Image teacherIcon = new Image("teacher.png");
+	    Image teacherIcon = new Image("images/teacher.png");
 	    teacherViewer.setImage(teacherIcon);
 	    teacherViewer.setPreserveRatio(true);
 	    teacherViewer.setFitHeight(200);
@@ -173,7 +173,7 @@ public class AddTeacher {
 	    GridPane.setHalignment(createTeacherButton, HPos.CENTER);
 	    addTeacherLayout.add(cancelButton, 2, 5);
 	    GridPane.setHalignment(cancelButton, HPos.CENTER);
-	    addTeacherLayout.getStylesheets().add("addteacher.css");
+	    addTeacherLayout.getStylesheets().add("css/admin.css");
 		
 		Scene createTeacherScene = new Scene(addTeacherLayout);
 		stage.setScene(createTeacherScene);

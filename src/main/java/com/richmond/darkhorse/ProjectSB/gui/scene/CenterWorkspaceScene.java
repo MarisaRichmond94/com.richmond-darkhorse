@@ -38,7 +38,7 @@ public class CenterWorkspaceScene extends Scene implements AdminLayout {
 		scrollPane.setFitToWidth(true);
 		BorderPane centerWorkspaceLayout = layout;
 		setBorderPaneWithCenterScrollPane(centerWorkspaceLayout,scrollPane,null,leftPane,topPane,bottomPane);
-		centerWorkspaceLayout.getStylesheets().add("centerworkspace.css");
+		centerWorkspaceLayout.getStylesheets().add("css/admin.css");
 	}
 	
 	/**
@@ -49,9 +49,9 @@ public class CenterWorkspaceScene extends Scene implements AdminLayout {
 	 */
 	public GridPane buildCenterPane(Stage stage,Admin admin) {
 		GridPane centerPane = new GridPane();
-		setConstraints(centerPane,4,0,15,15);
-		ImageView workspaceViewer = createImageWithFitHeight("workspace.png",150);
-		Button addCenterButton = createButton(null,"addcenter.png",200,300,400);
+		setConstraints(centerPane,4,0,15,15,"gridpane");
+		ImageView workspaceViewer = createImageWithFitHeight("images/workspace.png",150);
+		Button addCenterButton = createButton(null,"images/addcenter.png",200,300,400);
 		addCenterButton.setOnAction(e -> {
 			newAddCenter.display();
 			Platform.runLater(new ChangeScene(stage,new CenterWorkspaceScene(stage,null,admin)));

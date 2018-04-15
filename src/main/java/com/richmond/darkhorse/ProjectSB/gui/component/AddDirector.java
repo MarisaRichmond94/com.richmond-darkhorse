@@ -42,11 +42,11 @@ public class AddDirector {
 	    ColumnConstraints columnThree = new ColumnConstraints();
 	    columnThree.setPercentWidth(33.3);
 	    addDirectorLayout.getColumnConstraints().addAll(columnOne,columnTwo,columnThree);
-	    addDirectorLayout.getStyleClass().add("gridpane");
+	    addDirectorLayout.getStyleClass().add("modulargridpane");
 		
 		//Grid Pane - Icon
 	    ImageView directorViewer = new ImageView();
-	    Image directorIcon = new Image("director.png");
+	    Image directorIcon = new Image("images/director.png");
 	    directorViewer.setImage(directorIcon);
 	    directorViewer.setPreserveRatio(true);
 	    directorViewer.setFitHeight(200);
@@ -138,7 +138,7 @@ public class AddDirector {
 	    GridPane.setHalignment(createDirectorButton, HPos.CENTER);
 	    addDirectorLayout.add(cancelButton, 2, 4);
 	    GridPane.setHalignment(cancelButton, HPos.CENTER);
-	    addDirectorLayout.getStylesheets().add("adddirector.css");
+	    addDirectorLayout.getStylesheets().add("css/admin.css");
 		
 		Scene createDirectorScene = new Scene(addDirectorLayout);
 		stage.setScene(createDirectorScene);

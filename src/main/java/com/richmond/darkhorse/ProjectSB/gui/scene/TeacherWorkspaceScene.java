@@ -47,14 +47,14 @@ public class TeacherWorkspaceScene extends Scene implements AdminLayout{
 		//Top Bar - Logo
 		HBox topBar = new HBox();
 		ImageView logoViewer = new ImageView();
-		Image logo = new Image("logo.png");
+		Image logo = new Image("images/logo.png");
 		logoViewer.setImage(logo);
 		logoViewer.setPreserveRatio(true);
 		logoViewer.setFitHeight(250);
 		
 		//Top Bar - Home Button
 		ImageView homeButtonViewer = new ImageView();
-		Image hB = new Image("home.png");
+		Image hB = new Image("images/home.png");
 		homeButtonViewer.setImage(hB);
 		homeButtonViewer.setPreserveRatio(true);
 		homeButtonViewer.setFitHeight(100);
@@ -63,7 +63,7 @@ public class TeacherWorkspaceScene extends Scene implements AdminLayout{
 		
 		//Top Bar - Logout Button
 		ImageView logoutViewer = new ImageView();
-		Image lB = new Image("logout.png");
+		Image lB = new Image("images/logout.png");
 		logoutViewer.setImage(lB);
 		logoutViewer.setPreserveRatio(true);
 		logoutViewer.setFitHeight(100);
@@ -93,7 +93,7 @@ public class TeacherWorkspaceScene extends Scene implements AdminLayout{
 		//Side Bar - Center Workspace
 		VBox leftSideBar = new VBox();
 		ImageView centerViewer = new ImageView();
-		Image center = new Image("center.png");
+		Image center = new Image("images/center.png");
 		centerViewer.setImage(center);
 		centerViewer.setPreserveRatio(true);
 		centerViewer.setFitHeight(100);
@@ -104,7 +104,7 @@ public class TeacherWorkspaceScene extends Scene implements AdminLayout{
 		
 		//Side Bar - Director Workspace
 		ImageView directorViewer = new ImageView();
-		Image director = new Image("director.png");
+		Image director = new Image("images/director.png");
 		directorViewer.setImage(director);
 		directorViewer.setPreserveRatio(true);
 		directorViewer.setFitHeight(100);
@@ -115,7 +115,7 @@ public class TeacherWorkspaceScene extends Scene implements AdminLayout{
 		
 		//Side Bar - Teacher Workspace
 		ImageView teacherViewer = new ImageView();
-		Image teacher = new Image("teacher.png");
+		Image teacher = new Image("images/teacher.png");
 		teacherViewer.setImage(teacher);
 		teacherViewer.setPreserveRatio(true);
 		teacherViewer.setFitHeight(100);
@@ -126,7 +126,7 @@ public class TeacherWorkspaceScene extends Scene implements AdminLayout{
 		
 		//Side Bar - Classroom Workspace
 		ImageView classroomViewer = new ImageView();
-		Image classroom = new Image("classroom.png");
+		Image classroom = new Image("images/classroom.png");
 		classroomViewer.setImage(classroom);
 		classroomViewer.setPreserveRatio(true);
 		classroomViewer.setFitHeight(100);
@@ -157,14 +157,14 @@ public class TeacherWorkspaceScene extends Scene implements AdminLayout{
 		
 		//Center Pane - Title
 		ImageView workspaceViewer = new ImageView();
-		Image workspace = new Image("workspace.png");
+		Image workspace = new Image("images/workspace.png");
 		workspaceViewer.setImage(workspace);
 		workspaceViewer.setPreserveRatio(true);
 		workspaceViewer.setFitHeight(150);
 		
 		//Center Pane - Create Teacher Button
 		ImageView iconViewer = new ImageView();
-		Image teacherIcon = new Image("addteacher.png");
+		Image teacherIcon = new Image("images/addteacher.png");
 		iconViewer.setImage(teacherIcon);
 		iconViewer.setPreserveRatio(true);
 		iconViewer.setFitHeight(200);
@@ -227,7 +227,7 @@ public class TeacherWorkspaceScene extends Scene implements AdminLayout{
 		adminHomeLayout.setBottom(bottomBar);
 		adminHomeLayout.setLeft(leftSideBar);
 		adminHomeLayout.setCenter(scrollPane);
-		adminHomeLayout.getStylesheets().add("teacherworkspace.css");
+		adminHomeLayout.getStylesheets().add("css/admin.css");
 	}
 	
 	public void determinePosition(GridPane gridpane,Button button,int row,int column) {

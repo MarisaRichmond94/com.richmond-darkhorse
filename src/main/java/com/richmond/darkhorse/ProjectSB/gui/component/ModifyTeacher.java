@@ -52,11 +52,11 @@ public class ModifyTeacher {
 		ColumnConstraints columnThree = new ColumnConstraints();
 		columnThree.setPercentWidth(33.3);
 		modifyTeacherLayout.getColumnConstraints().addAll(columnOne,columnTwo,columnThree);
-		modifyTeacherLayout.getStyleClass().add("gridpane");
+		modifyTeacherLayout.getStyleClass().add("modulargridpane");
 		
 		//GridPane - Icon
 		ImageView teacherViewer = new ImageView();
-		Image teacherIcon = new Image("teacher.png");
+		Image teacherIcon = new Image("images/teacher.png");
 		teacherViewer.setImage(teacherIcon);
 		teacherViewer.setPreserveRatio(true);
 		teacherViewer.setFitHeight(150);
@@ -153,7 +153,7 @@ public class ModifyTeacher {
 		    
 		//GridPane - Write Button
 		ImageView writeViewer = new ImageView();
-		Image write = new Image("write.png");
+		Image write = new Image("images/write.png");
 		writeViewer.setImage(write);
 		writeViewer.setPreserveRatio(true);
 		writeViewer.setFitHeight(150);
@@ -196,7 +196,7 @@ public class ModifyTeacher {
 		Label editLabel = new Label("edit");
 		editLabel.getStyleClass().add("label");
 		ImageView editViewer = new ImageView();
-		Image edit = new Image("edit.png");
+		Image edit = new Image("images/edit.png");
 		editViewer.setImage(edit);
 		editViewer.setPreserveRatio(true);
 		editViewer.setFitHeight(150);
@@ -215,7 +215,7 @@ public class ModifyTeacher {
 		 
 		//GridPane - Delete Button
 		ImageView trashViewer = new ImageView();
-		Image trash = new Image("trash.png");
+		Image trash = new Image("images/trash.png");
 		trashViewer.setImage(trash);
 		trashViewer.setPreserveRatio(true);
 		trashViewer.setFitHeight(150);
@@ -273,7 +273,7 @@ public class ModifyTeacher {
 		modifyTeacherLayout.add(cancel,1,9);
 		GridPane.setHalignment(cancel,HPos.CENTER);
 		GridPane.setConstraints(cancel,1,9,2,1);
-		modifyTeacherLayout.getStylesheets().add("modifycenter.css");
+		modifyTeacherLayout.getStylesheets().add("css/admin.css");
 			
 		Scene modifyTeacherScene = new Scene(modifyTeacherLayout);
 		stage.setScene(modifyTeacherScene);

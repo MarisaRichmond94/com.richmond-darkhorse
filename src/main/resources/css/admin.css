@@ -1,18 +1,14 @@
-.bottombar{
-	-fx-background-color: LIGHTSALMON;
-	-fx-alignment: center;
-	-fx-background-insets: 0,0,0,0;
-	-fx-padding: 10,10,10,10;
-}
-
-.text{
-	-fx-font: 25px Georgia;
-}
-
 .gridpane{
 	-fx-alignment: center;
 	-fx-background-insets: 10,10,10,10;
 	-fx-padding: 10,0,0,10;
+}
+
+.modulargridpane{
+	-fx-alignment: center;
+	-fx-background-insets: 20,20,20,20;
+	-fx-padding: 20,20,20,20;
+	-fx-background-color: #FFFFFF;
 }
 
 .topbar{
@@ -21,6 +17,13 @@
 	-fx-padding: 10,10,10,10;
 	-fx-spacing: 550;
 	-fx-alignment: center;
+}
+
+.bottombar{
+	-fx-background-color: LIGHTSALMON;
+	-fx-alignment: center;
+	-fx-background-insets: 0,0,0,0;
+	-fx-padding: 10,10,10,10;
 }
 
 .sidebar{
@@ -35,6 +38,23 @@
 	-fx-font: 25px Georgia;
 }
 
+.title{
+	-fx-font: 70px Georgia;
+	-fx-text-alignment: center;
+	-fx-text-fill: #b30000;
+}
+
+.button{
+	-fx-alignment: center;
+	-fx-labelpadding: 10,10,10,10;
+	-fx-background-color: #CCCCCC;
+	-fx-font: 25px Georgia;
+}
+
+.button:hover {
+    -fx-background-color: #808080;
+}
+
 .addbutton{
 	-fx-font: 50px Georgia;
 	-fx-alignment: center;
@@ -42,8 +62,9 @@
 	-fx-background-color: #CCCCCC;
 }
 
-.button:hover {
-    -fx-background-color: #808080;
+.textfield{
+	-fx-font: 25px Georgia;	
+	-fx-alignment: center;
 }
 
 @charset "UTF-8";

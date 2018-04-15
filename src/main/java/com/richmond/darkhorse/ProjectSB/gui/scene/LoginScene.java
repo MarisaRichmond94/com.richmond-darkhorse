@@ -32,7 +32,7 @@ public class LoginScene extends Scene implements SceneFormatter {
 		
 		//Top Pane
 		HBox topBar = new HBox();
-		ImageView logoViewer = createImageWithFitHeight("logo.png",250);
+		ImageView logoViewer = createImageWithFitHeight("images/logo.png",250);
 		topBar.getChildren().add(logoViewer);
 		topBar.getStyleClass().add("hbox");
 		
@@ -46,7 +46,7 @@ public class LoginScene extends Scene implements SceneFormatter {
 		//Center Pane
 		GridPane gridpane = new GridPane();
 		gridpane.getStyleClass().add("gridpane");
-		ImageView loginViewer = createImageWithFitHeight("loginwithsmile.png",150);
+		ImageView loginViewer = createImageWithFitHeight("images/loginwithsmile.png",150);
 		Label firstNameLabel = createLabel("First Name:","text");
 		TextField fnTextField = createTextField("first name","textfield",500);
 		Label lastNameLabel = createLabel("Last Name:","text");
@@ -63,7 +63,7 @@ public class LoginScene extends Scene implements SceneFormatter {
 		});
 		failedLogin.getStyleClass().add("failedlogin");
 		failedLogin.setTextFill(Paint.valueOf("#ff3b00"));
-		setConstraints(gridpane,3,0,8,10);
+		setConstraints(gridpane,3,0,8,10,"gridpane");
 		placeNode(gridpane,loginViewer,1,0,"center",null);
 		placeNode(gridpane,firstNameLabel,0,1,"right",null);
 		placeNode(gridpane,fnTextField,1,1,"left",null);
@@ -77,7 +77,7 @@ public class LoginScene extends Scene implements SceneFormatter {
 		//Formatting
 		BorderPane loginLayout = layout;
 		setBorderPane(loginLayout,gridpane,null,null,topBar,bottomBar);
-		loginLayout.getStylesheets().add("loginscene.css");
+		loginLayout.getStylesheets().add("css/loginscene.css");
 	
 	}
 	

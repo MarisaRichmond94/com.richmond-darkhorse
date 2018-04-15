@@ -4,14 +4,9 @@ import com.richmond.darkhorse.ProjectSB.Center;
 
 public class ModifyExistingCenter implements Runnable{
 
-	private Center center;
-	private String centerName;
-	private String abbreviatedName;
-	private String licenseName;
-	private String address;
-	private String city;
-	private String county;
 	private Admin admin;
+	private Center center;
+	private String centerName,abbreviatedName,licenseName,address,city,county;
 	
 	public ModifyExistingCenter(Center center,String centerName,String abbreviatedName,String licenseName,String address,String city,String county,Admin admin) {
 		this.center = center;
