@@ -30,15 +30,15 @@ import javafx.stage.Stage;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.ChoiceBox;
 import java.util.Calendar;
+import java.time.*;
 
 public class DirectorDashboard extends Scene implements DirectorLayout{
 	
 	private BorderPane directorDashboardLayout;
 	private ScrollPane scrollPane;
 	private List<ImageButton> buttons = new ArrayList<ImageButton>();
+	private List<Button> defaultButtons = new ArrayList<Button>(), editButtons = new ArrayList<Button>(), scheduleButtons = new ArrayList<Button>();
 	private GridPane innerPane;
-	@SuppressWarnings("unused")
-	private boolean isEventPane = true;
 	private EventCalendar eventCalendar;
 	private List<Schedule> staffSchedules = new ArrayList<Schedule>();
 	private Center center;
@@ -57,7 +57,7 @@ public class DirectorDashboard extends Scene implements DirectorLayout{
 		HBox topPane = buildTopPane(stage,director);
 		HBox bottomPane = buildBottomPane();
 		VBox leftPane = buildLeftPane(stage,director);
-		GridPane centerPane = buildGridPane(director);
+		GridPane centerPane = buildGridPane(stage,director);
 		ScrollPane rightPane = buildRightPane(director);
 		directorDashboardLayout = layout;
 		setBorderPaneRightScroll(directorDashboardLayout,centerPane,rightPane,leftPane,topPane,bottomPane);
@@ -117,7 +117,7 @@ public class DirectorDashboard extends Scene implements DirectorLayout{
 	 * @param director - the current user
 	 * @return - a fully assembled GridPane
 	 */
-	public GridPane buildGridPane(Director director) {
+	public GridPane buildGridPane(Stage stage,Director director) {
 		GridPane gridpane = new GridPane();
 		setConstraints(gridpane,4,0,10,10,"gridpane");
 		Button modSchedule = createButton("modify schedule",null,0,0,0);
@@ -127,12 +127,21 @@ public class DirectorDashboard extends Scene implements DirectorLayout{
 	    clearSchedule.setOnAction(e -> director.clearSchedules());
 	    clearSchedule.setVisible(false);
 	    Button addButton = createButton("add event",null,0,0,0);
-	    addButton.setOnAction(e -> addEvent(director));
 	    Button removeButton = createButton("remove event",null,0,0,0);
 	    Button clearButton = createButton("clear all",null,0,0,0);
-	    clearButton.setVisible(false);
+	    Button cancelButton = createButton("cancel",null,0,0,0);
+	    defaultButtons.add(addButton);
+	    defaultButtons.add(removeButton);
+	    editButtons.add(clearButton);
+	    editButtons.add(cancelButton);
+	    scheduleButtons.add(modSchedule);
+	    scheduleButtons.add(clearSchedule);
+	    addButton.setOnAction(e -> addEvent(director));
 	    clearButton.setOnAction(e -> clear(director,clearButton,removeButton));
-	    removeButton.setOnAction(e -> remove(removeButton,clearButton));
+	    removeButton.setOnAction(e -> remove());
+	    cancelButton.setOnAction(e -> cancel());
+	    clearButton.setVisible(false);
+	    cancelButton.setVisible(false);
 	    ChoiceBox<String> viewBox = new ChoiceBox<String>();
 	    viewBox.getItems().addAll("event view","schedule view");
 	    viewBox.setValue(viewBox.getItems().get(0));
@@ -143,30 +152,25 @@ public class DirectorDashboard extends Scene implements DirectorLayout{
 				if(newValue == "event view") {
 					innerPane = buildEventPane(director);
 					scrollPane.setContent(innerPane);
-					addButton.setVisible(true);
-					removeButton.setVisible(true);
-					clearSchedule.setVisible(false);
-					modSchedule.setVisible(false);
-					isEventPane = true;
+					for(Button editButton : editButtons) {editButton.setVisible(false);}
+					for(Button defaultButton : defaultButtons) {defaultButton.setVisible(true);}
+					for(Button scheduleButton : scheduleButtons) {scheduleButton.setVisible(false);}
 				}else if(newValue == "schedule view") {
 					innerPane = buildSchedulePane(director);
 					scrollPane.setContent(innerPane);
-					addButton.setVisible(false);
-					removeButton.setVisible(false);
-					clearButton.setVisible(false);
-					modSchedule.setVisible(true);
-					clearSchedule.setVisible(true);
-					isEventPane = false;
+					for(Button editButton : editButtons) {editButton.setVisible(false);}
+					for(Button defaultButton : defaultButtons) {defaultButton.setVisible(false);}
+					for(Button scheduleButton : scheduleButtons) {scheduleButton.setVisible(true);}
 				}
 			}
         };
         viewBox.getSelectionModel().selectedItemProperty().addListener(changeListener);
-	    Calendar calendar = Calendar.getInstance();
-	    int monthNum = calendar.get(Calendar.MONTH);
-	    Label month = createLabel(getMonthNumToString(monthNum),"med-title");
+        LocalDate date = LocalDate.now();
+        String month = date.getMonth().toString(), finalMonth = month.substring(0,1) + month.substring(1).toLowerCase();
+	    Label monthLabel = createLabel(finalMonth,"med-title");
 	    ImageButton scheduleButton = new ImageButton(createImageWithFitHeight("images/schedule.png",100));
 	    List<Node> nodes = new ArrayList<>();
-	    nodes.addAll(Arrays.asList(viewBox,month,scheduleButton));
+	    nodes.addAll(Arrays.asList(viewBox,monthLabel,scheduleButton));
 	    placeNodes(gridpane,nodes);
 	    innerPane = buildEventPane(director);
 	    scrollPane = new ScrollPane(innerPane);
@@ -176,7 +180,8 @@ public class DirectorDashboard extends Scene implements DirectorLayout{
 	    placeNodeSpan(gridpane,scrollPane,0,1,4,4,null,null);
 	    placeNode(gridpane,addButton,1,5,"center",null);
 	    placeNode(gridpane,removeButton,2,5,"center",null);
-	    placeNode(gridpane,clearButton,2,5,"center",null);
+	    placeNode(gridpane,clearButton,1,5,"center",null);
+	    placeNode(gridpane,cancelButton,2,5,"center",null);
 	    placeNode(gridpane,modSchedule,1,5,"center",null);
 	    placeNode(gridpane,clearSchedule,2,5,"center",null);
 		return gridpane;
@@ -227,10 +232,16 @@ public class DirectorDashboard extends Scene implements DirectorLayout{
 	 * @param removeButton
 	 * @param clearButton
 	 */
-	private void remove(Button removeButton,Button clearButton) {
+	private void remove() {
 		revealButtons(buttons);
-		removeButton.setVisible(false);
-		clearButton.setVisible(true);
+		for(Button defaultButton : defaultButtons) {defaultButton.setVisible(false);}
+		for(Button editButton : editButtons) {editButton.setVisible(true);}
+	}
+	
+	private void cancel() {
+		hideButtons(buttons);
+		for(Button defaultButton : defaultButtons) {defaultButton.setVisible(true);}
+		for(Button editButton : editButtons) {editButton.setVisible(false);}
 	}
 	
 	/**
@@ -345,20 +356,13 @@ public class DirectorDashboard extends Scene implements DirectorLayout{
 		placeNodeSpan(gridPane,newButton,columnIndex,rowIndex,2,2,"center",null);
 		ImageButton trashButton = createTrashButton();
 		buttons.add(trashButton);
-		ImageButton cancelButton = createCancelButton();
-		buttons.add(cancelButton);
-		cancelButton.setOnAction(e -> {
-			hideButtons(buttons);
-			refreshEventPane(director);
-		});
 		trashButton.setOnAction(e -> {
 			director.getCenter(director.getCenterID()).getEventCalendar().removeEvent(event);
 			buttons.remove(trashButton);
-			buttons.remove(cancelButton);
 			refreshEventPane(director);
+			cancel();
 		});
 		placeNode(gridPane,trashButton,columnIndex,rowIndex+2,"center",null);
-		placeNode(gridPane,cancelButton,columnIndex+1,rowIndex+2,"center",null);
 	}
 
 	/**
@@ -369,16 +373,6 @@ public class DirectorDashboard extends Scene implements DirectorLayout{
 		ImageButton trashButton = new ImageButton(createImageWithFitHeight("images/trash.png",50));
 		trashButton.setVisible(false);
 		return trashButton;
-	}
-	
-	/**
-	 * Creates a cancel button
-	 * @return Button
-	 */
-	private ImageButton createCancelButton() {
-		ImageButton cancelButton = new ImageButton(createImageWithFitHeight("images/cancel.png",40));
-		cancelButton.setVisible(false);
-		return cancelButton;
 	}
 	
 	/**
@@ -462,10 +456,9 @@ public class DirectorDashboard extends Scene implements DirectorLayout{
 	//Calendar creation methods
 	private void buildCalendarView(GridPane gridpane) {
 		setConstraints(gridpane,10,0,10,10,"gridpane");
-	    Calendar calendar = Calendar.getInstance();
-	    int dayOfWeekInt = calendar.get(Calendar.DAY_OF_WEEK);
-	    String dayOfWeek = getDayOfWeek(dayOfWeekInt);
-	    List<Integer> dates = getDates(dayOfWeekInt,dayOfWeek);
+		LocalDate date = LocalDate.now();
+	    int dayNum = date.getDayOfWeek().getValue();
+	    List<Integer> dates = getDates(dayNum);
 	    Label monday = createLabel("Monday " + dates.get(0) + "","boxlabel");
 	    Label tuesday = createLabel ("Tuesday " + dates.get(1),"boxlabel");
 	    Label wednesday = createLabel("Wednesday " + dates.get(2),"boxlabel");
@@ -479,78 +472,58 @@ public class DirectorDashboard extends Scene implements DirectorLayout{
 	}
 	
 	/**
-	 * Gets the month of the year
-	 * @param monthNum - a number between 0 and 11 representing the month of the year
-	 * @return a String "month"
-	 */
-	private String getMonthNumToString(int monthNum) {
-		String month = null;
-		if(monthNum == 0) {month = "January";}
-		if(monthNum == 1) {month = "February";}
-		if(monthNum == 2) {month = "March";}
-		if(monthNum == 3) {month = "April";}
-		if(monthNum == 4) {month = "May";}
-		if(monthNum == 5) {month = "June";}
-		if(monthNum == 6) {month = "July";}
-		if(monthNum == 7) {month = "August";}
-		if(monthNum == 8) {month = "September";}
-		if(monthNum == 9) {month = "October";}
-		if(monthNum == 10) {month = "November";}
-		if(monthNum == 11) {month = "December";}
-		return month;
-	}
-	
-	/**
-	 * Gets the day of the week
-	 * @param dayOfWeekInt - a number between 2 and 6 representing the day of the week
-	 * @return the day of the week
-	 */
-	private String getDayOfWeek(int dayOfWeekInt) {
-		String dayOfWeek = null;
-		if(dayOfWeekInt == 2) {dayOfWeek = "Monday";}
-		else if(dayOfWeekInt == 3) {dayOfWeek = "Tuesday";}
-		else if(dayOfWeekInt == 4) {dayOfWeek = "Wednesday";}
-		else if(dayOfWeekInt == 5) {dayOfWeek = "Thursday";}
-		else if(dayOfWeekInt == 6) {dayOfWeek = "Friday";}
-		return dayOfWeek;
-	}
-	
-	/**
-	 * Gets a list of unordered dates
-	 * @param dayOfWeekInt
-	 * @param dayOfWeek
+	 * Gets a list of unordered dates starting with the current day of the month and then adding dates until the list reaches a size of 5
+	 * @param dayNum - an integer representing the day of the week (e.g. 1 for Monday, etc.)
 	 * @return a list of unordered dates
 	 */
-	private List<Integer> getDates(int dayOfWeekInt,String dayOfWeek){
+	private List<Integer> getDates(int dayNum){
 		List<Integer> dates = new ArrayList<Integer>();
-		Calendar now = Calendar.getInstance(); 
-		int dateStart = now.get(Calendar.DATE);
-		if(dayOfWeek == null) {
-	    		if(dayOfWeekInt == 1) {
-	    			dateStart = dateStart+1;
-	    			dayOfWeekInt = 2;
-	    		}else if(dayOfWeekInt == 7) {
-	    			dateStart = dateStart+2;
-	    			dayOfWeekInt = 2;
-	    		}
-		}
-		dates.add(dateStart); 
-		while(dayOfWeekInt < 7) { 
-			int date = dateStart+1;
-			dates.add(date);
-			dayOfWeekInt++;
-			dateStart++;
+		LocalDate now = LocalDate.now();
+		int startDate = now.getDayOfMonth();
+		dates.add(startDate);
+		int date = startDate+1;
+		OUTER_LOOP: while(dayNum < 5) { 
+			boolean isValid = dateValidator(now.getMonth(),date);
+			if(isValid == true) {
+				dates.add(date);
+				dayNum++;
+				date++;
+			}else {
+				date = 1;
+				while(dayNum < 5) {
+					dates.add(date);
+					dayNum++;
+					date++;
+				}
+				break OUTER_LOOP;
+			}
 		}
 		if(dates.size() < 5) { 
 			int difference = 5 - dates.size();  
-			int newDateStart = dateStart - difference; 
-			while(newDateStart < dateStart) { 
+			int newDateStart = startDate - difference; 
+			while(newDateStart < startDate) { 
 				dates.add(newDateStart); 
 				newDateStart = newDateStart+1; 
 			}
 		}
 		List<Integer> sortedList = sort(dates);
 		return sortedList;
+	}
+	
+	/**
+	 * Determines whether or not a given date is valid based on the current month
+	 * @param month - Month
+	 * @param date - integer (ideally representing the day of the month)
+	 * @return true if the date is valid and false if it is not (e.g. April 31st)
+	 */
+	private boolean dateValidator(Month month,int date) {
+		try {
+			@SuppressWarnings("unused")
+			LocalDate dateCheck = LocalDate.of(0,month,date);
+			return true;
+		}catch(Exception e) {
+			return false;
+		}
 	}
 	
 	/**
