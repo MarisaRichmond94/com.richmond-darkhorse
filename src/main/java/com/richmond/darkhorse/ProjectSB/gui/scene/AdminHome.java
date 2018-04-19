@@ -1,4 +1,6 @@
 package com.richmond.darkhorse.ProjectSB.gui.scene;
+import java.util.List;
+
 import com.richmond.darkhorse.ProjectSB.Admin;
 import com.richmond.darkhorse.ProjectSB.gui.component.AdminLayout;
 import javafx.scene.Scene;
@@ -8,6 +10,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import javafx.scene.image.ImageView;
+import javafx.scene.Node;
 
 public class AdminHome extends Scene implements AdminLayout{
 		
@@ -34,10 +37,18 @@ public class AdminHome extends Scene implements AdminLayout{
 		GridPane centerPane = new GridPane();
 		setConstraints(centerPane,1,0,10,10,"gridpane");
 		ImageView welcomeViewer = createImageWithFitHeight("images/welcome.png",125);
-		ImageView iconViewer = createImageWithFitHeight("admin.png",450);
+		ImageView iconViewer = createImageWithFitHeight("images/admin.png",450);
 		placeNode(centerPane,welcomeViewer,0,0,"center",null);
 		placeNode(centerPane,iconViewer,0,1,"center",null);
 		return centerPane;
+	}
+	
+	/**
+	 * Places all of the nodes in the list in the given GridPane
+	 * @param gridpane - GridPane layout
+	 * @param nodes - a list of nodes to be added to the GridPane
+	 */
+	public void placeNodes(GridPane gridpane,List<Node> nodes) {
 	}
 	
 }

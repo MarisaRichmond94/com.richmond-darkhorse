@@ -28,23 +28,22 @@ public class AccountManager implements Serializable {
 	}
 
 	/**
-	 * Gets the only instance of the account manager. If one hasn't been created, it
-	 * will create one
+	 * Gets the only instance of the account manager. If one hasn't been created, it will create one
 	 * @return {@link AccountManager} - a singleton instance of account manager
 	 */
 	public static AccountManager getInstance() {
-		if (instance == null) {
-			instance = new AccountManager();
-		}
+		if (instance == null) {instance = new AccountManager();}
 		return instance;
 	}
 	
-	//ID generation methods
+	/**
+	 * Generates a userID for a new {@link StaffMember}
+	 * @param newStaffMember - a new director or teacher 
+	 * @return a new userID
+	 */
 	public String generateUserID(StaffMember newStaffMember) {
 		String userID = newStaffMember.getUserID();
-		if(userID != null) {
-			return null;
-		}
+		if(userID != null) {return null;}
 		String title = newStaffMember.getTitle();
 		String centerID = newStaffMember.getCenterID();
 		int uniqueCode = 0;
@@ -85,11 +84,14 @@ public class AccountManager implements Serializable {
 		return userID;
 	}
 
+	/**
+	 * Generates a classroomID for a new {@link Classroom} object
+	 * @param classroom - the new {@link Classroom}
+	 * @return a nine-digit classroomID
+	 */
 	public String generateClassroomID(Classroom classroom) {
 		String classroomID = classroom.getClassroomID();
-		if(classroomID != null) {
-			return null;
-		}
+		if(classroomID != null) {return null;}
 		String centerID = classroom.getCenterID();
 		boolean status = true;
 		while (status == true) {
@@ -103,11 +105,14 @@ public class AccountManager implements Serializable {
 		return classroomID; 
 	}
 
+	/**
+	 * Generates a 9-digit identification number for a new {@link Student}
+	 * @param student - a new student
+	 * @return a 9-digit identification number
+	 */
 	public String generateStudentID(Student student) {
 		String studentID = student.getStudentID();
-		if(studentID != null) {
-			return null;
-		}
+		if(studentID != null) {return null;}
 		boolean status = true;
 		while (status == true) {
 			int leftLimit = 500000000;
@@ -120,11 +125,14 @@ public class AccountManager implements Serializable {
 		return studentID;
 	}
 
+	/**
+	 * Generates a unique 9-digit identification number for a new {@link Document}
+	 * @param newDocument - a new {@link Document} object
+	 * @return a unique 9-digit identification number
+	 */
 	public String generateDocumentID(Document newDocument) {
 		String documentID = newDocument.getDocumentID();
-		if(documentID != null) {
-			return null;
-		}
+		if(documentID != null) {return null;}
 		String documentType = newDocument.getTitle();
 		String studentID = newDocument.getStudentID();
 		byte[] digits = studentID.getBytes();
@@ -155,7 +163,13 @@ public class AccountManager implements Serializable {
 		return documentID;
 	}
 
-	//Check methods
+	/**
+	 * Checks to see if the account information matches up with a set of {@link Credentials} in the system
+	 * @param firstName - the user's first name
+	 * @param lastName - the user's last name
+	 * @param userID - the user's unique 9-digit identification number
+	 * @return true if the user's credentials match up and false if they do not
+	 */
 	public boolean checkAccount(String firstName, String lastName, String userID) {
 		Account account = userIDToAccount.get(userID);
 		if(userIDToAccount.containsKey(userID)) {
@@ -163,53 +177,75 @@ public class AccountManager implements Serializable {
 			if (credentials != null) {
 				String firstNameCheck = credentials.getFirstName();
 				String lastNameCheck = credentials.getLastName();
-				if (firstName.equals(firstNameCheck) && lastName.equals(lastNameCheck)) {
-					return true;
-				}
+				if (firstName.equals(firstNameCheck) && lastName.equals(lastNameCheck)) {return true;}
 			} 
 		}
 		return false;
 	}
 	
+	/**
+	 * Checks to see if the list of {@link Student}s in the system already contains a specific 9-digit ID
+	 * @param studentID - the student's 9-digit identification number
+	 * @return true if the list of students already contains a student with the given ID or false if it does NOT
+	 */
 	public boolean checkStudentID(String studentID) {
-		if (students.containsKey(studentID)) {
-			return true;
-		}
+		if (students.containsKey(studentID)) {return true;}
 		return false;
 	}
 
+	/**
+	 * Checks to see if the list of {@link Classroom}s in the system already contains a specific 9-digit ID
+	 * @param classroomID - the classroom's 9-digit identification number
+	 * @return true if the list of classrooms already contains a classroom with the given ID or false if it does NOT
+	 */
 	public boolean checkClassroomID(String classroomID) {
-		if (classrooms.containsKey(classroomID)) {
-			return true;
-		}
+		if (classrooms.containsKey(classroomID)) {return true;}
 		return false;
 	}
 
+	/**
+	 * Checks to see if the list of {@link Document}s in the system already contains a specific 9-digit ID
+	 * @param documentID - the document's 9-digit identification number
+	 * @return true if the list of documents already contains a document with the given ID or false if it does NOT
+	 */
 	public boolean checkDocumentID(String documentID) {
-		if (documents.containsKey(documentID)) {
-			return true;
-		}
+		if (documents.containsKey(documentID)) {return true;}
 		return false;
 	}
 	
-	//Add methods
+	/**
+	 * Adds a new user to the system
+	 * @param userID
+	 * @param account
+	 */
 	public void addUser(String userID, Account account) {
 		userIDToAccount.put(userID,account);
 	}
 
+	/**
+	 * Adds a new student to the system
+	 * @param student
+	 */
 	public void addStudent(Student student) {
 		students.put(student.getStudentID(),student);
 	}
 
+	/**
+	 * Adds a new classroom to the system
+	 * @param classroom
+	 */
 	public void addClassroom(Classroom classroom) {
 		classrooms.put(classroom.getClassroomID(),classroom);
 	}
 
+	/**
+	 * Adds a new document to the system
+	 * @param document
+	 */
 	public void addDocument(Document document) {
 		documents.put(document.getDocumentID(),document);
 	}
 	
-	//Standard getters and setters
 	public Account getAccount(String userID) {
 		Account account = userIDToAccount.get(userID);
 		return account;
@@ -235,18 +271,21 @@ public class AccountManager implements Serializable {
 		return students;
 	}
 	
-	//Save and load methods
+	/**
+	 * Serializes a list of users 
+	 */
 	public void saveUserIDToAccount() {
 		try {
 			ObjectOutputStream output = new ObjectOutputStream(new FileOutputStream("userIDsToAccounts.ser"));
 			output.writeObject(userIDToAccount);
 			output.flush();
 			output.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		} catch (IOException e) {e.printStackTrace();}
 	} 
 	
+	/**
+	 * Loads all of the users in the system
+	 */
 	@SuppressWarnings("unchecked")
 	public void loadUserIDToAccount() {
 		try {
@@ -263,10 +302,16 @@ public class AccountManager implements Serializable {
 		}
     	}
 	
+	/**
+	 * Loads all users
+	 */
 	public void startUp() {
 		loadUserIDToAccount();
 	}
 	
+	/**
+	 * Saves all users
+	 */
 	public void shutDown() {
 		saveUserIDToAccount();
 	}

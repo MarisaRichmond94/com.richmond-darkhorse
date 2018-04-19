@@ -5,18 +5,14 @@ import java.util.Map;
 public class Admin implements Account,Serializable{
 
 	private static final long serialVersionUID = 8453756L;
-	private String userID = "123456789";
-	private String firstName = "Marisa";
-	private String lastName = "Richmond";
-	private String title = "Admin";
+	private String userID = "123456789",firstName = "Marisa",lastName = "Richmond",title = "Admin";
 	private Credential credentials;
 	
 	public Admin() {
 		Credential credentials = new Credential(firstName,lastName,title);
 		this.credentials = credentials;
 	}
-
-	//Object creation methods
+	
 	public Center createCenter(String centerName,String abbreviatedName,String licenseName,String licenseNumber,String address,String city,String county) {
 		Center center = new Center(centerName,abbreviatedName,licenseName,licenseNumber,address,city,county);
 	    return center;
@@ -33,9 +29,7 @@ public class Admin implements Account,Serializable{
 		center.addTeacher(teacher);
 		if(classroom.getTeacherID() == null) {
 			classroom.setTeacherID(teacher.getTeacherID());
-		}else{
-			classroom.setAssistantTeacherID(teacher.getTeacherID());
-		}
+		}else{classroom.setAssistantTeacherID(teacher.getTeacherID());}
 		return teacher;
 	}
 	
@@ -63,7 +57,6 @@ public class Admin implements Account,Serializable{
 		return classroom;
 	}
 	
-	//Object removal methods
 	public void deleteCenter(Center center) {
 		SpecialBeginnings.getInstance().removeCenter(center.getCenterID());
 	}
@@ -80,9 +73,7 @@ public class Admin implements Account,Serializable{
 			Classroom classroom = teacher.getClassroom(teacher.getClassroomID());
 			classroom.removeTeacher(teacher);
 		}
-		if(staffMembers.containsKey(teacher.getUserID())) {
-			staffMembers.remove(teacher.getUserID());
-		}
+		if(staffMembers.containsKey(teacher.getUserID())) { staffMembers.remove(teacher.getUserID()); }
 	}
 	
 	public void deleteClassroom(Classroom classroom) {
@@ -97,7 +88,6 @@ public class Admin implements Account,Serializable{
 		center.deleteClassroom(classroom);
 	}
 	
-	//Modify methods
 	public Center modifyCenter(Center center,String centerName,String abbreviatedName,String licenseName,String address,String city,String county) {
 		center.setCenterName(centerName);
 		center.setAbbreviatedName(abbreviatedName);
@@ -146,8 +136,7 @@ public class Admin implements Account,Serializable{
 	    		Classroom oldClassroom = modifiedTeacher.getClassroom(modifiedTeacher.getClassroomID());
 	    		oldClassroom.removeTeacher(modifiedTeacher);
 	    }
-		if(classroom.getTeacherID() == null) {
-	    		classroom.setTeacherID(modifiedTeacher.getTeacherID());
+		if(classroom.getTeacherID() == null) {classroom.setTeacherID(modifiedTeacher.getTeacherID());
 	    	}else {classroom.setAssistantTeacherID(modifiedTeacher.getTeacherID());}
 		modifiedTeacher.setClassroomID(classroom.getClassroomID());
 		return modifiedTeacher;
@@ -188,10 +177,7 @@ public class Admin implements Account,Serializable{
 			classroom.removeTeacher(teacher);
 			teacher.removeClassroom(classroom);
 		}
-		String userID = teacher.getUserID();
-		String directorID = teacher.getTeacherID();
-		String firstName = teacher.getFirstName();
-		String lastName = teacher.getLastName();
+		String userID = teacher.getUserID(), directorID = teacher.getTeacherID(), firstName = teacher.getFirstName(), lastName = teacher.getLastName();
 		this.deleteTeacher(teacher);
 		Director newlyPromotedDirector = new Director(firstName,lastName,center);
 		newlyPromotedDirector.setDirectorID(directorID);
@@ -199,8 +185,7 @@ public class Admin implements Account,Serializable{
 		this.addNewStaffMember(newlyPromotedDirector);
 		return newlyPromotedDirector;
 	}
-	
-	//Add methods
+
 	public void addNewCenter(Center center) {
 		SpecialBeginnings.getInstance().addCenter(center);
 	}
@@ -213,7 +198,6 @@ public class Admin implements Account,Serializable{
 		center.addClassroom(classroom);
 	}
 
-	//Standard getters and setters
 	public String getUserID() {
 		return userID;
 	}

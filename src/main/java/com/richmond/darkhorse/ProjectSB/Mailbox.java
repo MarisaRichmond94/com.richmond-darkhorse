@@ -6,8 +6,7 @@ import java.util.Map;
 public class Mailbox implements Serializable{
 	
 	private static final long serialVersionUID = 8453756L;
-	private String userID;
-	private String centerID;
+	private String userID, centerID;
 	private Map<String,BehaviorReport> unsignedBehaviorReports;
 	private Map<String,IncidentReport> unsignedIncidentReports;
 	private Map<String,BehaviorReport> signedBehaviorReports;

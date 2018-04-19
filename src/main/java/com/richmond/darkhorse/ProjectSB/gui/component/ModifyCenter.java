@@ -5,13 +5,12 @@ import java.util.List;
 import com.richmond.darkhorse.ProjectSB.Admin;
 import com.richmond.darkhorse.ProjectSB.Center;
 import com.richmond.darkhorse.ProjectSB.middleman.ModifyExistingCenter;
-import javafx.scene.Scene;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 public class ModifyCenter implements AdminLayout{
@@ -33,12 +32,8 @@ public class ModifyCenter implements AdminLayout{
 	
 	public void display() {
 		Stage stage = new Stage();
-		stage.initModality(Modality.APPLICATION_MODAL);
-		stage.setTitle(center.getCenterName());
 		GridPane modifyCenterLayout = buildGridPane(stage);
-		Scene modifyCenterScene = new Scene(modifyCenterLayout);
-		stage.setScene(modifyCenterScene);
-		stage.showAndWait();
+		buildPopUp(stage,modifyCenterLayout,center.getCenterName());
 	}
 	
 	/**
@@ -74,18 +69,29 @@ public class ModifyCenter implements AdminLayout{
 	    Button cancel = new Button("cancel");
 	    cancel.setOnAction(e -> stage.close());
 	    cancel.getStyleClass().add("button");
-	    placeNode(gridpane,centerViewer,0,0,"center",null);
-	    placeNodeSpan(gridpane,title,1,0,2,1,"center",null);
+	    List<Node> nodes = new ArrayList<>();
+	    nodes.addAll(Arrays.asList(centerViewer,title,editButton,writeButton,trashButton,editLabel,writeLabel,trashLabel,cancel));
+	    placeNodes(gridpane,nodes);
 	    populateGridPane(gridpane,labels,textFields,1);
-	    placeNode(gridpane,editButton,1,8,"center",null);
-	    placeNode(gridpane,writeButton,1,8,"center",null);
-	    placeNode(gridpane,trashButton,2,8,"center",null);
-	    placeNode(gridpane,editLabel,1,9,"center",null);
-	    placeNode(gridpane,writeLabel,1,9,"center",null);
-	    placeNode(gridpane,trashLabel,2,9,"center",null);
-	    placeNodeSpan(gridpane,cancel,1,10,2,1,"center",null);
 	    gridpane.getStylesheets().add("css/admin.css");
 	    return gridpane;
+	}
+	
+	/**
+	 * Places all of the nodes in the list in the given GridPane
+	 * @param gridpane - GridPane layout
+	 * @param nodes - a list of nodes to be added to the GridPane
+	 */
+	public void placeNodes(GridPane gridpane,List<Node> nodes) {
+		placeNode(gridpane,nodes.get(0),0,0,"center",null);
+	    placeNodeSpan(gridpane,nodes.get(1),1,0,2,1,"center",null);
+	    placeNode(gridpane,nodes.get(2),1,8,"center",null);
+	    placeNode(gridpane,nodes.get(3),1,8,"center",null);
+	    placeNode(gridpane,nodes.get(4),2,8,"center",null);
+	    placeNode(gridpane,nodes.get(5),1,9,"center",null);
+	    placeNode(gridpane,nodes.get(6),1,9,"center",null);
+	    placeNode(gridpane,nodes.get(7),2,9,"center",null);
+	    placeNodeSpan(gridpane,nodes.get(8),1,10,2,1,"center",null);
 	}
 	
 	/**

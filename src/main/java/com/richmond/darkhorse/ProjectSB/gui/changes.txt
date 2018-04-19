@@ -1,0 +1,9 @@
+DirectorDashboard
+1.) Figure out why the days and dates are off
+2.) When you click "remove event", make it so that "add event" becomes "clear all" and "remove event" becomes "cancel"
+3.) Fix the fact that the buttons under the events BOTH look like "delete" instead of "delete" and "cancel"
+4.) After the user deletes an event, either a.) the delete and cancel buttons under the remaining events should stay or b.) the menu at the bottom should go back to
+being "add event" and "remove event" 
+
+ClassroomStatus 
+1.) I'm pretty certain that Students Present does not return anything because it is never correctly populated. It should be populated each time based on the day 

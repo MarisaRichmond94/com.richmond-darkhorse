@@ -4,20 +4,19 @@ import java.util.List;
 import java.util.Map;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.ToggleButton;
-import com.richmond.darkhorse.ProjectSB.AccountManager;
-import com.richmond.darkhorse.ProjectSB.Center;
 import com.richmond.darkhorse.ProjectSB.Director;
 import com.richmond.darkhorse.ProjectSB.Document;
-import com.richmond.darkhorse.ProjectSB.SpecialBeginnings;
 import com.richmond.darkhorse.ProjectSB.StaffMember;
 import com.richmond.darkhorse.ProjectSB.Teacher;
 import com.richmond.darkhorse.ProjectSB.BehaviorReport;
 import com.richmond.darkhorse.ProjectSB.IncidentReport;
+import com.richmond.darkhorse.ProjectSB.gui.component.DirectorLayout;
 import com.richmond.darkhorse.ProjectSB.gui.component.ImageButton;
 import com.richmond.darkhorse.ProjectSB.gui.component.UnsignedBehaviorReportPane;
 import com.richmond.darkhorse.ProjectSB.gui.component.UnsignedIncidentReportPane;
 import com.richmond.darkhorse.ProjectSB.middleman.ChangeScene;
 import javafx.application.Platform;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -32,7 +31,7 @@ import javafx.stage.Stage;
 import javafx.geometry.HPos;
 import javafx.geometry.VPos;
 
-public class DirectorMailbox extends Scene {
+public class DirectorMailbox extends Scene implements DirectorLayout {
 	
 	private boolean isBehaviorReportPane = true;
 	private GridPane innerPane;
@@ -46,117 +45,14 @@ public class DirectorMailbox extends Scene {
 	
 	public DirectorMailbox(Stage stage,BorderPane layout,Scene nextScene,Director director) {
 		super(layout);
-		
-		HBox topBar = buildTopBar(stage,director);
-		HBox bottomBar = buildBottomBar();
-		VBox leftSideBar = buildLeftSideBar(stage,director);
-		VBox rightSideBar = buildRightSideBar(director);
+		HBox topPane = buildTopPane(stage,director);
+		HBox bottomPane = buildBottomPane();
+		VBox leftPane = buildLeftPane(stage,director);
+		VBox rightPane = buildRightSideBar(director);
 		GridPane centerPane = buildCenterPane(director,stage);
-		
 		directorMailboxLayout = layout;
-		directorMailboxLayout.setTop(topBar);
-		directorMailboxLayout.setBottom(bottomBar);
-		directorMailboxLayout.setLeft(leftSideBar);
-		directorMailboxLayout.setRight(rightSideBar);
-		directorMailboxLayout.setCenter(centerPane);
-		directorMailboxLayout.getStylesheets().add("directormailbox.css");
-		
-	}
-	
-	public HBox buildTopBar(Stage stage,Director director) {
-		HBox topBar = new HBox();
-		ImageView logoViewer = new ImageView();
-		Image logo = new Image("logo.png");
-		logoViewer.setImage(logo);
-		logoViewer.setPreserveRatio(true);
-		logoViewer.setFitHeight(250);
-						
-		ImageView homeButtonViewer = new ImageView();
-		Image hB = new Image("home.png");
-		homeButtonViewer.setImage(hB);
-		homeButtonViewer.setPreserveRatio(true);
-		homeButtonViewer.setFitHeight(100);
-		ImageButton homeButton = new ImageButton(homeButtonViewer);
-		homeButton.setOnAction(e -> Platform.runLater(new ChangeScene(stage,new DirectorHome(stage,null,director))));
-						
-		ImageView logoutViewer = new ImageView();
-		Image lB = new Image("logout.png");
-		logoutViewer.setImage(lB);
-		logoutViewer.setPreserveRatio(true);
-		logoutViewer.setFitHeight(100);
-		ImageButton logoutButton = new ImageButton(logoutViewer);
-		logoutButton.setOnAction(e -> {
-			SpecialBeginnings sB = SpecialBeginnings.getInstance();
-			sB.saveCenters();
-			sB.saveStaffMembers();
-			Map<String,Center> centers = sB.getCenters();
-			for(Center center : centers.values()) {
-				center.saveClassrooms();
-				center.saveStudents();
-			}
-			AccountManager.getInstance().saveUserIDToAccount();
-			Platform.runLater(new ChangeScene(stage,new LoginScene(stage,null)));
-		});
-		topBar.getChildren().addAll(homeButton,logoViewer,logoutButton);
-		topBar.getStyleClass().add("topbar");
-		return topBar;
-	}
-	
-	public HBox buildBottomBar() {
-		HBox bottomBar = new HBox();
-		Label signature = new Label("Created by Marisa Richmond");
-		signature.getStyleClass().add("text");
-		bottomBar.getChildren().add(signature);
-		bottomBar.getStyleClass().add("bottombar");
-		return bottomBar;
-	}
-	
-	public VBox buildLeftSideBar(Stage stage,Director director) {
-		VBox leftSideBar = new VBox();
-		
-		ImageView dashboardViewer = new ImageView();
-		Image dashboard = new Image("dashboard.png");
-		dashboardViewer.setImage(dashboard);
-		dashboardViewer.setPreserveRatio(true);
-		dashboardViewer.setFitHeight(100);
-		ImageButton dashboardButton = new ImageButton(dashboardViewer);
-		dashboardButton.setOnAction(e -> Platform.runLater(new ChangeScene(stage,new DirectorDashboard(stage,null,director))));
-		Label viewDashboard = new Label("Dashboard");
-		viewDashboard.getStyleClass().add("label");
-		
-		ImageView mailboxViewer = new ImageView();
-		Image mailbox = new Image("mailbox.png");
-		mailboxViewer.setImage(mailbox);
-		mailboxViewer.setPreserveRatio(true);
-		mailboxViewer.setFitHeight(80);
-		ImageButton mailboxButton = new ImageButton(mailboxViewer);
-		mailboxButton.setOnAction(e -> Platform.runLater(new ChangeScene(stage,new DirectorMailbox(stage,null,director))));
-		Label checkMailbox = new Label("Mailbox");
-		checkMailbox.getStyleClass().add("label");
-		
-		ImageView classroomViewer = new ImageView();
-		Image classroom = new Image("classroom.png");
-		classroomViewer.setImage(classroom);
-		classroomViewer.setPreserveRatio(true);
-		classroomViewer.setFitHeight(100);
-		ImageButton classroomButton = new ImageButton(classroomViewer);
-		classroomButton.setOnAction(e -> Platform.runLater(new ChangeScene(stage,new DirectorClassroomWorkspace(stage,null,director))));
-		Label viewClassroom = new Label("Classrooms");
-		viewClassroom.getStyleClass().add("label");
-		
-		ImageView studentViewer = new ImageView();
-		Image students = new Image("students.png");
-		studentViewer.setImage(students);
-		studentViewer.setPreserveRatio(true);
-		studentViewer.setFitHeight(95);
-		ImageButton studentButton = new ImageButton(studentViewer);
-		studentButton.setOnAction(e -> Platform.runLater(new ChangeScene(stage,new DirectorStudentWorkspace(stage,null,director))));
-		Label createStudent = new Label("Students");
-		createStudent.getStyleClass().add("label");
-		
-		leftSideBar.getChildren().addAll(dashboardButton,viewDashboard,mailboxButton,checkMailbox,classroomButton,viewClassroom,studentButton,createStudent);
-		leftSideBar.getStyleClass().add("sidebar");
-		return leftSideBar;
+		setBorderPane(directorMailboxLayout,centerPane,rightPane,leftPane,topPane,bottomPane);
+		directorMailboxLayout.getStylesheets().add("css/director.css");
 	}
 	
 	public VBox buildRightSideBar(Director director) {
@@ -442,6 +338,12 @@ public class DirectorMailbox extends Scene {
 				}
 			}
 		}
+	}
+
+	@Override
+	public void placeNodes(GridPane gridpane, List<Node> nodes) {
+		// TODO Auto-generated method stub
+		
 	}
 	
 }

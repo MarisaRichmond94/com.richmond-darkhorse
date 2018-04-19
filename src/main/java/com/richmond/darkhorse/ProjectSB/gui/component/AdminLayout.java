@@ -1,7 +1,9 @@
 package com.richmond.darkhorse.ProjectSB.gui.component;
 import java.util.ArrayList;
-import java.util.List;
+import javafx.scene.Node;
+import javafx.scene.Scene;
 
+import java.util.List;
 import com.richmond.darkhorse.ProjectSB.Admin;
 import com.richmond.darkhorse.ProjectSB.gui.scene.AdminHome;
 import com.richmond.darkhorse.ProjectSB.gui.scene.CenterWorkspaceScene;
@@ -17,6 +19,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 public interface AdminLayout extends SceneFormatter,CoreFunctions {
@@ -38,7 +41,7 @@ public interface AdminLayout extends SceneFormatter,CoreFunctions {
 		VBox logoutButtonBox = buildButtonWithLabel(logoutButton,createLabel("logout","text"));
 		topPane.setAlignment(Pos.CENTER);
 		topPane.getChildren().addAll(homeButtonBox,logoViewer,logoutButtonBox);
-		topPane.getStyleClass().add("topbar");
+		topPane.getStyleClass().add("toppane");
 		return topPane;
 	}
 	
@@ -64,7 +67,7 @@ public interface AdminLayout extends SceneFormatter,CoreFunctions {
 		Label signature = new Label("Created by Marisa Richmond");
 		signature.getStyleClass().add("text");
 		bottomPane.getChildren().add(signature);
-		bottomPane.getStyleClass().add("bottombar");
+		bottomPane.getStyleClass().add("bottompane");
 		return bottomPane;
 	}
 	
@@ -89,8 +92,24 @@ public interface AdminLayout extends SceneFormatter,CoreFunctions {
 		classroomButton.setOnAction(e -> Platform.runLater(new ChangeScene(stage,new ClassroomWorkspaceScene(stage,null,admin))));
 		Label addClassroom = createLabel("Classrooms","label");
 		leftPane.getChildren().addAll(centerButton,addCenter,directorButton,addDirector,teacherButton,addTeacher,classroomButton,addClassroom);
-		leftPane.getStyleClass().add("sidebar");
+		leftPane.getStyleClass().add("leftpane");
 		return leftPane;
+	}
+	
+	/**
+	 * Builds a pop-up scene with modality
+	 * @param stage - a new secondary stage
+	 * @param gridpane - the layout
+	 * @param title - the title at the top of the new window
+	 */
+	public default void buildPopUp(Stage stage,GridPane gridpane,String title) {
+		stage.initModality(Modality.APPLICATION_MODAL);
+		stage.setTitle(title);
+		Scene scene = new Scene(gridpane);
+		stage.setScene(scene);
+		stage.setMaxWidth(1100);
+		stage.setMinWidth(1100);
+		stage.showAndWait();
 	}
 	
 	/**
@@ -143,5 +162,7 @@ public interface AdminLayout extends SceneFormatter,CoreFunctions {
 			textFieldIndex++;
 		}
 	}
+	
+	public abstract void placeNodes(GridPane gridpane,List<Node> nodes);
 	
 }

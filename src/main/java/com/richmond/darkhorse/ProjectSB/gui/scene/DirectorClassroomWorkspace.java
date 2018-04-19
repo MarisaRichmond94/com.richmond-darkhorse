@@ -1,5 +1,6 @@
 package com.richmond.darkhorse.ProjectSB.gui.scene;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import com.richmond.darkhorse.ProjectSB.AccountManager;
 import com.richmond.darkhorse.ProjectSB.Center;
@@ -7,10 +8,12 @@ import com.richmond.darkhorse.ProjectSB.Classroom;
 import com.richmond.darkhorse.ProjectSB.Director;
 import com.richmond.darkhorse.ProjectSB.SpecialBeginnings;
 import com.richmond.darkhorse.ProjectSB.Teacher;
+import com.richmond.darkhorse.ProjectSB.gui.component.DirectorLayout;
 import com.richmond.darkhorse.ProjectSB.gui.component.ImageButton;
 import com.richmond.darkhorse.ProjectSB.middleman.ChangeScene;
 import javafx.application.Platform;
 import javafx.geometry.HPos;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -24,7 +27,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
-public class DirectorClassroomWorkspace extends Scene {
+public class DirectorClassroomWorkspace extends Scene implements DirectorLayout {
 	
 	private double rowIndex = 0.5;
 	private int column = 1;
@@ -35,17 +38,13 @@ public class DirectorClassroomWorkspace extends Scene {
 	
 	public DirectorClassroomWorkspace(Stage stage,BorderPane layout,Scene nextScene,Director director) {
 		super(layout);
-		HBox topBar = buildTopBar(stage,director);
-		HBox bottomBar = buildBottomBar();
-		VBox leftSideBar = buildSideBar(stage,director);
+		HBox topPane = buildTopPane(stage,director);
+		HBox bottomPane = buildBottomPane();
+		VBox leftPane = buildLeftPane(stage,director);
 		ScrollPane scrollPane = buildCenterPane(stage,director);
-		
 		BorderPane directorClassroomWorkspaceLayout = layout;
-		directorClassroomWorkspaceLayout.setTop(topBar);
-		directorClassroomWorkspaceLayout.setBottom(bottomBar);
-		directorClassroomWorkspaceLayout.setLeft(leftSideBar);
-		directorClassroomWorkspaceLayout.setCenter(scrollPane);
-		directorClassroomWorkspaceLayout.getStylesheets().add("classroomworkspace.css");
+		setBorderPaneCenterScroll(directorClassroomWorkspaceLayout,scrollPane,null,leftPane,topPane,bottomPane);
+		directorClassroomWorkspaceLayout.getStylesheets().add("css/director.css");
 	}
 	
 	public ScrollPane buildCenterPane(Stage stage,Director director) {
@@ -251,6 +250,12 @@ public class DirectorClassroomWorkspace extends Scene {
 		leftSideBar.getChildren().addAll(dashboardButton,viewDashboard,mailboxButton,checkMailbox,classroomButton,viewClassroom,studentButton,createStudent);
 		leftSideBar.getStyleClass().add("sidebar");
 		return leftSideBar;
+	}
+
+	@Override
+	public void placeNodes(GridPane gridpane, List<Node> nodes) {
+		// TODO Auto-generated method stub
+		
 	}
 	
 }

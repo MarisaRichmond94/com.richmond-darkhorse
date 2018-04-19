@@ -10,10 +10,8 @@ import java.io.Serializable;
 public class IncidentReport extends Document implements Serializable{
 
 	private static final long serialVersionUID = 8453756L;
-	private String fileName;
-	private String studentDOB, typeOfReport, incidentDescription, actionTaken, studentCondition, teachersPresent, comments;
-	private boolean medicalAttention, onSite;
-	private boolean teacherSignature, directorSignature = false;
+	private String fileName, studentDOB, typeOfReport, incidentDescription, actionTaken, studentCondition, teachersPresent, comments;
+	private boolean medicalAttention, onSite, teacherSignature, directorSignature = false;
 	
 	public IncidentReport(Student student,Teacher teacher) {
 		super(teacher,student);

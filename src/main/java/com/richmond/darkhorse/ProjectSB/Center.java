@@ -14,9 +14,7 @@ import java.util.Map;
 public class Center implements Serializable{
 
 	private static final long serialVersionUID = 8453756L;
-    private String centerName, abbreviatedName, licenseName, licenseNumber, centerID, address, city, county;
-    private String directorID;
-    private String studentsFileName, classroomsFileName;
+    private String centerName, abbreviatedName, licenseName, licenseNumber, centerID, address, city, county, directorID, studentsFileName, classroomsFileName;
     private Map<String,Classroom> classrooms;
     private Map<String,Student> students;
     private List<String> teacherIDs;
@@ -87,8 +85,7 @@ public class Center implements Serializable{
 				output.writeObject(classrooms);
 				output.flush();
 				output.close();
-			} catch (IOException e) {
-			}
+			} catch (IOException e) {e.printStackTrace();}
     }
    
     public void loadClassrooms() {
@@ -122,9 +119,7 @@ public class Center implements Serializable{
     }
     
     public void removeStudent(Student student) {
-    		if(students.containsKey(student.getStudentID())) {
-    			students.remove(student.getStudentID());
-    		}
+    		if(students.containsKey(student.getStudentID())) {students.remove(student.getStudentID());}
     }
     
     public void saveStudents() {
@@ -133,8 +128,7 @@ public class Center implements Serializable{
 				output.writeObject(students);
 				output.flush();
 				output.close();
-			} catch (IOException e) {
-			}
+			} catch (IOException e) {e.printStackTrace();}
 	}
 	
 	public void loadStudents() {
@@ -144,10 +138,9 @@ public class Center implements Serializable{
 			Map<String,Student> studentList = (Map<String,Student>)objectInput.readObject();
 			students = studentList;
 	        objectInput.close();
-		} catch (FileNotFoundException e) {
-		} catch (IOException e) {
-		} catch (ClassNotFoundException e) {
-		}
+		} catch (FileNotFoundException e) {e.printStackTrace();} 
+		catch (IOException e) {e.printStackTrace();} 
+		catch (ClassNotFoundException e) {e.printStackTrace();}
 	}
 	
 	//Add methods
@@ -256,9 +249,7 @@ public class Center implements Serializable{
 	public Director getDirector(String directorID) {
 		SpecialBeginnings sB = SpecialBeginnings.getInstance();
 		Map<String,StaffMember> staffMembers = sB.getStaffMembers();
-		if(staffMembers.containsKey(directorID)) {
-			return (Director) staffMembers.get(directorID);
-		}
+		if(staffMembers.containsKey(directorID)) {return (Director) staffMembers.get(directorID);}
 		return null;
 	}
 

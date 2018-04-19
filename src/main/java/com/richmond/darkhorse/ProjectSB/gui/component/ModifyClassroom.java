@@ -10,20 +10,16 @@ import com.richmond.darkhorse.ProjectSB.Classroom;
 import com.richmond.darkhorse.ProjectSB.StaffMember;
 import com.richmond.darkhorse.ProjectSB.Teacher;
 import com.richmond.darkhorse.ProjectSB.middleman.ModifyExistingClassroom;
-import javafx.geometry.HPos;
-import javafx.scene.Scene;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
 
-public class ModifyClassroom {
+public class ModifyClassroom implements AdminLayout {
 
 	private Classroom theClassroom;
 	private String previousAgeGroup;
@@ -48,53 +44,133 @@ public class ModifyClassroom {
 	
 	public void display() {
 		Stage stage = new Stage();
-		stage.initModality(Modality.APPLICATION_MODAL);
-		stage.setTitle(theClassroom.getCenter(theClassroom.getCenterID()) + ": " + theClassroom.getClassroomType());
-		
-		//Grid Pane
-		GridPane modifyClassroomLayout = new GridPane();
-		modifyClassroomLayout.setVgap(10);
-		modifyClassroomLayout.setHgap(10);
-		ColumnConstraints columnOne = new ColumnConstraints();
-		columnOne.setPercentWidth(33.3);
-	    ColumnConstraints columnTwo = new ColumnConstraints();
-	    columnTwo.setPercentWidth(33.3);
-	    ColumnConstraints columnThree = new ColumnConstraints();
-	    columnThree.setPercentWidth(33.3);
-	    modifyClassroomLayout.getColumnConstraints().addAll(columnOne,columnTwo,columnThree);
-	    modifyClassroomLayout.getStyleClass().add("modulargridpane");
-		
-		//Grid Pane - Icon
-	    ImageView classroomViewer = new ImageView();
-	    Image classroom = new Image("images/classroom.png");
-	    classroomViewer.setImage(classroom);
-	    classroomViewer.setPreserveRatio(true);
-	    classroomViewer.setFitHeight(150);
-	    
-		//Grid Pane - Title
-	    Label title = new Label("Modify Classroom");
-	    title.getStyleClass().add("title");
-	    
-	  //Grid Pane - Classroom Type Box
-	    Label classType = new Label("Classroom type:");
-	    classType.getStyleClass().add("label");
-	    ChoiceBox<String> typeBox = new ChoiceBox<String>();
-	    Map<String,String> classroomTypes = this.getClassroomTypes();
+		GridPane modifyClassroomLayout = buildGridPane(stage);
+		String stageTitle = theClassroom.getCenter(theClassroom.getCenterID()) + ": " + theClassroom.getClassroomType();
+		buildPopUp(stage,modifyClassroomLayout,stageTitle);
+	}
+	
+	/**
+	 * Builds the layout for ModifyClassroom
+	 * @param stage - the current stage
+	 * @return a GridPane layout
+	 */
+	private GridPane buildGridPane(Stage stage) {
+		GridPane gridpane = new GridPane();
+		setConstraints(gridpane,3,0,10,10,"modulargridpane");
+		ImageView classroomViewer = createImageWithFitHeight("images/classroom.png",200);
+		Label title = createLabel("Modify Classroom","title");
+		Label classType = createLabel("Classroom type:","label");
+		ChoiceBox<String> typeBox = buildTypeBox();
+	    Label centerName = createLabel("Center:","label");
+	    ChoiceBox<Center> centerBox = buildCenterBox();
+	    Label teacherName = createLabel("Lead teacher:","label");
+	    ChoiceBox<TeacherHolder> teacherBox = buildTeacherBox(centerBox);
+	    Label assistantName = createLabel("Assistant teacher (optional):","label");
+	    ChoiceBox<TeacherHolder> assistantTeacherBox = buildAssistantTeacherBox(centerBox,teacherBox);
+	    Label capacity = createLabel("Max capacity:","label");
+	    ChoiceBox<Integer> capacityBox = buildCapacityBox();
+	    Label duplicateTeacherWarning = createLabel("Cannot assign lead teacher and assistant teacher to the same person","label");
+	    duplicateTeacherWarning.setTextFill(Color.RED);
+		duplicateTeacherWarning.setVisible(false);
+		Label teacherAlreadyActiveWarning = createLabel("Teacher is already active in another classroom","label");
+	    teacherAlreadyActiveWarning.setTextFill(Color.RED);
+		teacherAlreadyActiveWarning.setVisible(false);
+		ImageButton writeButton = new ImageButton(createImageWithFitHeight("images/write.png",100));
+	    writeButton.setOnAction(e -> write(stage,teacherBox,assistantTeacherBox,capacityBox,teacherAlreadyActiveWarning,duplicateTeacherWarning));
+	    writeButton.setVisible(false);
+	    Label writeLabel = createLabel("write","label");
+	    writeLabel.setVisible(false);
+	    Label editLabel = createLabel("edit","label");
+	    ImageButton editButton = new ImageButton(createImageWithFitHeight("images/edit.png",100));
+	    editButton.setOnAction(e -> edit(teacherBox,assistantTeacherBox,capacityBox,writeButton,editButton,writeLabel,editLabel));
+	    ImageButton trashButton = new ImageButton(createImageWithFitHeight("images/trash.png",100));
+	    trashButton.setOnAction(e -> {
+	    		admin.deleteClassroom(theClassroom);
+	    		stage.close();
+	    	});
+	    Label trashLabel = createLabel("delete","label");
+	    Button cancelButton = new Button("Cancel");
+	    cancelButton.getStyleClass().add("button");
+	    cancelButton.setOnAction(e -> stage.close());	   
+	    List<Node> nodes = new ArrayList<>();
+	    nodes.addAll(Arrays.asList(teacherAlreadyActiveWarning,duplicateTeacherWarning,classroomViewer,title,classType,typeBox,centerName,centerBox,teacherName,teacherBox,assistantName,assistantTeacherBox,capacity,capacityBox,editButton,writeButton,trashButton,editLabel,writeLabel,trashLabel,cancelButton));
+		placeNodes(gridpane,nodes);
+		gridpane.getStylesheets().add("css/admin.css");
+		return gridpane;
+	}
+	
+	/**
+	 * Populates a list of {@link Teacher}s
+	 * @param center - the selected {@link Center}
+	 * @return a list of {@link Teacher}s at the selected {@link Center}
+	 */
+	public List<Teacher> populateTeachers(Center center){
+		Map<String,StaffMember> staffMembers = admin.getStaffMembers();
+		List<Teacher> availableTeacher = new ArrayList<Teacher>();
+		for(StaffMember staffMember: staffMembers.values()) {
+			String title = staffMember.getTitle();
+			if(title.equals("Teacher")) {
+				Teacher correctTeacher = (Teacher) staffMember;
+				availableTeacher.add(correctTeacher);
+			}
+		}
+		return availableTeacher;
+	}
+	
+	/**
+	 * Places all of the nodes in the list in the given GridPane
+	 * @param gridpane - GridPane layout
+	 * @param nodes - a list of nodes to be added to the GridPane
+	 */
+	public void placeNodes(GridPane gridpane,List<Node> nodes) {
+		placeNodeSpan(gridpane,nodes.get(0),1,9,2,1,"center",null);
+		placeNodeSpan(gridpane,nodes.get(1),1,9,2,1,"center",null);
+		placeNode(gridpane,nodes.get(2),0,0,"center",null);
+		placeNodeSpan(gridpane,nodes.get(3),1,0,2,1,"center",null);
+		placeNode(gridpane,nodes.get(4),0,1,"right",null);
+		placeNodeSpan(gridpane,nodes.get(5),1,1,2,1,"left",null);
+		placeNode(gridpane,nodes.get(6),0,2,"right",null);
+		placeNodeSpan(gridpane,nodes.get(7),1,2,2,1,"left",null);
+		placeNode(gridpane,nodes.get(8),0,3,"right",null);
+		placeNodeSpan(gridpane,nodes.get(9),1,3,2,1,"left",null);
+		placeNode(gridpane,nodes.get(10),0,4,"right",null);
+		placeNodeSpan(gridpane,nodes.get(11),1,4,2,1,"left",null);
+		placeNode(gridpane,nodes.get(12),0,5,"right",null);
+		placeNodeSpan(gridpane,nodes.get(13),1,5,2,1,"left",null);
+		placeNode(gridpane,nodes.get(14),1,6,"center",null);
+		placeNode(gridpane,nodes.get(15),1,6,"center",null);
+		placeNode(gridpane,nodes.get(16),2,6,"center",null);
+		placeNode(gridpane,nodes.get(17),1,7,"center",null);
+		placeNode(gridpane,nodes.get(18),1,7,"center",null);
+		placeNode(gridpane,nodes.get(19),2,7,"center",null);
+		placeNodeSpan(gridpane,nodes.get(20),1,8,2,1,"center",null);
+	}
+	
+	/**
+	 * Builds a ChoiceBox of type <String> populated with all of the classroom types
+	 * @return a ChoiceBox<String>
+	 */
+	private ChoiceBox<String> buildTypeBox() {
+		ChoiceBox<String> typeBox = new ChoiceBox<String>();
+		Map<String,String> classroomTypes = this.getClassroomTypes();
 	    	for(String ageGroup : classroomTypes.values()) {
 	    		if(ageGroup.equals(previousAgeGroup)) {
 	    			typeBox.getItems().add(ageGroup);
 	    			typeBox.setValue(ageGroup);
 	    		}
 	    	}
-	    typeBox.setMaxWidth(600);
-	    typeBox.setDisable(true);
-	    typeBox.getStyleClass().add("choicebox");
-	    
-		//Grid Pane - Center Box
-	    Label centerName = new Label("Center:");
-	    centerName.getStyleClass().add("label");
-	    ChoiceBox<Center> centerBox = new ChoiceBox<Center>();
-	    if(admin.getCenters().isEmpty()) {centerBox.setDisable(true);}else {
+	    typeBox.getStyleClass().add("choice-box");
+	    return typeBox;
+	}
+	
+	/**
+	 * Builds a ChoiceBox of type <Center> populated with all of the Centers in the system
+	 * @return ChoiceBox<Center>
+	 */
+	private ChoiceBox<Center> buildCenterBox(){
+		ChoiceBox<Center> centerBox = new ChoiceBox<Center>();
+		if(admin.getCenters().isEmpty()) {centerBox.setDisable(true);}
+		else {
 	    		Map<String,Center> centers = admin.getCenters();
 	    		for(Center activeCenter : centers.values()) {
 	    			centerBox.getItems().add(activeCenter);
@@ -102,16 +178,20 @@ public class ModifyClassroom {
 	    		}
 	    		centerBox.setDisable(true);
 	    }
-	    centerBox.setMaxWidth(600);
-	    centerBox.getStyleClass().add("choicebox");
-	    
-		//Grid Pane - Lead Teacher Box
-	    Label teacherName = new Label("Lead Teacher:");
-	    teacherName.getStyleClass().add("label");
-	    ChoiceBox<TeacherHolder> teacherBox = new ChoiceBox<TeacherHolder>();
-	    TeacherHolder emptyTeacherHolder = new TeacherHolder(null);
+	    centerBox.getStyleClass().add("choice-box");
+	    return centerBox;
+	}
+	
+	/**
+	 * Builds a ChoiceBox of type <TeacherHolder> populated with all of the Teachers in the system
+	 * @param centerBox - a ChoiceBox<Center> that holds all of the Centers in the system
+	 * @return ChoiceBox<TeacherHolder>
+	 */
+	private ChoiceBox<TeacherHolder> buildTeacherBox(ChoiceBox<Center> centerBox){
+		ChoiceBox<TeacherHolder> teacherBox = new ChoiceBox<TeacherHolder>();
+		TeacherHolder emptyTeacherHolder = new TeacherHolder(null);
 	    teacherBox.getItems().add(emptyTeacherHolder);
-	    List<Teacher> availableTeachers = populateTeachers();
+	    List<Teacher> availableTeachers = populateTeachers(centerBox.getValue());
 	    for(Teacher theTeacher : availableTeachers) {
 	    		TeacherHolder teacherHolder = new TeacherHolder(theTeacher);
 	    		if(theTeacher.equals(teacher)) {
@@ -122,17 +202,20 @@ public class ModifyClassroom {
 	    		}
 	    }
 	    if(teacher == null) {teacherBox.setValue(emptyTeacherHolder);}
-	    teacherBox.setMaxWidth(600);
-	    teacherBox.setDisable(true);
-	    teacherBox.getStyleClass().add("choicebox");
-	    
-		//Grid Pane - Assistant Teacher Box
-	    Label assistantName = new Label("Assistant Teacher (optional):");
-	    assistantName.getStyleClass().add("label");
-	    ChoiceBox<TeacherHolder> assistantTeacherBox = new ChoiceBox<TeacherHolder>();
+	    teacherBox.getStyleClass().add("choice-box");
+	    return teacherBox;
+	}
+	
+	/**
+	 * Builds a ChoiceBox of type <TeacherHolder> populated with all of the Teachers in the system
+	 * @param centerBox - a ChoiceBox<Center> that holds all of the Centers in the system
+	 * @return ChoiceBox<TeacherHolder>
+	 */
+	private ChoiceBox<TeacherHolder> buildAssistantTeacherBox(ChoiceBox<Center> centerBox,ChoiceBox<TeacherHolder> teacherBox){
+		ChoiceBox<TeacherHolder> assistantTeacherBox = new ChoiceBox<TeacherHolder>();
 	    TeacherHolder emptyAssistantTeacherHolder = new TeacherHolder(null);
 	    assistantTeacherBox.getItems().add(emptyAssistantTeacherHolder);
-	    List<Teacher> availableAssistantTeachers = populateTeachers();
+	    List<Teacher> availableAssistantTeachers = populateTeachers(centerBox.getValue());
 	    for(Teacher theAssistantTeacher : availableAssistantTeachers) {
 	    		TeacherHolder assistantTeacherHolder = new TeacherHolder(theAssistantTeacher);
 	    		if(theAssistantTeacher.equals(assistantTeacher)) {
@@ -143,185 +226,74 @@ public class ModifyClassroom {
 	    		}
 	    }
 	    if(assistantTeacher == null) {assistantTeacherBox.setValue(emptyAssistantTeacherHolder);}
-	    assistantTeacherBox.setMaxWidth(600);
-	    assistantTeacherBox.setDisable(true);
-	    assistantTeacherBox.getStyleClass().add("choicebox");
-	    
-		//Grid Pane - Capacity Box
-	    Label capacity = new Label("Max capacity:");
-	    capacity.getStyleClass().add("label");
-	    ChoiceBox<Integer> capacityBox = new ChoiceBox<Integer>();
-	    for(int theMaxCapacity : roomSizes) {
+	    assistantTeacherBox.getStyleClass().add("choice-box");
+	    return assistantTeacherBox;
+	}
+	
+	/**
+	 * Builds a ChoiceBox of type <Integer> populated with the different room capacities
+	 * @return ChoiceBox<Integer>
+	 */
+	private ChoiceBox<Integer> buildCapacityBox(){
+		ChoiceBox<Integer> capacityBox = new ChoiceBox<Integer>();
+		for(int theMaxCapacity : roomSizes) {
 	    		capacityBox.getItems().add(theMaxCapacity);
-	    		if(theMaxCapacity == maxCapacity) {
-	    			capacityBox.setValue(theMaxCapacity);
-	    		}
+	    		if(theMaxCapacity == maxCapacity) {capacityBox.setValue(theMaxCapacity);}
 	    }
-	    capacityBox.setDisable(true);
-	    capacityBox.setMaxWidth(600);
-	    capacityBox.getStyleClass().add("choicebox");
-
-	    //Grid Pane - Duplicate Teacher Warning
-	    Label duplicateTeacherWarning = new Label("Cannot assign teacher and assistant teacher to the same person");
-	    duplicateTeacherWarning.getStyleClass().add("label");
-	    duplicateTeacherWarning.setTextFill(Color.RED);
-	    modifyClassroomLayout.add(duplicateTeacherWarning, 0, 9);
-	    GridPane.setConstraints(duplicateTeacherWarning,0,9,3,1);
-	    GridPane.setHalignment(duplicateTeacherWarning, HPos.CENTER);
-	    duplicateTeacherWarning.setVisible(false);
-	    
-	    //Grid Pane - Teacher Already Active Warning
-	    Label teacherAlreadyActiveWarning = new Label("Teacher is already active in another classroom");
-	    teacherAlreadyActiveWarning.getStyleClass().add("label");
-	    teacherAlreadyActiveWarning.setTextFill(Color.RED);
-	    modifyClassroomLayout.add(teacherAlreadyActiveWarning, 0, 9);
-	    GridPane.setConstraints(teacherAlreadyActiveWarning,0,9,3,1);
-	    GridPane.setHalignment(teacherAlreadyActiveWarning, HPos.CENTER);
-	    teacherAlreadyActiveWarning.setVisible(false);
-	    
-		//Grid Pane - Write Button
-	    ImageView writeViewer = new ImageView();
-	    Image write = new Image("images/write.png");
-	    writeViewer.setImage(write);
-	    writeViewer.setPreserveRatio(true);
-	    writeViewer.setFitHeight(150);
-	    ImageButton writeButton = new ImageButton(writeViewer);
-	    writeButton.setOnAction(e -> {
-	    		Teacher newLeadTeacher = teacherBox.getValue().getTeacher();
-	    		if(teacherBox.getValue() == null) {newLeadTeacher.setTeacherID(null);}
-	    		Teacher newAssistantTeacher = assistantTeacherBox.getValue().getTeacher();
-	    		if(assistantTeacherBox.getValue() == null) {newAssistantTeacher.setTeacherID(null);}
-	    		int newMaxSize = capacityBox.getValue();
-	    		if(newLeadTeacher != null && newAssistantTeacher != null && newLeadTeacher.equals(newAssistantTeacher)) {
-	    			if(teacherAlreadyActiveWarning.isVisible()) {teacherAlreadyActiveWarning.setVisible(false);}
-		    		duplicateTeacherWarning.setVisible(true);
-		    	}else if(newLeadTeacher != null && newLeadTeacher.getClassroomID() != null){
-		    		if(duplicateTeacherWarning.isVisible()) {duplicateTeacherWarning.setVisible(false);}
-		    		teacherAlreadyActiveWarning.setVisible(true);
-	    		}else if(newAssistantTeacher != null && newAssistantTeacher.getClassroomID() != null) {
-		    		if(duplicateTeacherWarning.isVisible()) {duplicateTeacherWarning.setVisible(false);}
-		    		teacherAlreadyActiveWarning.setVisible(true);
-		    	}else {
-		    		Thread modifyExistingClassroom = new Thread(new ModifyExistingClassroom(theClassroom,newLeadTeacher,newAssistantTeacher,newMaxSize,admin));
-    	    			modifyExistingClassroom.start();	
-    	    			stage.close();
-		    	}
-	    });
-	    writeButton.setVisible(false);
-	    Label writeLabel = new Label("write");
-	    writeLabel.setVisible(false);
-	    writeLabel.getStyleClass().add("label");
-	    
-		//Grid Pane - Edit Button
-	    Label editLabel = new Label("edit");
-	    editLabel.getStyleClass().add("label");
-	    ImageView editViewer = new ImageView();
-	    Image edit = new Image("images/edit.png");
-	    editViewer.setImage(edit);
-	    editViewer.setPreserveRatio(true);
-	    editViewer.setFitHeight(150);
-	    ImageButton editButton = new ImageButton(editViewer);
-	    editButton.setOnAction(e -> {
-	    		teacherBox.setDisable(false);
-	    		assistantTeacherBox.setDisable(false);
-	    		capacityBox.setDisable(false);
-	    		writeButton.setVisible(true);
-	    		writeLabel.setVisible(true);
-	    		editButton.setVisible(false);
-	    		editLabel.setVisible(false);
-	    });
-	    
-		//Grid Pane - Delete Button
-	    ImageView trashViewer = new ImageView();
-	    Image trash = new Image("images/trash.png");
-	    trashViewer.setImage(trash);
-	    trashViewer.setPreserveRatio(true);
-	    trashViewer.setFitHeight(150);
-	    ImageButton trashButton = new ImageButton(trashViewer);
-	    trashButton.setOnAction(e -> {
-	    		admin.deleteClassroom(theClassroom);
+	    capacityBox.getStyleClass().add("choice-box");
+	    return capacityBox;
+	}
+	
+	/**
+	 * Gets the text from each text field in the List. If the text field is empty, gets the current value stored in the center and submits all necessary fields to 
+	 * the thread in order to modify the existing center. Once completed, the stage closes
+	 * @param stage - the current stage 
+	 */
+	private void write(Stage stage,ChoiceBox<TeacherHolder> teacherBox,ChoiceBox<TeacherHolder> assistantTeacherBox,ChoiceBox<Integer> capacityBox,Label teacherAlreadyActiveWarning,Label duplicateTeacherWarning) {
+		Teacher newLeadTeacher = teacherBox.getValue().getTeacher(), newAssistantTeacher = assistantTeacherBox.getValue().getTeacher();
+		if(teacherBox.getValue() == null) {newLeadTeacher.setTeacherID(null);}
+		if(assistantTeacherBox.getValue() == null) {newAssistantTeacher.setTeacherID(null);}
+		int newMaxSize = capacityBox.getValue();
+		if(newLeadTeacher != null && newAssistantTeacher != null && newLeadTeacher.equals(newAssistantTeacher)) {
+			if(teacherAlreadyActiveWarning.isVisible()) {teacherAlreadyActiveWarning.setVisible(false);}
+	    		duplicateTeacherWarning.setVisible(true);
+	    	}else if(newLeadTeacher != null && newLeadTeacher.getClassroomID() != null && !newLeadTeacher.getClassroomID().equals(theClassroom.getClassroomID())){
+	    		if(duplicateTeacherWarning.isVisible()) {duplicateTeacherWarning.setVisible(false);}
+	    		teacherAlreadyActiveWarning.setVisible(true);
+		}else if(newAssistantTeacher != null && newAssistantTeacher.getClassroomID() != null && !newAssistantTeacher.getClassroomID().equals(theClassroom.getClassroomID())) {
+	    		if(duplicateTeacherWarning.isVisible()) {duplicateTeacherWarning.setVisible(false);}
+	    		teacherAlreadyActiveWarning.setVisible(true);
+	    	}else {
+	    		Thread modifyExistingClassroom = new Thread(new ModifyExistingClassroom(theClassroom,newLeadTeacher,newAssistantTeacher,newMaxSize,admin));
+	    		modifyExistingClassroom.start();	
 	    		stage.close();
-	    });
-	    Label trashLabel = new Label("delete");
-	    trashLabel.getStyleClass().add("label");
-	    
-		//Grid Pane - Cancel Button
-	    Button cancel = new Button("cancel");
-	    cancel.setOnAction(e -> stage.close());
-	    cancel.getStyleClass().add("button");
-	    
-		//Grid Pane - Layout
-	    modifyClassroomLayout.add(classroomViewer,0,0);
-	    GridPane.setHalignment(classroomViewer,HPos.CENTER);
-	    modifyClassroomLayout.add(title,1,0);
-	    GridPane.setConstraints(title,1,0,2,1);
-	    GridPane.setHalignment(title,HPos.CENTER);
-	    modifyClassroomLayout.add(classType,0,1);
-	    GridPane.setHalignment(classType,HPos.RIGHT);
-	    modifyClassroomLayout.add(typeBox,1,1);
-	    GridPane.setConstraints(typeBox,1,1,2,1);
-	    modifyClassroomLayout.add(centerName,0,2);
-	    GridPane.setHalignment(centerName,HPos.RIGHT);
-	    modifyClassroomLayout.add(centerBox,1,2);
-	    GridPane.setConstraints(centerBox,1,2,2,1);
-	    modifyClassroomLayout.add(teacherName,0,3);
-	    GridPane.setHalignment(teacherName,HPos.RIGHT);
-	    modifyClassroomLayout.add(teacherBox,1,3);
-	    GridPane.setConstraints(teacherBox,1,3,2,1);
-	    modifyClassroomLayout.add(assistantName,0,4);
-	    GridPane.setHalignment(assistantName,HPos.RIGHT);
-	    modifyClassroomLayout.add(assistantTeacherBox,1,4);
-	    GridPane.setConstraints(assistantTeacherBox,1,4,2,1);
-	    modifyClassroomLayout.add(capacity,0,5);
-	    GridPane.setHalignment(capacity,HPos.RIGHT);
-	    modifyClassroomLayout.add(capacityBox,1,5);
-	    GridPane.setConstraints(capacityBox,1,5,2,1);
-	    modifyClassroomLayout.add(editButton,1,6);
-	    GridPane.setHalignment(editButton,HPos.CENTER);
-	    modifyClassroomLayout.add(writeButton,1,6);
-	    GridPane.setHalignment(writeButton,HPos.CENTER);
-	    modifyClassroomLayout.add(trashButton,2,6);
-	    GridPane.setHalignment(trashButton,HPos.CENTER);
-	    modifyClassroomLayout.add(editLabel,1,7);
-	    GridPane.setHalignment(editLabel,HPos.CENTER);
-	    modifyClassroomLayout.add(writeLabel,1,7);
-	    GridPane.setHalignment(writeLabel,HPos.CENTER);
-	    modifyClassroomLayout.add(trashLabel,2,7);
-	    GridPane.setHalignment(trashLabel,HPos.CENTER);
-	    modifyClassroomLayout.add(cancel,1,8);
-	    GridPane.setHalignment(cancel,HPos.CENTER);
-	    GridPane.setConstraints(cancel,1,8,2,1);
-	    modifyClassroomLayout.getStylesheets().add("css/admin.css");
-		
-		Scene modifyClassroomScene = new Scene(modifyClassroomLayout);
-		stage.setScene(modifyClassroomScene);
-		stage.showAndWait();
+	    	}
 	}
 	
-	public List<Teacher> populateTeachers(){
-		Map<String,StaffMember> staffMembers = admin.getStaffMembers();
-		List<Teacher> teachers = new ArrayList<Teacher>();
-		for(StaffMember staffMember: staffMembers.values()) {
-			String title = staffMember.getTitle();
-			if(title.equals("Teacher")) {teachers.add((Teacher) staffMember);}
-		}
-		return teachers;
+	/**
+	 * Enters the program into edit-mode by revealing the write button and enabling all text fields for typing
+	 * @param teacherBox
+	 * @param assistantTeacherBox
+	 * @param capacityBox
+	 * @param writeButton
+	 * @param editButton
+	 * @param writeLabel
+	 * @param editLabel
+	 */
+	private void edit(ChoiceBox<TeacherHolder> teacherBox,ChoiceBox<TeacherHolder> assistantTeacherBox,ChoiceBox<Integer> capacityBox,Button writeButton,Button editButton,Label writeLabel,Label editLabel) {
+		teacherBox.setDisable(false);
+		assistantTeacherBox.setDisable(false);
+		capacityBox.setDisable(false);
+		writeButton.setVisible(true);
+		writeLabel.setVisible(true);
+		editButton.setVisible(false);
+		editLabel.setVisible(false);
 	}
 	
-	public class TeacherHolder{
-		private Teacher teacher;
-		public TeacherHolder(Teacher teacher) {this.teacher = teacher;}
-		public Teacher getTeacher() {return teacher;}
-		@Override
-		public String toString() {
-			if(teacher == null) {return "N/A";
-			}else {
-				Center center = teacher.getCenter(teacher.getCenterID());
-				return center.getAbbreviatedName() +  ": " + teacher.getFirstName() + " " + teacher.getLastName();
-			}
-		}
-	}
-	
+	/**
+	 * populates the list of classroom types
+	 * @return a list of classroom types
+	 */
 	public Map<String,String> populateClassroomTypes() {
 		classroomTypes.put("PreK2", "4+ years");
 		classroomTypes.put("PreK1", "3-4 years");
@@ -329,8 +301,26 @@ public class ModifyClassroom {
 		return classroomTypes;
 	}
 
+	/**
+	 * Grabs a list of classroom types
+	 * @return a list of classroom types
+	 */
 	public Map<String, String> getClassroomTypes() {
 		return classroomTypes;
+	}
+	
+	private class TeacherHolder{
+		private Teacher teacher;
+		public TeacherHolder(Teacher teacher) {this.teacher = teacher;}
+		public Teacher getTeacher() {return teacher;}
+		@Override
+		public String toString() {
+			if(teacher == null) {return "N/A";}
+			else {
+				Center center = teacher.getCenter(teacher.getCenterID());
+				return center.getAbbreviatedName() +  ": " + teacher.getFirstName() + " " + teacher.getLastName();
+			}
+		}
 	}
 	
 }

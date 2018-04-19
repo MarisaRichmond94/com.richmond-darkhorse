@@ -6,10 +6,8 @@ import java.util.Map;
 public class Attendance implements Serializable{
 
 	private static final long serialVersionUID = 8453756L;
-	private String studentID;
-	private String recordID;
-	private Map<String,Boolean> attendancePlan;
-	private Map<String,Boolean> attendanceHistory;
+	private String studentID,recordID;
+	private Map<String,Boolean> attendancePlan,attendanceHistory;
 	
 	public Attendance(String studentID,String recordID) {
 		this.studentID = studentID;

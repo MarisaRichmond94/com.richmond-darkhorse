@@ -1,4 +1,7 @@
 package com.richmond.darkhorse.ProjectSB.gui.scene;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import com.richmond.darkhorse.ProjectSB.Admin;
 import com.richmond.darkhorse.ProjectSB.Center;
@@ -16,6 +19,7 @@ import javafx.application.Platform;
 import javafx.scene.control.Button;
 import javafx.scene.image.ImageView;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.Node;
 
 public class CenterWorkspaceScene extends Scene implements AdminLayout {
 	
@@ -37,7 +41,7 @@ public class CenterWorkspaceScene extends Scene implements AdminLayout {
 		ScrollPane scrollPane = new ScrollPane(centerPane);
 		scrollPane.setFitToWidth(true);
 		BorderPane centerWorkspaceLayout = layout;
-		setBorderPaneWithCenterScrollPane(centerWorkspaceLayout,scrollPane,null,leftPane,topPane,bottomPane);
+		setBorderPaneCenterScroll(centerWorkspaceLayout,scrollPane,null,leftPane,topPane,bottomPane);
 		centerWorkspaceLayout.getStylesheets().add("css/admin.css");
 	}
 	
@@ -51,15 +55,26 @@ public class CenterWorkspaceScene extends Scene implements AdminLayout {
 		GridPane centerPane = new GridPane();
 		setConstraints(centerPane,4,0,15,15,"gridpane");
 		ImageView workspaceViewer = createImageWithFitHeight("images/workspace.png",150);
-		Button addCenterButton = createButton(null,"images/addcenter.png",200,300,400);
+		Button addCenterButton = createButton(null,"images/center.png",200,300,400);
 		addCenterButton.setOnAction(e -> {
 			newAddCenter.display();
 			Platform.runLater(new ChangeScene(stage,new CenterWorkspaceScene(stage,null,admin)));
 		});
-		addCenters(centerPane,stage,admin);
-		placeNodeSpan(centerPane,workspaceViewer,1,0,2,1,"center",null);
-		placeNodeSpan(centerPane,addCenterButton,0,1,2,1,"center",null);
+		List<Node> nodes = new ArrayList<>();
+		nodes.addAll(Arrays.asList(workspaceViewer,addCenterButton));
+		placeNodes(centerPane,nodes);
+		populateCenters(centerPane,stage,admin);
 		return centerPane;
+	}
+	
+	/**
+	 * Places all of the nodes in the list in the given GridPane
+	 * @param gridpane - GridPane layout
+	 * @param nodes - a list of nodes to be added to the GridPane
+	 */
+	public void placeNodes(GridPane gridpane,List<Node> nodes) {
+		placeNodeSpan(gridpane,nodes.get(0),1,0,2,1,"center",null);
+		placeNodeSpan(gridpane,nodes.get(1),0,1,2,1,"center",null);
 	}
 	
 	/**
@@ -68,7 +83,7 @@ public class CenterWorkspaceScene extends Scene implements AdminLayout {
 	 * @param stage - the stage of the current scene
 	 * @param admin - the user 
 	 */
-	public void addCenters(GridPane gridpane,Stage stage,Admin admin) {
+	public void populateCenters(GridPane gridpane,Stage stage,Admin admin) {
 		Map<String,Center> centers = admin.getCenters();
 		for(Center value : centers.values()) {
 			String centerName = value.getCenterName(),licenseNumber = value.getLicenseNumber(),address = value.getAddress(),city = value.getCity(),county = value.getCounty();
@@ -97,7 +112,7 @@ public class CenterWorkspaceScene extends Scene implements AdminLayout {
 	 * @param row 
 	 * @param column
 	 */
-	public void determinePosition(GridPane gridpane,Button button,int row,int column) {
+	private void determinePosition(GridPane gridpane,Button button,int row,int column) {
 		int columnIndex;
 		if(column == 0) {placeNodeSpan(gridpane,button,2,1,2,1,"center",null);}
 		else {
@@ -113,7 +128,7 @@ public class CenterWorkspaceScene extends Scene implements AdminLayout {
 	 * @param n - the number being analyzed
 	 * @return true if the number (n) is even and false if the number (n) is odd
 	 */
-	public boolean isIntEven(int n) {
+	private boolean isIntEven(int n) {
 		if( n % 2 == 0) { return true; }
 		return false;
 	}
@@ -123,7 +138,7 @@ public class CenterWorkspaceScene extends Scene implements AdminLayout {
 	 * @param rowIndex - double representing the row number
 	 * @return true if the double ends in 0 and false if the number does not end in 0
 	 */
-	public boolean doesNumberEndInZero(double rowIndex) {
+	private boolean doesNumberEndInZero(double rowIndex) {
 		if (Math.abs(rowIndex - Math.rint(rowIndex)) == 0.5) { return false; }
 		return true;
 	}

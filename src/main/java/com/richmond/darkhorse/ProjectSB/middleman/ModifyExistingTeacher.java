@@ -35,13 +35,9 @@ public class ModifyExistingTeacher implements Runnable {
 
 	@Override
 	public void run() {
-		if(selectedClassroom != null && title.equals("Teacher")) {
-			admin.modifyStaffMemberTeacherWithClassroom(teacher, title, teachersFirstName, teachersLastName, selectedCenter, selectedClassroom);
-		}else if(selectedClassroom == null && title.equals("Teacher")) {
-			admin.modifyStaffMemberTeacherWithoutClassroom(teacher, title, teachersFirstName, teachersLastName, selectedCenter);
-		}else {
-			admin.promoteToDirector(teacher, selectedCenter);
-		}
+		if(selectedClassroom != null && title.equals("Teacher")) {admin.modifyStaffMemberTeacherWithClassroom(teacher, title, teachersFirstName, teachersLastName, selectedCenter, selectedClassroom);}
+		else if(selectedClassroom == null && title.equals("Teacher")) {admin.modifyStaffMemberTeacherWithoutClassroom(teacher, title, teachersFirstName, teachersLastName, selectedCenter);}
+		else {admin.promoteToDirector(teacher, selectedCenter);}
 	}
 	
 }

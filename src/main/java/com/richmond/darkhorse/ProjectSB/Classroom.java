@@ -84,27 +84,20 @@ public class Classroom implements Serializable{
 	public Teacher getTeacher(String teacherID) {
 		SpecialBeginnings sB = SpecialBeginnings.getInstance();
 		Map<String,StaffMember> staffMembers = sB.getStaffMembers();
-		if(staffMembers.containsKey(teacherID)) {
-			return (Teacher)staffMembers.get(teacherID);
-		}
+		if(staffMembers.containsKey(teacherID)) {return (Teacher)staffMembers.get(teacherID);}
 		return null;
 	}
 	
 	public Teacher getAssistantTeacher(String assistantTeacherID) {
 		SpecialBeginnings sB = SpecialBeginnings.getInstance();
 		Map<String,StaffMember> staffMembers = sB.getStaffMembers();
-		if(staffMembers.containsKey(assistantTeacherID)) {
-			return (Teacher)staffMembers.get(assistantTeacherID);
-		}
+		if(staffMembers.containsKey(assistantTeacherID)) {return (Teacher)staffMembers.get(assistantTeacherID);}
 		return null;
 	}
 	
 	public void removeTeacher(Teacher teacher) {
-		if(teacherID != null && this.teacherID.equals(teacher.getTeacherID())) {
-			this.teacherID = null;
-		}else if(assistantTeacherID != null && this.assistantTeacherID.equals(teacher.getTeacherID())) {
-			this.assistantTeacherID = null;	
-		}
+		if(teacherID != null && this.teacherID.equals(teacher.getTeacherID())) {this.teacherID = null;}
+		else if(assistantTeacherID != null && this.assistantTeacherID.equals(teacher.getTeacherID())) {this.assistantTeacherID = null;	}
 	}
 	
 	//Student-related methods
@@ -115,9 +108,7 @@ public class Classroom implements Serializable{
 			Record record = student.getRecord();
 			Attendance attendance = record.getAttendance();
 			Map<String,Boolean> attendancePlan = attendance.getAttendancePlan();
-			if(attendancePlan.containsKey(day) && attendancePlan.get(day) == true) {
-				studentsExpected.add(studentID);
-			}
+			if(attendancePlan.containsKey(day) && attendancePlan.get(day) == true) {studentsExpected.add(studentID);}
 		}
 		this.studentsExpected = studentsExpected;
 		return studentsExpected;
@@ -128,12 +119,8 @@ public class Classroom implements Serializable{
 	}
 	
 	public void removeStudentEnrolled(Student student) {
-		if(student.getStudentID() != null) {
-			studentsEnrolled.remove(student.getStudentID());
-		}
-		if(studentsExpected.contains(student.getStudentID())) {
-			studentsExpected.remove(student.getStudentID());
-		}
+		if(student.getStudentID() != null) {studentsEnrolled.remove(student.getStudentID());}
+		if(studentsExpected.contains(student.getStudentID())) {studentsExpected.remove(student.getStudentID());}
 	}
 	
 	public void addStudentPresent(Student student) {
@@ -159,9 +146,7 @@ public class Classroom implements Serializable{
 	public void removeStudentsExpected(Student student) {
 		for(String studentID : studentsExpected) {
 			String studentIDCheck = student.getStudentID();
-			if(studentIDCheck.equals(studentID)) {
-				studentsExpected.remove(studentID);
-			}
+			if(studentIDCheck.equals(studentID)) {studentsExpected.remove(studentID);}
 		}
 	}
 	
@@ -201,9 +186,7 @@ public class Classroom implements Serializable{
 			Record record = student.getRecord();
 			Attendance attendance = record.getAttendance();
 			Map<String,Boolean> attendancePlan = attendance.getAttendancePlan();
-			if(attendancePlan.containsKey(day) && attendancePlan.get(day) == true) {
-				count++;
-			}
+			if(attendancePlan.containsKey(day) && attendancePlan.get(day) == true) {count++;}
 		}
 		return count;
 	}
@@ -321,9 +304,7 @@ public class Classroom implements Serializable{
 
 	@Override
 	public String toString() {
-		if(this.equals(null)) {
-			return "N/A";
-		}
+		if(this.equals(null)) {return "N/A";}
 		return this.getClassroomType();
 	}
 }

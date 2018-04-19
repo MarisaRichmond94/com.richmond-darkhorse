@@ -138,7 +138,24 @@ public interface SceneFormatter {
 	 * @param topPane - top pane (optional)
 	 * @param bottomPane - bottom pane (optional)
 	 */
-	public default void setBorderPaneWithCenterScrollPane(BorderPane borderPane,ScrollPane centerPane,Pane rightPane,Pane leftPane,Pane topPane,Pane bottomPane) {
+	public default void setBorderPaneCenterScroll(BorderPane borderPane,ScrollPane centerPane,Pane rightPane,Pane leftPane,Pane topPane,Pane bottomPane) {
+		if(centerPane != null) {borderPane.setCenter(centerPane);}
+		if(rightPane != null) {borderPane.setRight(rightPane);}
+		if(leftPane != null) {borderPane.setLeft(leftPane);}
+		if(topPane != null) {borderPane.setTop(topPane);}
+		if(bottomPane != null) {borderPane.setBottom(bottomPane);}
+	}
+	
+	/**
+	 * Sets the different components of the BorderPane layout: center, right, left, top, and bottom
+	 * @param borderPane - BorderPane
+	 * @param centerPane - center pane (optional)
+	 * @param rightPane - right pane (optional)
+	 * @param leftPane - left pane (optional)
+	 * @param topPane - top pane (optional)
+	 * @param bottomPane - bottom pane (optional)
+	 */
+	public default void setBorderPaneRightScroll(BorderPane borderPane,Pane centerPane,ScrollPane rightPane,Pane leftPane,Pane topPane,Pane bottomPane) {
 		if(centerPane != null) {borderPane.setCenter(centerPane);}
 		if(rightPane != null) {borderPane.setRight(rightPane);}
 		if(leftPane != null) {borderPane.setLeft(leftPane);}
@@ -203,16 +220,35 @@ public interface SceneFormatter {
 		return newTextField;
 	}
 	
+	/**
+	 * Creates a new button
+	 * @param text - what the button will say (optional)
+	 * @param imageString - image to be displayed on the button (optional)
+	 * @param fitHeight - fit height of the image (optional)
+	 * @param height - height of the button (optional)
+	 * @param width - width of the button (optional)
+	 * @return a button
+	 */
 	public default Button createButton(String text,String imageString,int fitHeight,int height,int width) {
-		Button newButton;
-		if(text == null) {newButton = new Button("",createImageWithFitHeight(imageString,fitHeight));}
-		else {newButton = new Button(text,createImageWithFitHeight(imageString,fitHeight));}
+		Button newButton = new Button();
+		if(text == null & imageString != null) {newButton = new Button("",createImageWithFitHeight(imageString,fitHeight));}
+		else if(imageString != null){newButton = new Button(text,createImageWithFitHeight(imageString,fitHeight));}
+		else if(text != null && imageString == null) {
+			newButton = new Button();
+			newButton.setText(text);
+		}
 		newButton.getStyleClass().add("button");
-		newButton.setPrefHeight(height);
-		newButton.setPrefWidth(width);
+		if(height != 0) { newButton.setPrefHeight(height); }
+		if(width != 0) { newButton.setPrefWidth(width); }
 		return newButton;
 	}
 	
+	/**
+	 * Creates a button without text
+	 * @param height - height of the button
+	 * @param width - width of the button
+	 * @return a button
+	 */
 	public default Button createButtonWithoutText(int height,int width) {
 		Button newButton = new Button();
 		newButton.getStyleClass().add("button");

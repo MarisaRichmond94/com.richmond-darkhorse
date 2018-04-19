@@ -21,11 +21,8 @@ public class CreateNewStudent implements Runnable{
 	
 	@Override
 	public void run() {
-		if(classroom != null) {
-			director.createNewStudent(firstName, lastName, birthDate, classroom, attendancePlan);
-		}else {
-			director.createNewStudentWithoutClassroom(firstName,lastName,birthDate,attendancePlan);
-		}
+		if(classroom != null) {director.createNewStudent(firstName, lastName, birthDate, classroom, attendancePlan);}
+		else {director.createNewStudentWithoutClassroom(firstName,lastName,birthDate,attendancePlan);}
 	}
 
 }

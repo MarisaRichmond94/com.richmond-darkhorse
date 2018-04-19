@@ -7,8 +7,7 @@ import java.util.Map;
 public class Document implements Serializable {
 
 	private static final long serialVersionUID = 8453756L;
-	protected String title;
-	protected String studentName, studentID, teacherID, documentID, centerID, formattedDate, stringDate, stringTime;
+	protected String title, studentName, studentID, teacherID, documentID, centerID, formattedDate, stringDate, stringTime;
 	protected Date date;
 	protected String fileName;
 	

@@ -5,11 +5,7 @@ import java.util.Map;
 public class StaffMember implements Account,Serializable{
 	
 	private static final long serialVersionUID = 8453756L;
-	protected String firstName;
-	protected String lastName;
-	protected String title;
-	protected String userID;
-	protected String centerID; 
+	protected String firstName, lastName, title, userID, centerID; 
 	protected Mailbox mailbox;
 	protected Credential credentials;
 	protected Contact contact;
@@ -32,9 +28,7 @@ public class StaffMember implements Account,Serializable{
 	public Center getCenter(String centerID) {
 		SpecialBeginnings sB = SpecialBeginnings.getInstance();
 		Map<String,Center> centers = sB.getCenters();
-		if(centers.containsKey(centerID)) {
-			return centers.get(centerID);
-		}
+		if(centers.containsKey(centerID)) {return centers.get(centerID);}
 		return null;
 	}
 	

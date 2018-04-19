@@ -15,9 +15,6 @@ public class ChangeScene implements Runnable{
 	@Override
 	public void run() {
 		stage.setScene(scene);
-		//stage.setMaximized(true);
-//		stage.setFullScreen(true);
-//		stage.setFullScreenExitHint("");
 	}
 	
 }

@@ -6,12 +6,7 @@ import java.util.List;
 public class EventCalendar implements Serializable{
 
 	private static final long serialVersionUID = 8453756L;
-	private List<Event> events;
-	private List<Event> mondayEvents = new ArrayList<Event>();
-	private List<Event> tuesdayEvents = new ArrayList<Event>();
-	private List<Event> wednesdayEvents = new ArrayList<Event>();
-	private List<Event> thursdayEvents = new ArrayList<Event>();
-	private List<Event> fridayEvents = new ArrayList<Event>();
+	private List<Event> events, mondayEvents = new ArrayList<Event>(), tuesdayEvents = new ArrayList<Event>(), wednesdayEvents = new ArrayList<Event>(), thursdayEvents = new ArrayList<Event>(), fridayEvents = new ArrayList<Event>();
 	
 	public EventCalendar() {
 		this.events = new ArrayList<Event>();

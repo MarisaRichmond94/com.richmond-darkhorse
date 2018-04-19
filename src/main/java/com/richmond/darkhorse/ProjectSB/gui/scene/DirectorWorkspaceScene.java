@@ -1,33 +1,27 @@
 package com.richmond.darkhorse.ProjectSB.gui.scene;
 import java.util.ArrayList;
+import java.util.Arrays;
+import javafx.scene.Node;
 import java.util.List;
 import java.util.Map;
-
-import com.richmond.darkhorse.ProjectSB.AccountManager;
 import com.richmond.darkhorse.ProjectSB.Admin;
 import com.richmond.darkhorse.ProjectSB.Center;
 import com.richmond.darkhorse.ProjectSB.Director;
-import com.richmond.darkhorse.ProjectSB.SpecialBeginnings;
 import com.richmond.darkhorse.ProjectSB.StaffMember;
 import com.richmond.darkhorse.ProjectSB.gui.component.AddDirector;
 import com.richmond.darkhorse.ProjectSB.gui.component.AdminLayout;
-import com.richmond.darkhorse.ProjectSB.gui.component.ImageButton;
 import com.richmond.darkhorse.ProjectSB.gui.component.ModifyDirector;
 import com.richmond.darkhorse.ProjectSB.middleman.ChangeScene;
 import javafx.scene.Scene;
-import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import javafx.application.Platform;
-import javafx.geometry.HPos;
 import javafx.scene.control.Button;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.layout.ColumnConstraints;
 
 public class DirectorWorkspaceScene extends Scene implements AdminLayout{
 	
@@ -42,153 +36,62 @@ public class DirectorWorkspaceScene extends Scene implements AdminLayout{
 	
 	public DirectorWorkspaceScene(Stage stage,BorderPane layout,Scene nextScene,Admin admin) {
 		super(layout);
-		
-		//Top Bar - Logo
-		HBox topBar = new HBox();
-		ImageView logoViewer = new ImageView();
-		Image logo = new Image("images/logo.png");
-		logoViewer.setImage(logo);
-		logoViewer.setPreserveRatio(true);
-		logoViewer.setFitHeight(250);
-		
-		//Top Bar - Home Button
-		ImageView homeButtonViewer = new ImageView();
-		Image hB = new Image("images/home.png");
-		homeButtonViewer.setImage(hB);
-		homeButtonViewer.setPreserveRatio(true);
-		homeButtonViewer.setFitHeight(100);
-		ImageButton homeButton = new ImageButton(homeButtonViewer);
-		homeButton.setOnAction(e -> Platform.runLater(new ChangeScene(stage,new AdminHome(stage,null,admin))));
-		
-		//Top Bar - Logout Button
-		ImageView logoutViewer = new ImageView();
-		Image lB = new Image("images/logout.png");
-		logoutViewer.setImage(lB);
-		logoutViewer.setPreserveRatio(true);
-		logoutViewer.setFitHeight(100);
-		ImageButton logoutButton = new ImageButton(logoutViewer);
-		logoutButton.setOnAction(e -> {
-			SpecialBeginnings sB = SpecialBeginnings.getInstance();
-			sB.saveCenters();
-			sB.saveStaffMembers();
-			Map<String,Center> centers = sB.getCenters();
-			for(Center center : centers.values()) {
-				center.saveClassrooms();
-			}
-			AccountManager.getInstance().saveUserIDToAccount();
-			Platform.runLater(new ChangeScene(stage,new LoginScene(stage,null)));
-		});
-		
-		topBar.getChildren().addAll(homeButton,logoViewer,logoutButton);
-		topBar.getStyleClass().add("topbar");
-		
-		//Bottom Bar 
-		HBox bottomBar = new HBox();
-		Label signature = new Label("Created by Marisa Richmond");
-		signature.getStyleClass().add("text");
-		bottomBar.getChildren().add(signature);
-		bottomBar.getStyleClass().add("bottombar");
-		
-		//Side Bar - Center Workspace
-		VBox leftSideBar = new VBox();
-		ImageView centerViewer = new ImageView();
-		Image center = new Image("images/center.png");
-		centerViewer.setImage(center);
-		centerViewer.setPreserveRatio(true);
-		centerViewer.setFitHeight(100);
-		ImageButton centerButton = new ImageButton(centerViewer);
-		centerButton.setOnAction(e -> Platform.runLater(new ChangeScene(stage,new CenterWorkspaceScene(stage,null,admin))));
-		Label addCenter = new Label("Centers");
-		addCenter.getStyleClass().add("label");
-		
-		//Side Bar - Director Workspace
-		ImageView directorViewer = new ImageView();
-		Image director = new Image("images/director.png");
-		directorViewer.setImage(director);
-		directorViewer.setPreserveRatio(true);
-		directorViewer.setFitHeight(100);
-		ImageButton directorButton = new ImageButton(directorViewer);
-		directorButton.setOnAction(e -> Platform.runLater(new ChangeScene(stage,new DirectorWorkspaceScene(stage,null,admin))));
-		Label addDirector = new Label("Directors");
-		addDirector.getStyleClass().add("label");
-		
-		//Side Bar - Teacher Workspace
-		ImageView teacherViewer = new ImageView();
-		Image teacher = new Image("images/teacher.png");
-		teacherViewer.setImage(teacher);
-		teacherViewer.setPreserveRatio(true);
-		teacherViewer.setFitHeight(100);
-		ImageButton teacherButton = new ImageButton(teacherViewer);
-		teacherButton.setOnAction(e -> Platform.runLater(new ChangeScene(stage,new TeacherWorkspaceScene(stage,null,admin))));
-		Label addTeacher = new Label("Teachers");
-		addTeacher.getStyleClass().add("label");
-		
-		//Side Bar - Classroom Workspace
-		ImageView classroomViewer = new ImageView();
-		Image classroom = new Image("images/classroom.png");
-		classroomViewer.setImage(classroom);
-		classroomViewer.setPreserveRatio(true);
-		classroomViewer.setFitHeight(100);
-		ImageButton classroomButton = new ImageButton(classroomViewer);
-		classroomButton.setOnAction(e -> Platform.runLater(new ChangeScene(stage,new ClassroomWorkspaceScene(stage,null,admin))));
-		Label addClassroom = new Label("Classrooms");
-		addClassroom.getStyleClass().add("label");
-		
-		leftSideBar.getChildren().addAll(centerButton,addCenter,directorButton,addDirector,teacherButton,addTeacher,classroomButton,addClassroom);
-		leftSideBar.getStyleClass().add("sidebar");
-		
-		//Center Pane 
-		GridPane centerPane = new GridPane();
-		centerPane.setVgap(10);
-		centerPane.setHgap(10);
-		ColumnConstraints columnOne = new ColumnConstraints();
-		columnOne.setPercentWidth(24.5);
-	    ColumnConstraints columnTwo = new ColumnConstraints();
-	    columnTwo.setPercentWidth(24.5);
-	    ColumnConstraints columnThree = new ColumnConstraints();
-	    columnThree.setPercentWidth(24.5);
-	    ColumnConstraints columnFour = new ColumnConstraints();
-	    columnFour.setPercentWidth(24.5);
-	    ColumnConstraints columnFive = new ColumnConstraints();
-	    columnFive.setPercentWidth(2);
-	    centerPane.getColumnConstraints().addAll(columnOne,columnTwo,columnThree,columnFour,columnFive);
-		centerPane.getStyleClass().add("gridpane");
-		
-		//Center Pane - Title
-		ImageView workspaceViewer = new ImageView();
-		Image workspace = new Image("images/workspace.png");
-		workspaceViewer.setImage(workspace);
-		workspaceViewer.setPreserveRatio(true);
-		workspaceViewer.setFitHeight(150);
-		
-		//Center Pane - Create Director Button
-		ImageView iconViewer = new ImageView();
-		Image directorIcon = new Image("images/adddirector.png");
-		iconViewer.setImage(directorIcon);
-		iconViewer.setPreserveRatio(true);
-		iconViewer.setFitHeight(200);
-		Button addDirectorButton = new Button("",iconViewer);
-		addDirectorButton.getStyleClass().add("button");
-		addDirectorButton.setPrefHeight(300);
-		addDirectorButton.setPrefWidth(400);
+		HBox topPane = buildTopPane(stage,admin);
+		HBox bottomPane = buildBottomPane();
+		VBox leftPane = buildLeftPane(stage,admin);
+		ScrollPane scrollPane = new ScrollPane(buildCenterPane(stage,admin));
+		scrollPane.setFitToWidth(true);
+		BorderPane adminHomeLayout = layout;
+		setBorderPaneCenterScroll(adminHomeLayout,scrollPane,null,leftPane,topPane,bottomPane);
+		adminHomeLayout.getStylesheets().add("css/admin.css");
+	}
+	
+	/**
+	 * Builds the central GridPane for the overall BorderPane layout
+	 * @param stage - the current stage
+	 * @param admin - the current user (admininstrator)
+	 * @return a fully populated GridPane
+	 */
+	private GridPane buildCenterPane(Stage stage,Admin admin) {
+		GridPane gridpane = new GridPane();
+		setConstraints(gridpane,4,0,15,15,"gridpane");
+		ImageView workspaceViewer = createImageWithFitHeight("images/workspace.png",150);
+		Button addDirectorButton = createButton(null,"images/director.png",200,300,400);
 		addDirectorButton.setOnAction(e -> {
 			newAddDirector.display();
 			Platform.runLater(new ChangeScene(stage,new DirectorWorkspaceScene(stage,null,admin)));
 		});
-		
-		//Center Pane - Director Buttons
+		List<Node> nodes = new ArrayList<>();
+	    nodes.addAll(Arrays.asList(workspaceViewer,addDirectorButton));
+	    placeNodes(gridpane,nodes);
+		populateDirectors(gridpane,stage,admin);
+		return gridpane;
+	}
+	
+	/**
+	 * Places all of the nodes in the list in the given GridPane
+	 * @param gridpane - GridPane layout
+	 * @param nodes - a list of nodes to be added to the GridPane
+	 */
+	public void placeNodes(GridPane gridpane,List<Node> nodes) {
+		placeNodeSpan(gridpane,nodes.get(0),1,0,2,1,"center",null);
+		placeNodeSpan(gridpane,nodes.get(1),0,1,2,1,"center",null);
+	}
+	
+	/**
+	 * populates any @{Director}s in the system
+	 * @param gridpane - the GridPane being populated
+	 * @param stage - the current stage
+	 * @param admin - the current user (administrator)
+	 */
+	private void populateDirectors(GridPane gridpane,Stage stage,Admin admin) {
 		Map<String,StaffMember> staffMembers = admin.getStaffMembers();
-		List<Director> directors = populateDirectors(staffMembers);
+		List<Director> directors = pullDirectors(staffMembers);
 		for(Director theDirector : directors) {
-			String firstName = theDirector.getFirstName();
-			String lastName = theDirector.getLastName();
 			Center theCenter = theDirector.getCenter(theDirector.getCenterID());
-			String centerString = String.valueOf(theCenter);
-			Button newButton = new Button();
-			newButton.setText(firstName + " " + lastName + "\n" + centerString);
-			newButton.getStyleClass().add("button");
-			newButton.setPrefHeight(300);
-			newButton.setPrefWidth(400);
+			String firstName = theDirector.getFirstName(), lastName = theDirector.getLastName(), centerString = String.valueOf(theCenter);
+			String buttonText = "" + firstName + " " + lastName + "\n" + centerString + "";
+			Button newButton = createButton(buttonText,null,0,300,400);
 			newButton.setOnAction(e -> {
 				ModifyDirector modifyDirector = new ModifyDirector(admin,(Director)theDirector);
 				modifyDirector.display();
@@ -197,75 +100,62 @@ public class DirectorWorkspaceScene extends Scene implements AdminLayout{
 			});
 			int row = 0;
 			boolean doesNumberEndInZero = doesNumberEndInZero(rowIndex);
-			if(doesNumberEndInZero == false) {
-				row = (int) Math.round(rowIndex);
-			}else {
-				row = (int)rowIndex;
-			}
-			determinePosition(centerPane,newButton,row,column);
+			if(doesNumberEndInZero == false) {row = (int) Math.round(rowIndex);}
+			else {row = (int)rowIndex;}
+			determinePosition(gridpane,newButton,row,column);
 			rowIndex = rowIndex+0.5;
 			column++;	
 		}
-		
-		centerPane.add(workspaceViewer, 1, 0);
-		GridPane.setConstraints(workspaceViewer,1,0,2,1);
-		centerPane.add(addDirectorButton, 0, 1);
-		GridPane.setConstraints(addDirectorButton,0,1,2,1);
-		GridPane.setHalignment(workspaceViewer,HPos.CENTER);
-		GridPane.setHalignment(addDirectorButton,HPos.CENTER);
-		
-		//Overall border pane layout
-		ScrollPane scrollPane = new ScrollPane(centerPane);
-		scrollPane.setFitToWidth(true);
-		BorderPane adminHomeLayout = layout;
-		adminHomeLayout.setTop(topBar);
-		adminHomeLayout.setBottom(bottomBar);
-		adminHomeLayout.setLeft(leftSideBar);
-		adminHomeLayout.setCenter(scrollPane);
-		adminHomeLayout.getStylesheets().add("css/admin.css");
 	}
 	
-	public void determinePosition(GridPane gridpane,Button button,int row,int column) {
+	/**
+	 * Determines which position to place the new @{Center} button
+	 * @param gridpane - GridPane
+	 * @param button - button representing a @{Center}
+	 * @param row 
+	 * @param column
+	 */
+	private void determinePosition(GridPane gridpane,Button button,int row,int column) {
 		int columnIndex;
-		if(column == 0) {
-			gridpane.add(button, 2, 1);
-			GridPane.setConstraints(button, 2, 1, 2, 1);
-			GridPane.setHalignment(button, HPos.CENTER);
-		}else {
+		if(column == 0) {placeNodeSpan(gridpane,button,2,1,2,1,"center",null);}
+		else {
 			boolean isIndexEven = isIntEven(column);
-			if(isIndexEven == true) {
-				columnIndex = 2;
-			}else {
-				columnIndex = 0;
-			}
-			gridpane.add(button, columnIndex, row);
-			GridPane.setConstraints(button, columnIndex, row, 2, 1);
-			GridPane.setHalignment(button, HPos.CENTER);
-			
+			if(isIndexEven == true) {columnIndex = 2;
+			}else {columnIndex = 0;}
+			placeNodeSpan(gridpane,button,columnIndex,row,2,1,"center",null);
 		}
 	}
 	
-	public boolean isIntEven(int n) {
-		if( n % 2 == 0) {
-			return true;
-		}
+	/**
+	 * Determines whether or not the given number is even or odd
+	 * @param n - the number being analyzed
+	 * @return true if the number (n) is even and false if the number (n) is odd
+	 */
+	private boolean isIntEven(int n) {
+		if( n % 2 == 0) { return true; }
 		return false;
 	}
 	
-	public boolean doesNumberEndInZero(double rowIndex) {
-		if (Math.abs(rowIndex - Math.rint(rowIndex)) == 0.5) {
-			return false;
-		}
+	/**
+	 * Determines whether or not the given double ends in 0
+	 * @param rowIndex - double representing the row number
+	 * @return true if the double ends in 0 and false if the number does not end in 0
+	 */
+	private boolean doesNumberEndInZero(double rowIndex) {
+		if (Math.abs(rowIndex - Math.rint(rowIndex)) == 0.5) { return false; }
 		return true;
 	}
 	
-	public List<Director> populateDirectors(Map<String,StaffMember> staffMembers){
+	/**
+	 * Goes through a list of all of the @{StaffMember}s in the system and pulls out any @{Director}s
+	 * @param staffMembers - a list of all @{StaffMember}s in the system
+	 * @return a list of all @{Director}s in the system
+	 */
+	private List<Director> pullDirectors(Map<String,StaffMember> staffMembers){
 		List<Director> directors = new ArrayList<Director>();
 		for(StaffMember staffMember: staffMembers.values()) {
 			String title = staffMember.getTitle();
-			if(title.equals("Director")) {
-				directors.add((Director) staffMember);
-			}
+			if(title.equals("Director")) {directors.add((Director) staffMember);}
 		}
 		return directors;
 	}

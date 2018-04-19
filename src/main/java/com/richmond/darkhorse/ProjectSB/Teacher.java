@@ -5,8 +5,7 @@ import java.util.Map;
 public class Teacher extends StaffMember implements Serializable {
 
 	private static final long serialVersionUID = 8453756L;
-	private String classroomID;
-	private String teacherID;
+	private String classroomID, teacherID;
 
 	//Constructor for a teacher WITHOUT a {@link Classroom}
 	public Teacher(String firstName, String lastName, Center center) {
@@ -51,9 +50,7 @@ public class Teacher extends StaffMember implements Serializable {
 	public Classroom getClassroom(String classroomID) {
 		Center center = this.getCenter(centerID);
 		Map<String,Classroom> classrooms = center.getClassrooms();
-		if(classrooms.containsKey(classroomID)) {
-			return classrooms.get(classroomID);
-		}
+		if(classrooms.containsKey(classroomID)) {return classrooms.get(classroomID);}
 		return null;
 	}
 	
@@ -76,7 +73,7 @@ public class Teacher extends StaffMember implements Serializable {
 
 	@Override
 	public String toString() {
-		return firstName + " " + lastName + ", employee #" + userID;
+		return firstName + " " + lastName;
 	}
 
 }

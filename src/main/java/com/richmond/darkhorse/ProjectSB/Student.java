@@ -61,9 +61,7 @@ public class Student implements Serializable{
 	
 	public Teacher getTeacher(String teacherID) {
 		Map<String,StaffMember> staffMembers = SpecialBeginnings.getInstance().getStaffMembers();
-		if(staffMembers.containsKey(teacherID) && staffMembers.get(teacherID).getTitle().equals("Teacher")) {
-			return (Teacher) staffMembers.get(teacherID);
-		}
+		if(staffMembers.containsKey(teacherID) && staffMembers.get(teacherID).getTitle().equals("Teacher")) {return (Teacher) staffMembers.get(teacherID);}
 		return null;
 	}
 	
@@ -72,9 +70,7 @@ public class Student implements Serializable{
 		Map<String,Center> centers = sB.getCenters();
 		for(Center center : centers.values()) {
 			Map<String,Classroom> classrooms = center.getClassrooms();
-			if(classrooms.containsKey(this.getClassroomID())) {
-				return classrooms.get(this.getClassroomID());
-			}
+			if(classrooms.containsKey(this.getClassroomID())) {return classrooms.get(this.getClassroomID());}
 		}
 		return null;
 	}

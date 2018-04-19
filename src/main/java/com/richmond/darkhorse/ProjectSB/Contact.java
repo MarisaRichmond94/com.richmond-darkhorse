@@ -5,13 +5,7 @@ import java.io.Serializable;
 public class Contact implements Serializable{
 
 	private static final long serialVersionUID = 8453756L;
-	private String iD;
-	private String firstName;
-	private String lastName;
-	private String relationshipToStudent;
-	private String cellNumber;
-	private String workNumber;
-	private String email;
+	private String iD, firstName, lastName, relationshipToStudent, cellNumber, workNumber, email;
 	
 	public Contact(String studentID,String firstName,String lastName,String relationship,String cellNumber,String workNumber,String email) {
 		this.iD = studentID;

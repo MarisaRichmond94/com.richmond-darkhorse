@@ -4,16 +4,15 @@ import java.util.Arrays;
 import java.util.List;
 import com.richmond.darkhorse.ProjectSB.Admin;
 import com.richmond.darkhorse.ProjectSB.middleman.CreateNewCenter;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.scene.control.TextField;
 import javafx.beans.binding.*;
+import javafx.scene.Node;
 
 public class AddCenter implements AdminLayout {
 	 
@@ -25,12 +24,8 @@ public class AddCenter implements AdminLayout {
 	
 	public void display() {
 		Stage stage = new Stage();
-		stage.initModality(Modality.APPLICATION_MODAL);
-		stage.setTitle("Create New Center");
 		GridPane addCenterLayout = buildGridPane(stage);
-		Scene createCenterScene = new Scene(addCenterLayout);
-		stage.setScene(createCenterScene);
-		stage.showAndWait();
+		buildPopUp(stage,addCenterLayout,"Create New Center");
 	}
 	
 	/**
@@ -75,13 +70,24 @@ public class AddCenter implements AdminLayout {
 	    Button cancelButton = new Button("Cancel");
 	    cancelButton.getStyleClass().add("button");
 	    cancelButton.setOnAction(e -> stage.close());
-	    placeNode(gridpane,centerViewer,0,0,"center",null);
-	    placeNodeSpan(gridpane,title,1,0,2,1,"center",null);
+	    List<Node> nodes = new ArrayList<>();
+	    nodes.addAll(Arrays.asList(centerViewer,title,createCenterButton,cancelButton));
+	    placeNodes(gridpane,nodes);
 	    populateGridPane(gridpane,labels,textFields,1);
-	    placeNode(gridpane,createCenterButton,1,8,"center",null);
-	    placeNode(gridpane,cancelButton,2,8,"center",null);
 	    gridpane.getStylesheets().add("css/admin.css");
 	    return gridpane;
+	}
+	
+	/**
+	 * Places all of the nodes in the list in the given GridPane
+	 * @param gridpane - GridPane layout
+	 * @param nodes - a list of nodes to be added to the GridPane
+	 */
+	public void placeNodes(GridPane gridpane,List<Node> nodes) {
+		placeNode(gridpane,nodes.get(0),0,0,"center",null);
+	    placeNodeSpan(gridpane,nodes.get(1),1,0,2,1,"center",null);
+	    placeNode(gridpane,nodes.get(2),1,8,"center",null);
+	    placeNode(gridpane,nodes.get(3),2,8,"center",null);
 	}
 	
 	/**

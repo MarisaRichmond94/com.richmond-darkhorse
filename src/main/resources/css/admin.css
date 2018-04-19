@@ -11,7 +11,7 @@
 	-fx-background-color: #FFFFFF;
 }
 
-.topbar{
+.toppane{
 	-fx-background-color: LIGHTSALMON;
 	-fx-background-insets: 0,0,0,0;
 	-fx-padding: 10,10,10,10;
@@ -19,14 +19,14 @@
 	-fx-alignment: center;
 }
 
-.bottombar{
+.bottompane{
 	-fx-background-color: LIGHTSALMON;
 	-fx-alignment: center;
 	-fx-background-insets: 0,0,0,0;
 	-fx-padding: 10,10,10,10;
 }
 
-.sidebar{
+.leftpane{
 	-fx-background-color: #CCCCCC;
 	-fx-spacing: 10;	
 	-fx-background-insets: 0,0,0,0;
@@ -65,6 +65,14 @@
 .textfield{
 	-fx-font: 25px Georgia;	
 	-fx-alignment: center;
+}
+
+.choice-box {
+    -fx-pref-width: 650;
+}
+
+.choice-box .context-menu {
+    -fx-pref-width: 650;
 }
 
 @charset "UTF-8";

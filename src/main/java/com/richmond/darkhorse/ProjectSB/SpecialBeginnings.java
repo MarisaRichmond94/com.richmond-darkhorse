@@ -46,9 +46,7 @@ public class SpecialBeginnings {
 				output.writeObject(centers);
 				output.flush();
 				output.close();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+			} catch (IOException e) {e.printStackTrace();}
     }
     
     public void saveStaffMembers() {
@@ -57,9 +55,7 @@ public class SpecialBeginnings {
 				output.writeObject(staffMembers);
 				output.flush();
 				output.close();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+			} catch (IOException e) {e.printStackTrace();}
     }  
 
     //Load methods
@@ -71,13 +67,9 @@ public class SpecialBeginnings {
 					Map<String,Center> centerList = (Map<String,Center>)objectInput.readObject();
 					centers = centerList;
 			        objectInput.close();
-				} catch (FileNotFoundException e) {
-					e.printStackTrace();
-				} catch (IOException e) {
-					e.printStackTrace();
-				} catch (ClassNotFoundException e) {
-					e.printStackTrace();
-				}
+				} catch (FileNotFoundException e) {e.printStackTrace();
+				} catch (IOException e) {e.printStackTrace();
+				} catch (ClassNotFoundException e) {e.printStackTrace();}
 	    	}
     }
     
@@ -88,29 +80,21 @@ public class SpecialBeginnings {
 				Map<String,StaffMember> staffList = (Map<String,StaffMember>)objectInput.readObject();
 				staffMembers = staffList;
 		        objectInput.close();
-			} catch (FileNotFoundException e) {
-				e.printStackTrace();
-			} catch (IOException e) {
-				e.printStackTrace();
-			} catch (ClassNotFoundException e) {
-				e.printStackTrace();
-			}
+			} catch (FileNotFoundException e) {e.printStackTrace();
+			} catch (IOException e) {e.printStackTrace();
+			} catch (ClassNotFoundException e) {e.printStackTrace();}
     	}
     
     //Remove methods
     public void removeCenter(String centerID) {
-    		if(centers.containsKey(centerID)) {
-    			centers.remove(centerID);
-    		}
+    		if(centers.containsKey(centerID)) {centers.remove(centerID);}
     }
     
     public void removeDirector(Director director) {
 	    	Center center = director.getCenter(director.getCenterID());
 	    	center.removeCenterDirector();
     		String userID = director.getUserID();
-    		if(staffMembers.containsKey(userID)) {
-    			staffMembers.remove(userID);
-    		}
+    		if(staffMembers.containsKey(userID)) {staffMembers.remove(userID);}
     }
     
     //Standard getters 
