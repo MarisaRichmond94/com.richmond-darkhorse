@@ -56,13 +56,12 @@ public class DirectorWorkspaceScene extends Scene implements AdminLayout{
 		GridPane gridpane = new GridPane();
 		setConstraints(gridpane,4,0,15,15,"gridpane");
 		ImageView workspaceViewer = createImageWithFitHeight("images/workspace.png",150);
-		Button addDirectorButton = createButton(null,"images/director.png",200,300,400);
+		Button addDirectorButton = createButton(null,"images/director.png",200,300,500);
 		addDirectorButton.setOnAction(e -> {
 			newAddDirector.display();
 			Platform.runLater(new ChangeScene(stage,new DirectorWorkspaceScene(stage,null,admin)));
 		});
-		List<Node> nodes = new ArrayList<>();
-	    nodes.addAll(Arrays.asList(workspaceViewer,addDirectorButton));
+		List<Node> nodes = Arrays.asList(workspaceViewer,addDirectorButton);
 	    placeNodes(gridpane,nodes);
 		populateDirectors(gridpane,stage,admin);
 		return gridpane;
@@ -91,7 +90,7 @@ public class DirectorWorkspaceScene extends Scene implements AdminLayout{
 			Center theCenter = theDirector.getCenter(theDirector.getCenterID());
 			String firstName = theDirector.getFirstName(), lastName = theDirector.getLastName(), centerString = String.valueOf(theCenter);
 			String buttonText = "" + firstName + " " + lastName + "\n" + centerString + "";
-			Button newButton = createButton(buttonText,null,0,300,400);
+			Button newButton = createButton(buttonText,null,0,300,500);
 			newButton.setOnAction(e -> {
 				ModifyDirector modifyDirector = new ModifyDirector(admin,(Director)theDirector);
 				modifyDirector.display();
@@ -106,44 +105,6 @@ public class DirectorWorkspaceScene extends Scene implements AdminLayout{
 			rowIndex = rowIndex+0.5;
 			column++;	
 		}
-	}
-	
-	/**
-	 * Determines which position to place the new @{Center} button
-	 * @param gridpane - GridPane
-	 * @param button - button representing a @{Center}
-	 * @param row 
-	 * @param column
-	 */
-	private void determinePosition(GridPane gridpane,Button button,int row,int column) {
-		int columnIndex;
-		if(column == 0) {placeNodeSpan(gridpane,button,2,1,2,1,"center",null);}
-		else {
-			boolean isIndexEven = isIntEven(column);
-			if(isIndexEven == true) {columnIndex = 2;
-			}else {columnIndex = 0;}
-			placeNodeSpan(gridpane,button,columnIndex,row,2,1,"center",null);
-		}
-	}
-	
-	/**
-	 * Determines whether or not the given number is even or odd
-	 * @param n - the number being analyzed
-	 * @return true if the number (n) is even and false if the number (n) is odd
-	 */
-	private boolean isIntEven(int n) {
-		if( n % 2 == 0) { return true; }
-		return false;
-	}
-	
-	/**
-	 * Determines whether or not the given double ends in 0
-	 * @param rowIndex - double representing the row number
-	 * @return true if the double ends in 0 and false if the number does not end in 0
-	 */
-	private boolean doesNumberEndInZero(double rowIndex) {
-		if (Math.abs(rowIndex - Math.rint(rowIndex)) == 0.5) { return false; }
-		return true;
 	}
 	
 	/**

@@ -7,7 +7,6 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 import javafx.scene.control.TextField;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -76,8 +75,7 @@ public class AddDirector implements AdminLayout{
 	    Button cancelButton = new Button("Cancel");
 	    cancelButton.getStyleClass().add("button");
 	    cancelButton.setOnAction(e -> stage.close());
-	    List<Node> nodes = new ArrayList<>();
-	    nodes.addAll(Arrays.asList(directorViewer,title,directorFirstName,firstNameField,directorLastName,lastNameField,center,centerBox,createDirectorButton,cancelButton));
+	    List<Node> nodes = Arrays.asList(directorViewer,title,directorFirstName,firstNameField,directorLastName,lastNameField,center,centerBox,createDirectorButton,cancelButton);
 	    placeNodes(gridpane,nodes);
 	    gridpane.getStylesheets().add("css/admin.css");
 	    return gridpane;

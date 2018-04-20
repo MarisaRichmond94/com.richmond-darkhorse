@@ -1,9 +1,5 @@
-DIRECTOR
-(Components)
-AddContact
 AddEvent
 AddRemovePane
-AddStudent
 AddStudentPane
 AlertBox
 BehaviorReportPane
@@ -12,8 +8,6 @@ DailySheetPane
 Description
 IncidentReportPane
 ModifyClassSizePane
-ModifyContact
-ModifyPlanPane
 ModifySchedules
 RemoveStudentPane
 TeacherInfoPane
@@ -25,16 +19,11 @@ ViewIncidentReport
 ViewReportPane
 ViewSelectedBehaviorReport
 ViewSelectedIncidentReport
-(Scenes)
 DirectorClassroomWorkspace
 DirectorMailbox
-DirectorStudentWorkspace
 ModifyBehaviorReports
 ModifyClassroomSetup
 ModifyIncidentReports
-ModifyStudentInfo
-
-TEACHER
 TeacherHome
 TeacherDashboard
 TeacherReportWorkspace

@@ -1,12 +1,15 @@
 package com.richmond.darkhorse.ProjectSB.gui.component;
 import java.util.ArrayList;
+import javafx.scene.control.CheckBox;
 import java.util.List;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.RowConstraints;
+import javafx.scene.layout.VBox;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.geometry.HPos;
+import javafx.geometry.Pos;
 import javafx.geometry.VPos;
 import javafx.scene.Node;
 import javafx.scene.layout.Pane;
@@ -14,6 +17,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ScrollPane;
 
 public interface SceneFormatter {
@@ -165,6 +169,19 @@ public interface SceneFormatter {
 	
 	//COMPONENT CREATION TOOLS
 	/**
+	 * Builds a button with a label beneath it
+	 * @param button - an ImageButton
+	 * @param label - the desired label for the button
+	 * @return a centered VBox with the button and the label 
+	 */
+	public default VBox buildButtonWithLabel(ImageButton button,Label label) {
+		VBox labeledButton = new VBox();
+		labeledButton.setAlignment(Pos.CENTER);
+		labeledButton.getChildren().addAll(button,label);
+		return labeledButton;
+	}
+	
+	/**
 	 * Creates an Image and puts it in an ImageView
 	 * @param imageString - the name of the image file 
 	 * @return an ImageView with the desired Image
@@ -243,6 +260,15 @@ public interface SceneFormatter {
 		return newButton;
 	}
 	
+	public default ToggleButton createToggleButton(String text,boolean isSelected,int maxHeight,int maxWidth,String cssTag) {
+		ToggleButton toggleButton = new ToggleButton(text);
+		toggleButton.setSelected(isSelected);
+		if(maxHeight != 0) {toggleButton.setMaxHeight(maxHeight);}
+		if(maxWidth != 0) {toggleButton.setMaxWidth(maxWidth);}
+		if(cssTag != null) {toggleButton.getStyleClass().add(cssTag);}
+		return toggleButton;
+	}
+	
 	/**
 	 * Creates a button without text
 	 * @param height - height of the button
@@ -255,6 +281,87 @@ public interface SceneFormatter {
 		newButton.setPrefHeight(height);
 		newButton.setPrefWidth(width);
 		return newButton;
+	}
+	
+	/**
+	 * Creates a List of labels
+	 * @param labelNames - the text for the labels
+	 * @param cssTag - the CSS tag for each label
+	 * @return a list of labels 
+	 */
+	public default List<Label> populateLabels(List<String> labelNames,String cssTag){
+		List<Label> labels = new ArrayList<>();
+		for(String labelName : labelNames) {
+			Label newLabel = createLabel(labelName,cssTag);
+			labels.add(newLabel);
+		}
+		return labels;
+	}
+	
+	/**
+	 * Creates a list of text fields
+	 * @param textFieldPrompts - the prompt text to go into the text field
+	 * @param cssTag - the CSS tag for each text field
+	 * @param maxWidth - the desired width of the text field
+	 * @return a list of text fields
+	 */
+	public default List<TextField> populateTextFields(List<String> textFieldPrompts,String cssTag,int maxWidth){
+		List<TextField> textFields = new ArrayList<>();
+		for(String textFieldPrompt : textFieldPrompts) {
+			TextField newTextField = createTextField(textFieldPrompt,cssTag,maxWidth);
+			textFields.add(newTextField);
+		}
+		return textFields;
+	}
+	
+	/**
+	 * Builds a CheckBox
+	 * @param text - String of text to be displayed beside the CheckBox
+	 * @param cssTag 
+	 * @return CheckBox
+	 */
+	public default CheckBox buildCheckBox(String text,String cssTag) {
+		CheckBox checkBox = new CheckBox(text);
+	    checkBox.getStyleClass().add("checkbox");
+	    return checkBox;
+	}
+	
+	/**
+	 * Determines which position to place the new @{Center} button
+	 * @param gridpane - GridPane
+	 * @param button - button representing a @{Center}
+	 * @param row 
+	 * @param column
+	 */
+	public default void determinePosition(GridPane gridpane,Button button,int row,int column) {
+		int columnIndex;
+		if(column == 0) {placeNodeSpan(gridpane,button,2,1,2,1,"center",null);}
+		else {
+			boolean isIndexEven = isIntEven(column);
+			if(isIndexEven == true) {columnIndex = 2;
+			}else {columnIndex = 0;}
+			placeNodeSpan(gridpane,button,columnIndex,row,2,1,"center",null);
+		}
+	}
+	
+	/**
+	 * Determines whether or not the given number is even or odd
+	 * @param n - the number being analyzed
+	 * @return true if the number (n) is even and false if the number (n) is odd
+	 */
+	public default boolean isIntEven(int n) {
+		if( n % 2 == 0) { return true; }
+		return false;
+	}
+	
+	/**
+	 * Determines whether or not the given double ends in 0
+	 * @param rowIndex - double representing the row number
+	 * @return true if the double ends in 0 and false if the number does not end in 0
+	 */
+	public default boolean doesNumberEndInZero(double rowIndex) {
+		if (Math.abs(rowIndex - Math.rint(rowIndex)) == 0.5) { return false; }
+		return true;
 	}
 	
 }

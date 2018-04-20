@@ -1,5 +1,4 @@
 package com.richmond.darkhorse.ProjectSB.gui.component;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import com.richmond.darkhorse.ProjectSB.Admin;
@@ -46,11 +45,9 @@ public class ModifyCenter implements AdminLayout{
 		setConstraints(gridpane,3,0,10,10,"modulargridpane");
 		ImageView centerViewer = createImageWithFitHeight("images/center.png",200);
 		Label title = createLabel("Modify Center","title");
-		List<String> labelNames = new ArrayList<>();
-		labelNames.addAll(Arrays.asList("Center name:","Abbreviated Name:","Name on license:","License number:","Address:","City:","County:"));
+		List<String> labelNames = Arrays.asList("Center name:","Abbreviated Name:","Name on license:","License number:","Address:","City:","County:");
 		List<Label> labels = populateLabels(labelNames,"label");
-		List<String> textFieldPrompts = new ArrayList<>();
-		textFieldPrompts.addAll(Arrays.asList(center.getCenterName(),center.getAbbreviatedName(),center.getLicenseName(),center.getLicenseNumber(),center.getAddress(),center.getCity(),center.getCounty()));
+		List<String> textFieldPrompts = Arrays.asList(center.getCenterName(),center.getAbbreviatedName(),center.getLicenseName(),center.getLicenseNumber(),center.getAddress(),center.getCity(),center.getCounty());
 		List<TextField> textFields = populateTextFields(textFieldPrompts,"textfield",0);
 		ImageButton writeButton = new ImageButton(createImageWithFitHeight("images/write.png",100));
 	    writeButton.setOnAction(e -> write(stage,textFields));
@@ -69,8 +66,7 @@ public class ModifyCenter implements AdminLayout{
 	    Button cancel = new Button("cancel");
 	    cancel.setOnAction(e -> stage.close());
 	    cancel.getStyleClass().add("button");
-	    List<Node> nodes = new ArrayList<>();
-	    nodes.addAll(Arrays.asList(centerViewer,title,editButton,writeButton,trashButton,editLabel,writeLabel,trashLabel,cancel));
+	    List<Node> nodes = Arrays.asList(centerViewer,title,editButton,writeButton,trashButton,editLabel,writeLabel,trashLabel,cancel);
 	    placeNodes(gridpane,nodes);
 	    populateGridPane(gridpane,labels,textFields,1);
 	    gridpane.getStylesheets().add("css/admin.css");

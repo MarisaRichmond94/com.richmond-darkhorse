@@ -1,5 +1,4 @@
 package com.richmond.darkhorse.ProjectSB.gui.component;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -74,16 +73,14 @@ public class ModifyDirector implements AdminLayout{
 		centerBox.setDisable(true);
 		centerBox.getStyleClass().add("choice-box");
 		ImageButton writeButton = new ImageButton(createImageWithFitHeight("images/write.png",100));
-		List<TextField> textFields = new ArrayList<>();
-		textFields.addAll(Arrays.asList(firstNameField,lastNameField));
+		List<TextField> textFields = Arrays.asList(firstNameField,lastNameField);
 		writeButton.setOnAction(e -> write(stage,gridpane,writeButton,errorMessage,titleBox,centerBox,textFields));
 		writeButton.setVisible(false);
 		Label writeLabel = createLabel("write","label");
 		writeLabel.setVisible(false);
 		Label editLabel = createLabel("edit","label");
 		ImageButton editButton = new ImageButton(createImageWithFitHeight("images/edit.png",100));
-		List<Node> nodes = new ArrayList<>();
-		nodes.addAll(Arrays.asList(firstNameField,lastNameField,centerBox,titleBox,writeButton,writeLabel,editButton,editLabel));
+		List<Node> nodes = Arrays.asList(firstNameField,lastNameField,centerBox,titleBox,writeButton,writeLabel,editButton,editLabel);
 		editButton.setOnAction(e -> edit(nodes));
 		ImageButton trashButton = new ImageButton(createImageWithFitHeight("images/trash.png",100));
 		trashButton.setOnAction(e -> {
@@ -93,8 +90,7 @@ public class ModifyDirector implements AdminLayout{
 		Label trashLabel = createLabel("delete","label");
 		Button cancel = createButton("cancel",null,0,0,0);
 		cancel.setOnAction(e -> stage.close());
-		List<Node> allNodes = new ArrayList<>();
-		allNodes.addAll(Arrays.asList(directorViewer,title,firstName,firstNameField,lastName,lastNameField,titleChange,titleBox,theCenter,centerBox,editButton,writeButton,trashButton,editLabel,writeLabel,trashLabel,cancel));
+		List<Node> allNodes = Arrays.asList(directorViewer,title,firstName,firstNameField,lastName,lastNameField,titleChange,titleBox,theCenter,centerBox,editButton,writeButton,trashButton,editLabel,writeLabel,trashLabel,cancel);
 		placeNodes(gridpane,allNodes);
 		gridpane.getStylesheets().add("css/admin.css");
 		return gridpane;

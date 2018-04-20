@@ -92,8 +92,7 @@ public class ModifyClassroom implements AdminLayout {
 	    Button cancelButton = new Button("Cancel");
 	    cancelButton.getStyleClass().add("button");
 	    cancelButton.setOnAction(e -> stage.close());	   
-	    List<Node> nodes = new ArrayList<>();
-	    nodes.addAll(Arrays.asList(teacherAlreadyActiveWarning,duplicateTeacherWarning,classroomViewer,title,classType,typeBox,centerName,centerBox,teacherName,teacherBox,assistantName,assistantTeacherBox,capacity,capacityBox,editButton,writeButton,trashButton,editLabel,writeLabel,trashLabel,cancelButton));
+	    List<Node> nodes = Arrays.asList(teacherAlreadyActiveWarning,duplicateTeacherWarning,classroomViewer,title,classType,typeBox,centerName,centerBox,teacherName,teacherBox,assistantName,assistantTeacherBox,capacity,capacityBox,editButton,writeButton,trashButton,editLabel,writeLabel,trashLabel,cancelButton);
 		placeNodes(gridpane,nodes);
 		gridpane.getStylesheets().add("css/admin.css");
 		return gridpane;

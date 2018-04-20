@@ -1,4 +1,4 @@
-DirectorDashboard (Event Pane)
+DirectorDashboard (Event View)
 1.) Figure out why the days and dates are off
 2.) When you click "remove event", make it so that "add event" becomes "clear all" and "remove event" becomes "cancel"
 3.) Fix the fact that the buttons under the events BOTH look like "delete" instead of "delete" and "cancel"
@@ -6,5 +6,14 @@ DirectorDashboard (Event Pane)
 being "add event" and "remove event" 
 5.) What if a date goes out of the legal limit for that month? April 32? 
 
+DirectorDashboard (Schedule View)
+1.) Make it so that when you clear the schedule, the old values for the start and stop times are saved for easier creation 
+2.) Make it so that you can set multiple employee's schedules at a time before hitting the set button 
+3.)	Make it so that the application can recognize a hole when a teacher is only scheduled for part of the day 
+4.) Allow holes to be filled by float employees 
+
 ClassroomStatus 
 1.) I'm pretty certain that Students Present does not return anything because it is never correctly populated. It should be populated each time based on the day 
+
+DirectorStudentWorkspace 
+1.) Add a sorting button that sorts students by age or a "show" button that only shows students in certain classes or not in any class at all -- some way to organize 

@@ -48,6 +48,11 @@
 	-fx-font: 25px Georgia;
 }
 
+.padded-label{
+	-fx-font: 25px Georgia;
+	-fx-padding: 10,10,10,10;
+}
+
 .boxlabel{
 	-fx-font: 30px Georgia;
 }
@@ -57,13 +62,36 @@
 	-fx-wrap-text: true;
 }
 
+.response-label{
+	-fx-font: 25px Georgia;
+	-fx-text-fill: #003399;
+	-fx-font-style: italic;
+	-fx-text-alignment: left;
+}
+
+.pre-label{
+	-fx-font: 25px Georgia;
+	-fx-text-decoration: underline;
+}
+
 .subtitle{
 	-fx-font: 40px Georgia;
 	-fx-font-decoration: underline;
 }
 
+.super-subtitle{
+	-fx-font: 85px Georgia;
+	-fx-text-alignment: center;
+}
+
 .title{
 	-fx-font: 50px Georgia;
+}
+
+.popup-title{
+	-fx-font: 70px Georgia;
+	-fx-text-alignment: center;
+	-fx-text-fill: #b30000;
 }
 
 .med-title{
@@ -74,6 +102,12 @@
 	-fx-font: 150px Georgia;	
 	-fx-text-alignment: center;
 	-fx-text-fill: #b30000;
+}
+
+.side-title{
+	-fx-font: 30px Georgia;
+	-fx-text-fill: #b30000;
+	-fx-underline: true;
 }
 
 .choice-box {
@@ -137,9 +171,28 @@
     -fx-background-color: #CC0000;
 }
 
+.toggle-button{
+	-fx-font: 25px Georgia;
+	-fx-alignment: center;
+	-fx-labelpadding: 10,10,10,10;
+	-fx-background-color: #CCCCCC;
+}
+
+.toggle-button:hover {
+    -fx-background-color: #808080;
+}
+
+.toggle-button:selected {
+    -fx-background-color: #808080; 
+}
+
 .textfield{
 	-fx-font: 25px Georgia;
 	-fx-alignment: center;
+}
+
+.checkbox{
+	-fx-font: 25px Georgia;
 }
 
 @charset "UTF-8";

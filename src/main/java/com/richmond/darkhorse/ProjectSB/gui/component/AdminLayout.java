@@ -1,8 +1,6 @@
 package com.richmond.darkhorse.ProjectSB.gui.component;
-import java.util.ArrayList;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-
 import java.util.List;
 import com.richmond.darkhorse.ProjectSB.Admin;
 import com.richmond.darkhorse.ProjectSB.gui.scene.AdminHome;
@@ -43,19 +41,6 @@ public interface AdminLayout extends SceneFormatter,CoreFunctions {
 		topPane.getChildren().addAll(homeButtonBox,logoViewer,logoutButtonBox);
 		topPane.getStyleClass().add("toppane");
 		return topPane;
-	}
-	
-	/**
-	 * Builds a button with a label beneath it
-	 * @param button - an ImageButton
-	 * @param label - the desired label for the button
-	 * @return a centered VBox with the button and the label 
-	 */
-	public default VBox buildButtonWithLabel(ImageButton button,Label label) {
-		VBox labeledButton = new VBox();
-		labeledButton.setAlignment(Pos.CENTER);
-		labeledButton.getChildren().addAll(button,label);
-		return labeledButton;
 	}
 	
 	/**
@@ -110,37 +95,6 @@ public interface AdminLayout extends SceneFormatter,CoreFunctions {
 		stage.setMaxWidth(1100);
 		stage.setMinWidth(1100);
 		stage.showAndWait();
-	}
-	
-	/**
-	 * Creates a List of labels
-	 * @param labelNames - the text for the labels
-	 * @param cssTag - the CSS tag for each label
-	 * @return a list of labels 
-	 */
-	public default List<Label> populateLabels(List<String> labelNames,String cssTag){
-		List<Label> labels = new ArrayList<>();
-		for(String labelName : labelNames) {
-			Label newLabel = createLabel(labelName,cssTag);
-			labels.add(newLabel);
-		}
-		return labels;
-	}
-	
-	/**
-	 * Creates a list of text fields
-	 * @param textFieldPrompts - the prompt text to go into the text field
-	 * @param cssTag - the CSS tag for each text field
-	 * @param maxWidth - the desired width of the text field
-	 * @return a list of text fields
-	 */
-	public default List<TextField> populateTextFields(List<String> textFieldPrompts,String cssTag,int maxWidth){
-		List<TextField> textFields = new ArrayList<>();
-		for(String textFieldPrompt : textFieldPrompts) {
-			TextField newTextField = createTextField(textFieldPrompt,cssTag,maxWidth);
-			textFields.add(newTextField);
-		}
-		return textFields;
 	}
 	
 	/**

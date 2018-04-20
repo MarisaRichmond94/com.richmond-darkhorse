@@ -8,7 +8,6 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.scene.control.TextField;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -54,14 +53,12 @@ public class AddTeacher implements AdminLayout{
 			Bindings.isEmpty(firstNameField.textProperty())
 			.or(Bindings.isEmpty(lastNameField.textProperty()))
 		);
-		List<TextField> textFields = new ArrayList<>();
-		textFields.addAll(Arrays.asList(firstNameField,lastNameField));
+		List<TextField> textFields = Arrays.asList(firstNameField,lastNameField);
 		createTeacherButton.setOnAction(e -> createTeacher(stage,classroomBox,centerBox,textFields,activeTeacherWarning));
 		Button cancelButton = new Button("Cancel");
 		cancelButton.getStyleClass().add("button");
 		cancelButton.setOnAction(e -> stage.close());
-		List<Node> nodes = new ArrayList<>();
-		nodes.addAll(Arrays.asList(activeTeacherWarning,teacherViewer,title,teacherFirstName,firstNameField,teacherLastName,lastNameField,centerSelection,centerBox,classroomSelection,classroomBox,createTeacherButton,cancelButton));
+		List<Node> nodes = Arrays.asList(activeTeacherWarning,teacherViewer,title,teacherFirstName,firstNameField,teacherLastName,lastNameField,centerSelection,centerBox,classroomSelection,classroomBox,createTeacherButton,cancelButton);
 		placeNodes(gridpane,nodes);
 		gridpane.getStylesheets().add("css/admin.css");
 		return gridpane;

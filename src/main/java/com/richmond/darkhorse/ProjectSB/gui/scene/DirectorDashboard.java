@@ -74,8 +74,7 @@ public class DirectorDashboard extends Scene implements DirectorLayout{
 		setConstraints(innerPane,4,0,10,10,"rightpane");
 		Label title = createLabel("Ratios","subtitle");
 		populateClassrooms(director);
-		List<Node> nodes = new ArrayList<>();
-		nodes.addAll(Arrays.asList(title));
+		List<Node> nodes = Arrays.asList(title);
 		placeNodeSpan(innerPane,nodes.get(0),1,0,2,1,"center",null);
 		ScrollPane rightPane = new ScrollPane(innerPane);
 		rightPane.setFitToHeight(true);
@@ -169,8 +168,7 @@ public class DirectorDashboard extends Scene implements DirectorLayout{
         String month = date.getMonth().toString(), finalMonth = month.substring(0,1) + month.substring(1).toLowerCase();
 	    Label monthLabel = createLabel(finalMonth,"med-title");
 	    ImageButton scheduleButton = new ImageButton(createImageWithFitHeight("images/schedule.png",100));
-	    List<Node> nodes = new ArrayList<>();
-	    nodes.addAll(Arrays.asList(viewBox,monthLabel,scheduleButton));
+	    List<Node> nodes = Arrays.asList(viewBox,monthLabel,scheduleButton);
 	    placeNodes(gridpane,nodes);
 	    innerPane = buildEventPane(director);
 	    scrollPane = new ScrollPane(innerPane);
@@ -362,7 +360,7 @@ public class DirectorDashboard extends Scene implements DirectorLayout{
 			refreshEventPane(director);
 			cancel();
 		});
-		placeNode(gridPane,trashButton,columnIndex,rowIndex+2,"center",null);
+		placeNodeSpan(gridPane,trashButton,columnIndex,rowIndex+2,2,1,"center",null);
 	}
 
 	/**

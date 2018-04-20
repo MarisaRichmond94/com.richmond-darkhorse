@@ -1,5 +1,7 @@
 package com.richmond.darkhorse.ProjectSB.gui.component;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import com.richmond.darkhorse.ProjectSB.Classroom;
 import com.richmond.darkhorse.ProjectSB.Director;
@@ -7,175 +9,129 @@ import com.richmond.darkhorse.ProjectSB.Student;
 import com.richmond.darkhorse.ProjectSB.middleman.ModifyExistingStudent;
 import javafx.scene.paint.Color;
 import javafx.geometry.HPos;
+import javafx.scene.Node;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 
-public class ModifyPlanPane extends GridPane{
+public class ModifyPlanPane extends GridPane implements DirectorLayout{
 
 	private Map<String,Boolean> attendancePlan;
 	
 	public ModifyPlanPane(Student student,Director director) {
 		this.attendancePlan = student.getRecord().getAttendance().getAttendancePlan();
-		
-	    this.setVgap(10);
-	    this.setHgap(10);
-		ColumnConstraints columnOne = new ColumnConstraints();
-		columnOne.setPercentWidth(33.3);
-	    ColumnConstraints columnTwo = new ColumnConstraints();
-	    columnTwo.setPercentWidth(33.3);
-	    ColumnConstraints columnThree = new ColumnConstraints();
-	    columnThree.setPercentWidth(33.3);
-	    this.getColumnConstraints().addAll(columnOne,columnTwo,columnThree);
-	    this.getStyleClass().add("gridpane");
-	    this.getStylesheets().add("modifystudentinfo.css");
-	    
-	    Label studentAttendancePlan = new Label("Attendance Plan");
-	    studentAttendancePlan.getStyleClass().add("subtitle");
-	    
-	    Label monday = new Label("monday plan: ");
-	    monday.getStyleClass().add("centrallabel");
-	    ChoiceBox<String> mondayBox = new ChoiceBox<String>();
-	    mondayBox.getItems().addAll("present","not present");
-	    if(attendancePlan.get("Monday") == true) {mondayBox.setValue(mondayBox.getItems().get(0));}
-	    else {mondayBox.setValue(mondayBox.getItems().get(1));}
-	    mondayBox.setDisable(true);
-	    mondayBox.getStyleClass().add("choicebox");
-	    mondayBox.setMaxWidth(600);
-	    
-	    Label tuesday = new Label("tuesday plan: ");
-	    tuesday.getStyleClass().add("centrallabel");
-	    ChoiceBox<String> tuesdayBox = new ChoiceBox<String>();
-	    tuesdayBox.getItems().addAll("present","not present");
-	    if(attendancePlan.get("Tuesday") == true) {tuesdayBox.setValue(tuesdayBox.getItems().get(0));}
-	    else {tuesdayBox.setValue(tuesdayBox.getItems().get(1));}
-	    tuesdayBox.setDisable(true);
-	    tuesdayBox.getStyleClass().add("choicebox");
-	    tuesdayBox.setMaxWidth(600);
-	    
-	    Label wednesday = new Label("wednesday plan: ");
-	    wednesday.getStyleClass().add("centrallabel");
-	    ChoiceBox<String> wednesdayBox = new ChoiceBox<String>();
-	    wednesdayBox.getItems().addAll("present","not present");
-	    if(attendancePlan.get("Wednesday") == true) {wednesdayBox.setValue(wednesdayBox.getItems().get(0));}
-	    else {wednesdayBox.setValue(wednesdayBox.getItems().get(1));}
-	    wednesdayBox.setDisable(true);
-	    wednesdayBox.getStyleClass().add("choicebox");
-	    wednesdayBox.setMaxWidth(600);
-	    
-	    Label thursday = new Label("thursday plan: ");
-	    thursday.getStyleClass().add("centrallabel");
-	    ChoiceBox<String> thursdayBox = new ChoiceBox<String>();
-	    thursdayBox.getItems().addAll("present","not present");
-	    if(attendancePlan.get("Thursday") == true) {thursdayBox.setValue(thursdayBox.getItems().get(0));}
-	    else {thursdayBox.setValue(thursdayBox.getItems().get(1));}
-	    thursdayBox.setDisable(true);
-	    thursdayBox.getStyleClass().add("choicebox");
-	    thursdayBox.setMaxWidth(600);
-	    
-	    Label friday = new Label("friday plan: ");
-	    friday.getStyleClass().add("centrallabel");
-	    ChoiceBox<String> fridayBox = new ChoiceBox<String>();
-	    fridayBox.getItems().addAll("present","not present");
-	    if(attendancePlan.get("Friday") == true) {fridayBox.setValue(fridayBox.getItems().get(0));}
-	    else {fridayBox.setValue(fridayBox.getItems().get(1));}
-	    fridayBox.setDisable(true);
-	    fridayBox.getStyleClass().add("choicebox");
-	    fridayBox.setMaxWidth(600);
-	    
-	    ImageView writeViewer = new ImageView();
-		Image write = new Image("write.png");
-		writeViewer.setImage(write);
-		writeViewer.setPreserveRatio(true);
-		writeViewer.setFitHeight(150);
-		ImageButton writeButton = new ImageButton(writeViewer);
-		writeButton.setOnAction(e -> {
-			Classroom selectedClassroom = student.getClassroom(student.getClassroomID());
-			Map<String,Boolean> studentsAttendancePlan = new HashMap<String,Boolean>();
-			if(mondayBox.getValue().equals("present")) {studentsAttendancePlan.put("Monday",true);}
-			else {studentsAttendancePlan.put("Monday",false);}
-			if(tuesdayBox.getValue().equals("present")) {studentsAttendancePlan.put("Tuesday",true);}
-			else {studentsAttendancePlan.put("Tuesday",false);}
-			if(wednesdayBox.getValue().equals("present")) {studentsAttendancePlan.put("Wednesday",true);}
-			else {studentsAttendancePlan.put("Wednesday",false);}
-			if(thursdayBox.getValue().equals("present")) {studentsAttendancePlan.put("Thursday",true);}
-			else {studentsAttendancePlan.put("Thursday",false);}
-			if(fridayBox.getValue().equals("present")) {studentsAttendancePlan.put("Friday",true);}
-			else {studentsAttendancePlan.put("Friday",false);}
-			Thread modifyExistingStudent = new Thread(new ModifyExistingStudent(director,student,selectedClassroom,studentsAttendancePlan));
-			modifyExistingStudent.start();
-			Label saveSuccessful = new Label("save successful!");
-			saveSuccessful.setTextFill(Color.RED);
-			saveSuccessful.getStyleClass().add("label");
-			this.add(saveSuccessful,1,9);
-			GridPane.setConstraints(saveSuccessful,1,9,2,1);
-			GridPane.setHalignment(saveSuccessful,HPos.CENTER);
-			mondayBox.setDisable(true);
-			tuesdayBox.setDisable(true);
-			wednesdayBox.setDisable(true);
-			thursdayBox.setDisable(true);
-			fridayBox.setDisable(true);
-		});
+		buildGridPane(student,director);
+	}
+	
+	/**
+	 * Assembles the GridPane
+	 * @param student - the current {@link Student}
+	 */
+	private void buildGridPane(Student student,Director director) {
+		setConstraints(this,3,0,10,10,"gridpane");
+	    this.getStylesheets().add("css/director.css");
+	    Label studentAttendancePlan = createLabel("Attendance Plan","super-subtitle");
+	    List<Label> labels = populateLabels(Arrays.asList("monday plan:","tuesday plan","wednesday plan:","thursday plan:","friday plan:"),"centrallabel");
+	    ChoiceBox<String> mondayBox = buildDayBox("Monday");
+	    ChoiceBox<String> tuesdayBox = buildDayBox("Tuesday");
+	    ChoiceBox<String> wednesdayBox = buildDayBox("Wednesday");
+	    ChoiceBox<String> thursdayBox = buildDayBox("Thursday");
+	    ChoiceBox<String> fridayBox = buildDayBox("Friday");
+	    List<ChoiceBox<String>> dayBoxes = Arrays.asList(mondayBox,tuesdayBox,wednesdayBox,thursdayBox,fridayBox);
+	    ImageButton editButton = new ImageButton(createImageWithFitHeight("images/edit.png",125));
+		Label editLabel = createLabel("edit","label");
+		ImageButton writeButton = new ImageButton(createImageWithFitHeight("images/write.png",125));
 		writeButton.setVisible(false);
-		Label writeLabel = new Label("write");
-		writeLabel.setVisible(false);
-		writeLabel.getStyleClass().add("label");
-		
-		Label editLabel = new Label("edit");
-		editLabel.getStyleClass().add("label");
-		ImageView editViewer = new ImageView();
-		Image edit = new Image("edit.png");
-		editViewer.setImage(edit);
-		editViewer.setPreserveRatio(true);
-		editViewer.setFitHeight(150);
-		ImageButton editButton = new ImageButton(editViewer);
-		editButton.setOnAction(e -> {
-			writeButton.setVisible(true);
-			writeLabel.setVisible(true);
-			editButton.setVisible(false);
-			editLabel.setVisible(false);
-			mondayBox.setDisable(false);
-			tuesdayBox.setDisable(false);
-			wednesdayBox.setDisable(false);
-			thursdayBox.setDisable(false);
-			fridayBox.setDisable(false);
-		});
-		
-		
-		this.add(studentAttendancePlan,1,0);
-	    GridPane.setHalignment(studentAttendancePlan,HPos.LEFT);
-	    GridPane.setConstraints(studentAttendancePlan,1,0,2,1);
-	    this.add(monday,0,1);
-	    GridPane.setHalignment(monday,HPos.RIGHT);
-	    this.add(mondayBox,1,1);
-	    GridPane.setConstraints(mondayBox,1,1,2,1);
-	    this.add(tuesday,0,2);
-	    GridPane.setHalignment(tuesday,HPos.RIGHT);
-	    this.add(tuesdayBox,1,2);
-	    GridPane.setConstraints(tuesdayBox,1,2,2,1);
-	    this.add(wednesday,0,3);
-	    GridPane.setHalignment(wednesday,HPos.RIGHT);
-	    this.add(wednesdayBox,1,3);
-	    GridPane.setConstraints(wednesdayBox,1,3,2,1);
-	    this.add(thursday,0,4);
-	    GridPane.setHalignment(thursday,HPos.RIGHT);
-	    this.add(thursdayBox,1,4);
-	    GridPane.setConstraints(thursdayBox,1,4,2,1);
-	    this.add(friday,0,5);
-	    GridPane.setHalignment(friday,HPos.RIGHT);
-	    this.add(fridayBox,1,5);
-	    GridPane.setConstraints(fridayBox,1,5,2,1);
-	    this.add(editButton,1,6);
-	    GridPane.setHalignment(editButton,HPos.CENTER);
-	    this.add(editLabel,1,7);
-	    GridPane.setHalignment(editLabel,HPos.CENTER);
-	    this.add(writeButton,1,6);
-	    GridPane.setHalignment(writeButton,HPos.CENTER);
-	    this.add(writeLabel,1,7);
-		GridPane.setHalignment(writeLabel,HPos.CENTER);
+	    Label writeLabel = createLabel("write","label");
+	    writeLabel.setVisible(false);
+	    writeButton.setOnAction(e -> write(director,student,dayBoxes));
+	    editButton.setOnAction(e -> edit(writeButton,writeLabel,editButton,editLabel,dayBoxes));
+		List<Node> nodes = Arrays.asList(studentAttendancePlan,labels.get(0),dayBoxes.get(0),labels.get(1),dayBoxes.get(1),labels.get(2),dayBoxes.get(2),labels.get(3),dayBoxes.get(3),labels.get(4),dayBoxes.get(4),editButton,editLabel,writeButton,writeLabel);
+		placeNodes(this,nodes);
+	}
+
+	@Override
+	public void placeNodes(GridPane gridpane, List<Node> nodes) {
+		placeNodeSpan(this,nodes.get(0),0,0,3,1,"center",null);
+		placeNode(this,nodes.get(1),0,1,"right",null);
+		placeNodeSpan(this,nodes.get(2),1,1,2,1,"left",null);
+		placeNode(this,nodes.get(3),0,2,"right",null);
+		placeNodeSpan(this,nodes.get(4),1,2,2,1,"left",null);
+		placeNode(this,nodes.get(5),0,3,"right",null);
+		placeNodeSpan(this,nodes.get(6),1,3,2,1,"left",null);
+		placeNode(this,nodes.get(7),0,4,"right",null);
+		placeNodeSpan(this,nodes.get(8),1,4,2,1,"left",null);
+		placeNode(this,nodes.get(9),0,5,"right",null);
+		placeNodeSpan(this,nodes.get(10),1,5,2,1,"left",null);
+		placeNodeSpan(this,nodes.get(11),1,6,2,1,"center",null);
+		placeNodeSpan(this,nodes.get(12),1,7,2,1,"center",null);
+		placeNodeSpan(this,nodes.get(13),1,6,2,1,"center",null);
+		placeNodeSpan(this,nodes.get(14),1,7,2,1,"center",null);
+	}
+	
+	/**
+	 * Creates a new ChoiceBox<String> and populates it with "present" or "not present"
+	 * @param day - String representing the day of the week, which is used to determine which option to set the value to
+	 * @return ChoiceBox<String>
+	 */
+	private ChoiceBox<String> buildDayBox(String day){
+		ChoiceBox<String> dayBox = new ChoiceBox<String>();
+		dayBox.getItems().addAll("present","not present");
+	    if(attendancePlan.get(day) == true) {dayBox.setValue(dayBox.getItems().get(0));}
+	    else {dayBox.setValue(dayBox.getItems().get(1));}
+	    dayBox.setDisable(true);
+	    dayBox.getStyleClass().add("choice-box");
+	    return dayBox;
+	}
+	
+	/**
+	 * Takes all of the information from the Choice Boxes and uses them to modify the {@link Student}'s current {@link AttendancePlan}
+	 * @param director - the current user
+	 * @param student - the current {@link Student}
+	 * @param dayBoxes - a list of Choice Boxes containing necessary data
+	 */
+	private void write(Director director,Student student,List<ChoiceBox<String>> dayBoxes) {
+		Classroom selectedClassroom = student.getClassroom(student.getClassroomID());
+		Map<String,Boolean> studentsAttendancePlan = new HashMap<String,Boolean>();
+		if(dayBoxes.get(0).getValue().equals("present")) {studentsAttendancePlan.put("Monday",true);}
+		else {studentsAttendancePlan.put("Monday",false);}
+		if(dayBoxes.get(1).getValue().equals("present")) {studentsAttendancePlan.put("Tuesday",true);}
+		else {studentsAttendancePlan.put("Tuesday",false);}
+		if(dayBoxes.get(2).getValue().equals("present")) {studentsAttendancePlan.put("Wednesday",true);}
+		else {studentsAttendancePlan.put("Wednesday",false);}
+		if(dayBoxes.get(3).getValue().equals("present")) {studentsAttendancePlan.put("Thursday",true);}
+		else {studentsAttendancePlan.put("Thursday",false);}
+		if(dayBoxes.get(4).getValue().equals("present")) {studentsAttendancePlan.put("Friday",true);}
+		else {studentsAttendancePlan.put("Friday",false);}
+		Thread modifyExistingStudent = new Thread(new ModifyExistingStudent(director,student,selectedClassroom,studentsAttendancePlan));
+		modifyExistingStudent.start();
+		Label saveSuccessful = new Label("save successful!");
+		saveSuccessful.setTextFill(Color.RED);
+		saveSuccessful.getStyleClass().add("label");
+		this.add(saveSuccessful,1,9);
+		GridPane.setConstraints(saveSuccessful,1,9,2,1);
+		GridPane.setHalignment(saveSuccessful,HPos.CENTER);
+		dayBoxes.get(0).setDisable(true);
+		dayBoxes.get(1).setDisable(true);
+		dayBoxes.get(2).setDisable(true);
+		dayBoxes.get(3).setDisable(true);
+		dayBoxes.get(4).setDisable(true);
+	}
+	
+	/**
+	 * Allows the user to enter edit mode by enabling all Choice Boxes
+	 * @param writeButton
+	 * @param writeLabel
+	 * @param editButton
+	 * @param editLabel
+	 * @param dayBoxes
+	 */
+	private void edit(ImageButton writeButton,Label writeLabel,ImageButton editButton,Label editLabel,List<ChoiceBox<String>> dayBoxes) {
+		writeButton.setVisible(true);
+		writeLabel.setVisible(true);
+		editButton.setVisible(false);
+		editLabel.setVisible(false);
+		for(ChoiceBox<String> dayBox : dayBoxes) {dayBox.setDisable(false);}
 	}
 	
 }

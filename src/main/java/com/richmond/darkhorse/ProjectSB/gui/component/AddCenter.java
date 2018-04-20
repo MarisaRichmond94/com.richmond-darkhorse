@@ -1,5 +1,4 @@
 package com.richmond.darkhorse.ProjectSB.gui.component;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import com.richmond.darkhorse.ProjectSB.Admin;
@@ -38,11 +37,9 @@ public class AddCenter implements AdminLayout {
 		setConstraints(gridpane,3,0,10,10,"modulargridpane");
 		ImageView centerViewer = createImageWithFitHeight("images/center.png",200);
 		Label title = createLabel("Create New \nCenter","title");
-		List<String> labelNames = new ArrayList<>();
-		labelNames.addAll(Arrays.asList("Center name:","Abbreviated Name:","Name on license:","License number:","Address:","City:","County:"));
+		List<String> labelNames = Arrays.asList("Center name:","Abbreviated Name:","Name on license:","License number:","Address:","City:","County:");
 		List<Label> labels = populateLabels(labelNames,"label");
-		List<String> textFieldPrompts = new ArrayList<>();
-		textFieldPrompts.addAll(Arrays.asList("center name","abbreviated name","name on license","license number","address","city","county"));
+		List<String> textFieldPrompts = Arrays.asList("center name","abbreviated name","name on license","license number","address","city","county");
 		List<TextField> textFields = populateTextFields(textFieldPrompts,"textfield",0);
 	    Button createCenterButton = new Button("Create Center");
 	    createCenterButton.getStyleClass().add("button");
@@ -70,8 +67,7 @@ public class AddCenter implements AdminLayout {
 	    Button cancelButton = new Button("Cancel");
 	    cancelButton.getStyleClass().add("button");
 	    cancelButton.setOnAction(e -> stage.close());
-	    List<Node> nodes = new ArrayList<>();
-	    nodes.addAll(Arrays.asList(centerViewer,title,createCenterButton,cancelButton));
+	    List<Node> nodes = Arrays.asList(centerViewer,title,createCenterButton,cancelButton);
 	    placeNodes(gridpane,nodes);
 	    populateGridPane(gridpane,labels,textFields,1);
 	    gridpane.getStylesheets().add("css/admin.css");

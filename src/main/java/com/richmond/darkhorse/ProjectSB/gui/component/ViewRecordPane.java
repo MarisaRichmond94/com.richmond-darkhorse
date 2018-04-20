@@ -1,16 +1,16 @@
 package com.richmond.darkhorse.ProjectSB.gui.component;
+import java.util.Arrays;
+import java.util.List;
 import com.richmond.darkhorse.ProjectSB.Director;
 import com.richmond.darkhorse.ProjectSB.Student;
-import javafx.geometry.HPos;
+import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.ToggleButton;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 
-public class ViewRecordPane extends GridPane{
+public class ViewRecordPane extends GridPane implements DirectorLayout{
 	
 	private GridPane innerPane;
 	private DailySheetPane dailySheetPane;
@@ -18,51 +18,28 @@ public class ViewRecordPane extends GridPane{
 	private IncidentReportPane incidentReportPane;
 	
 	public ViewRecordPane(Director director,Student student) {
+		buildDefaultPane(director,student);
+	}
 	
-		this.setVgap(10);
-		this.setHgap(10);
-		ColumnConstraints columnOne = new ColumnConstraints();
-		columnOne.setPercentWidth(33.3);
-		ColumnConstraints columnTwo = new ColumnConstraints();
-		columnTwo.setPercentWidth(33.3);
-		ColumnConstraints columnThree = new ColumnConstraints();
-		columnThree.setPercentWidth(33.3);
-		this.getColumnConstraints().addAll(columnOne,columnTwo,columnThree);
-		this.getStyleClass().add("grid-pane");
-		this.getStylesheets().add("modifystudentinfo.css");	
-			
-		ImageView recordViewer = new ImageView();
-		Image record = new Image("record.png");
-		recordViewer.setImage(record);
-		recordViewer.setPreserveRatio(true);
-		recordViewer.setFitHeight(150);
-		
-		Label title = new Label(student.getFirstName() + "'s Record");
-		title.getStyleClass().add("subtitle");
-		
-		ToggleButton dailySheetButton = new ToggleButton("daily sheets");
-		dailySheetButton.setSelected(true);
-		dailySheetButton.setMaxHeight(50);
-		dailySheetButton.setMaxWidth(300);
-		dailySheetButton.getStyleClass().add("toggle-button");
-		
-		ToggleButton behaviorReportButton = new ToggleButton("behavior reports");
-		behaviorReportButton.setMaxHeight(50);
-		behaviorReportButton.setMaxWidth(300);
-		behaviorReportButton.getStyleClass().add("toggle-button");
-		
-		ToggleButton incidentReportButton = new ToggleButton("incident reports");
-		incidentReportButton.setMaxHeight(50);
-		incidentReportButton.setMaxWidth(300);
-		incidentReportButton.getStyleClass().add("toggle-button");
-		
-		//Inner GridPane
+	/**
+	 * Builds the starting GridPane for ViewRecordPane
+	 * @param director - the current user
+	 * @param student - the current {@link Student}
+	 */
+	private void buildDefaultPane(Director director,Student student) {
+		setConstraints(this,3,0,10,10,"gridpane");
+		this.getStylesheets().add("css/director.css");
+		ImageView recordViewer = createImageWithFitHeight("images/record.png",150);
+		String titleText = student.getFirstName() + "'s Record";
+		Label title = createLabel(titleText,"super-subtitle");
+		ToggleButton dailySheetButton = createToggleButton("daily sheets",true,50,300,"toggle-button");
+		ToggleButton behaviorReportButton = createToggleButton("behavior reports",false,50,300,"toggle-button");
+		ToggleButton incidentReportButton = createToggleButton("incident reports",false,50,300,"toggle-button");
 		dailySheetPane = new DailySheetPane(director,student);
 		innerPane = dailySheetPane;
 		ScrollPane scrollPane = new ScrollPane(innerPane);
 		scrollPane.setPrefHeight(500);
 		scrollPane.setPrefWidth(500);
-		
 		dailySheetButton.setOnAction(e -> {
 			if(behaviorReportButton.isSelected() == true) {behaviorReportButton.setSelected(false);}
 			else if(incidentReportButton.isSelected() == true) {incidentReportButton.setSelected(false);}
@@ -81,37 +58,51 @@ public class ViewRecordPane extends GridPane{
 			incidentReportPane = (IncidentReportPane) buildIncidentReportPane(student,director);
 			scrollPane.setContent(incidentReportPane);
 		});
-		
-		this.add(recordViewer,0,0);
-		GridPane.setHalignment(recordViewer,HPos.CENTER);
-		this.add(title,1,0);
-		GridPane.setConstraints(title,1,0,2,1);
-		GridPane.setHalignment(title,HPos.LEFT);
-		this.add(dailySheetButton,0,1);
-		GridPane.setHalignment(dailySheetButton,HPos.CENTER);
-		this.add(behaviorReportButton,1,1);
-		GridPane.setHalignment(behaviorReportButton,HPos.CENTER);
-		this.add(incidentReportButton,2,1);
-		GridPane.setHalignment(incidentReportButton,HPos.CENTER);
-		this.add(scrollPane,0,2);
-		GridPane.setConstraints(scrollPane,0,2,3,3);
-		GridPane.setHalignment(scrollPane,HPos.CENTER);
-		
+		List<Node> nodes = Arrays.asList(recordViewer,title,dailySheetButton,behaviorReportButton,incidentReportButton,scrollPane);
+		placeNodes(this,nodes);
 	}
 	
+	/**
+	 * Sets the internal ScrollPane to a DailySheetPane
+	 * @param student - the current {@link Student}
+	 * @param director - the current user
+	 * @return a fully-assembled DailySheetPane
+	 */
 	public GridPane buildDailySheetPane(Student student,Director director) {
 		DailySheetPane newDailySheetPane = new DailySheetPane(director,student);
 		return newDailySheetPane;
 	}
 	
+	/**
+	 * Sets the internal ScrollPane to a BehaviorReportPane
+	 * @param student - the current {@link Student}
+	 * @param director - the current user
+	 * @return a fully-assembled BehaviorReportPane
+	 */
 	public GridPane buildBehaviorReportPane(Student student,Director director) {
 		BehaviorReportPane newBehaviorReportPane = new BehaviorReportPane(director,student);
 		return newBehaviorReportPane;
 	}
 	
+	/**
+	 * Sets the internal ScrollPane to a IncidentReportPane
+	 * @param student - the current {@link Student}
+	 * @param director - the current user
+	 * @return a fully-assembled IncidentReportPane
+	 */
 	public GridPane buildIncidentReportPane(Student student,Director director) {
 		IncidentReportPane newIncidentReportPane = new IncidentReportPane(director,student);
 		return newIncidentReportPane;
+	}
+
+	@Override
+	public void placeNodes(GridPane gridpane,List<Node> nodes) {
+		placeNode(gridpane,nodes.get(0),0,0,"center",null);
+		placeNodeSpan(gridpane,nodes.get(1),1,0,2,1,"left",null);
+		placeNode(gridpane,nodes.get(2),0,1,"center",null);
+		placeNode(gridpane,nodes.get(3),1,1,"center",null);
+		placeNode(gridpane,nodes.get(4),2,1,"center",null);
+		placeNodeSpan(gridpane,nodes.get(5),0,2,3,3,"center",null);
 	}
 
 }

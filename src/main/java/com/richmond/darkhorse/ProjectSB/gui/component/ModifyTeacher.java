@@ -1,5 +1,4 @@
 package com.richmond.darkhorse.ProjectSB.gui.component;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -72,11 +71,9 @@ public class ModifyTeacher implements AdminLayout{
 		activeDirectorWarning.setTextFill(Color.RED);
 		activeTeacherWarning.setVisible(false);
 		activeDirectorWarning.setVisible(false);
-		List<Node> nodes = new ArrayList<>();
-		nodes.addAll(Arrays.asList(firstNameField,lastNameField,titleBox,centerBox,classroomBox));
+		List<Node> nodes = Arrays.asList(firstNameField,lastNameField,titleBox,centerBox,classroomBox);
 		ImageButton writeButton = new ImageButton(createImageWithFitHeight("images/write.png",100));
-		List<TextField> textFields = new ArrayList<>();
-		textFields.addAll(Arrays.asList(firstNameField,lastNameField));
+		List<TextField> textFields = Arrays.asList(firstNameField,lastNameField);
 	    writeButton.setOnAction(e -> write(stage,textFields,centerBox,classroomBox,titleBox,activeDirectorWarning,activeTeacherWarning));
 	    writeButton.setVisible(false);
 	    Label writeLabel = createLabel("write","label");
@@ -93,8 +90,7 @@ public class ModifyTeacher implements AdminLayout{
 	    Button cancel = new Button("cancel");
 	    cancel.setOnAction(e -> stage.close());
 	    cancel.getStyleClass().add("button");
-		List<Node> allNodes = new ArrayList<>();
-		allNodes.addAll(Arrays.asList(activeTeacherWarning,activeDirectorWarning,teacherViewer,title,teacherFirstName,firstNameField,teacherLastName,lastNameField,titleChange,titleBox,centerSelection,centerBox,classroomSelection,classroomBox,editButton,writeButton,trashButton,editLabel,writeLabel,trashLabel,cancel));
+		List<Node> allNodes = Arrays.asList(activeTeacherWarning,activeDirectorWarning,teacherViewer,title,teacherFirstName,firstNameField,teacherLastName,lastNameField,titleChange,titleBox,centerSelection,centerBox,classroomSelection,classroomBox,editButton,writeButton,trashButton,editLabel,writeLabel,trashLabel,cancel);
 		placeNodes(gridpane,allNodes);
 		gridpane.getStylesheets().add("css/admin.css");
 		return gridpane;

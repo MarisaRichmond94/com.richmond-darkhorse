@@ -1,76 +1,70 @@
 package com.richmond.darkhorse.ProjectSB.gui.component;
+import java.util.Arrays;
 import java.util.List;
 import com.richmond.darkhorse.ProjectSB.Contact;
 import com.richmond.darkhorse.ProjectSB.Director;
 import com.richmond.darkhorse.ProjectSB.Student;
 import javafx.scene.control.Label;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
-import javafx.geometry.HPos;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 
-//TODO burn this to the f**king ground  
-
-public class AddContactPane extends GridPane{
+public class AddContactPane extends GridPane implements DirectorLayout{
 	
 	public AddContactPane(Director director,Student student) {
-		
 		double rowIndex = 1.0;
 		int column = 0;
 		AddContact addContact = new AddContact(student,director);
-		
-		this.setVgap(10);
-		this.setHgap(10);
-		ColumnConstraints columnOne = new ColumnConstraints();
-		columnOne.setPercentWidth(25);
-		ColumnConstraints columnTwo = new ColumnConstraints();
-		columnTwo.setPercentWidth(25);
-		ColumnConstraints columnThree = new ColumnConstraints();
-		columnThree.setPercentWidth(25);
-		ColumnConstraints columnFour = new ColumnConstraints();
-		columnFour.setPercentWidth(25);
-		this.getColumnConstraints().addAll(columnOne,columnTwo,columnThree,columnFour);
-		this.getStyleClass().add("gridpane");
-		this.getStylesheets().add("modifystudentinfo.css");
-		
+		setConstraints(this,4,0,10,10,"gridpane");
+		this.getStylesheets().add("css/director.css");
 		buildPane(director,student,addContact,rowIndex,column);
-		
 	}
 	
-	public void buildPane(Director director,Student student,AddContact addContact,double rowIndex,int column) {
-		
+	/**
+	 * Populates the GridPane
+	 */
+	private void buildPane(Director director,Student student,AddContact addContact,double rowIndex,int column) {
 		this.getChildren().clear();
-		
-		Label title = new Label("Contacts");
-		title.getStyleClass().add("subtitle");
-		
-		ImageView newContactViewer = new ImageView();
-		Image createNewContact = new Image("addcontact.png");
-		newContactViewer.setImage(createNewContact);
-		newContactViewer.setPreserveRatio(true);
-		newContactViewer.setFitHeight(200);
-		Button createNewContactButton = new Button("",newContactViewer);
-		createNewContactButton.setPrefSize(500,275);
-		createNewContactButton.setOnAction(e -> {
-			addContact.display();
-			buildPane(director,student,addContact,1.0,0);
-		});
-		createNewContactButton.getStyleClass().add("button");
-		
+		Label title = createLabel("Student Contacts","super-subtitle");
+		Button createNewContactButton = createButton(null,"images/addcontact.png",250,300,500);
+		createNewContactButton.setOnAction(e -> createNewContact(addContact,director,student));
+		populateContacts(student,addContact,director,rowIndex,column);
+		List<Node> nodes = Arrays.asList(title,createNewContactButton);
+		placeNodes(this,nodes);
+	}
+	
+	@Override
+	public void placeNodes(GridPane gridpane, List<Node> nodes) {
+		placeNodeSpan(this,nodes.get(0),0,0,4,1,"center",null);
+		placeNodeSpan(this,nodes.get(1),0,1,2,1,"center",null);
+	}
+	
+	/**
+	 * Opens a new scene that will allow the user to create a new {@link Contact}
+	 * @param addContact - AddContact component
+	 * @param director - the current user
+	 * @param student - the current {@link Student}
+	 */
+	private void createNewContact(AddContact addContact,Director director,Student student) {
+		addContact.display();
+		buildPane(director,student,addContact,1.0,0);
+	}
+	
+	/**
+	 * Populates the GridPane with a list of {@link Contact}s for the {@link Student}
+	 * @param student - the current {@link Student}
+	 * @param addContact 
+	 * @param director - the current user
+	 * @param rowIndex
+	 * @param column
+	 */
+	private void populateContacts(Student student,AddContact addContact,Director director,double rowIndex,int column) {
 		List<Contact> studentContacts = student.getRecord().getContacts();
 		if(studentContacts.size() > 0) {
 			for(Contact contact : studentContacts) {
-				Button newButton = new Button();
-				String contactName = contact.getFirstName() + " " + contact.getLastName();
-				String contactRelationship = contact.getRelationshipToStudent();
-				String contactWorkPhone = contact.getWorkNumber();
-				String contactCellPhone = contact.getCellNumber();
-				String contactEmail = contact.getEmail();
-				newButton.setText(contactName + "\nrelationship: " + contactRelationship + "\nwork #: " + contactWorkPhone + "\ncell #: " + contactCellPhone + "\ne-mail: " + contactEmail);
-				newButton.setPrefSize(500,275);
-				newButton.getStyleClass().add("button");
+				String contactName = contact.getFirstName() + " " + contact.getLastName(), contactRelationship = contact.getRelationshipToStudent(), contactWorkPhone = contact.getWorkNumber(), contactCellPhone = contact.getCellNumber(), contactEmail = contact.getEmail();
+				String buttonText = contactName + "\nrelationship: " + contactRelationship + "\nwork #: " + contactWorkPhone + "\ncell #: " + contactCellPhone + "\ne-mail: " + contactEmail;
+				Button newButton = createButton(buttonText,null,0,300,500);
 				newButton.setOnAction(e -> {
 					ModifyContact modifyContact = new ModifyContact(director,student,contact);
 					modifyContact.display();
@@ -86,40 +80,6 @@ public class AddContactPane extends GridPane{
 				column++;
 			}
 		}
-		
-		this.add(title,1,0);
-		GridPane.setConstraints(title,1,0,2,1);
-		GridPane.setHalignment(title,HPos.CENTER);
-		this.add(createNewContactButton,0,1);
-		GridPane.setConstraints(createNewContactButton,0,1,2,1);
-		GridPane.setHalignment(createNewContactButton,HPos.CENTER);
-		
-	}
-
-	public void determinePosition(GridPane gridpane,Button button,int row,int column) {
-		int columnIndex;
-		if(column == 0) {
-			gridpane.add(button,2,1);
-			GridPane.setConstraints(button,2,1,2,1);
-			GridPane.setHalignment(button, HPos.CENTER);
-		}else {
-			boolean isIndexEven = isIntEven(column);
-			if(isIndexEven == true) {columnIndex = 2;
-			}else {columnIndex = 0;}
-			gridpane.add(button, columnIndex, row);
-			GridPane.setConstraints(button, columnIndex, row, 2, 1);
-			GridPane.setHalignment(button, HPos.CENTER);
-		}
-	}
-	
-	public boolean isIntEven(int n) {
-		if( n % 2 == 0) {return true;}
-		return false;
-	}
-	
-	public boolean doesNumberEndInZero(double rowIndex) {
-		if (Math.abs(rowIndex - Math.rint(rowIndex)) == 0.5) {return false;}
-		return true;
 	}
 	
 }

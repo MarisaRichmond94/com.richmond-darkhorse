@@ -1,5 +1,4 @@
 package com.richmond.darkhorse.ProjectSB.gui.scene;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -57,14 +56,13 @@ public class ClassroomWorkspaceScene extends Scene implements AdminLayout{
 		GridPane centerPane = new GridPane();
 		setConstraints(centerPane,4,0,15,15,"gridpane");
 		ImageView workspaceViewer = createImageWithFitHeight("images/workspace.png",150);
-		Button addClassroomButton = createButton(null,"images/classroom.png",200,300,400);
+		Button addClassroomButton = createButton(null,"images/classroom.png",200,300,500);
 		addClassroomButton.setOnAction(e -> {
 			newAddClassroom.display(); 
 			Platform.runLater(new ChangeScene(stage,new ClassroomWorkspaceScene(stage,null,admin)));
 		});
 		populateClassrooms(stage,admin,centerPane);
-		List<Node> nodes = new ArrayList<>();
-		nodes.addAll(Arrays.asList(workspaceViewer,addClassroomButton));
+		List<Node> nodes = Arrays.asList(workspaceViewer,addClassroomButton);
 		placeNodes(centerPane,nodes);
 		return centerPane;
 	}
@@ -104,7 +102,7 @@ public class ClassroomWorkspaceScene extends Scene implements AdminLayout{
 				assistantTeacherName = assistantTeacher.toString();
 			}
 			String buttonText = classroomType + "\n" + "Center: " + theCenter.getAbbreviatedName() + "\n" + "Lead Teacher: " + leadTeacherName + "\n" + "Assistant Teacher: " + assistantTeacherName + "\n" + "Class size: " + maxCapacity + "\n" + "Age Group: " + ageGroup;
-			Button newButton = createButton(buttonText,null,0,300,400);
+			Button newButton = createButton(buttonText,null,0,300,500);
 			newButton.setOnAction(e -> {
 				ModifyClassroom modifyClassroom = new ModifyClassroom(value,admin);
 				modifyClassroom.display();
@@ -121,42 +119,4 @@ public class ClassroomWorkspaceScene extends Scene implements AdminLayout{
 		}
 	}
 	
-	/**
-	 * Determines which position to place the new @{Center} button
-	 * @param gridpane - GridPane
-	 * @param button - button representing a @{Center}
-	 * @param row 
-	 * @param column
-	 */
-	private void determinePosition(GridPane gridpane,Button button,int row,int column) {
-		int columnIndex;
-		if(column == 0) {placeNodeSpan(gridpane,button,2,1,2,1,"center",null);}
-		else {
-			boolean isIndexEven = isIntEven(column);
-			if(isIndexEven == true) {columnIndex = 2;
-			}else {columnIndex = 0;}
-			placeNodeSpan(gridpane,button,columnIndex,row,2,1,"center",null);
-		}
-	}
-	
-	/**
-	 * Determines whether or not the given number is even or odd
-	 * @param n - the number being analyzed
-	 * @return true if the number (n) is even and false if the number (n) is odd
-	 */
-	private boolean isIntEven(int n) {
-		if( n % 2 == 0) { return true; }
-		return false;
-	}
-	
-	/**
-	 * Determines whether or not the given double ends in 0
-	 * @param rowIndex - double representing the row number
-	 * @return true if the double ends in 0 and false if the number does not end in 0
-	 */
-	private boolean doesNumberEndInZero(double rowIndex) {
-		if (Math.abs(rowIndex - Math.rint(rowIndex)) == 0.5) { return false; }
-		return true;
-	}
-
 }
