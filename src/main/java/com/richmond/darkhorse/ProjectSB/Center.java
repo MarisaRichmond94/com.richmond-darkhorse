@@ -71,12 +71,10 @@ public class Center implements Serializable{
     public void deleteClassroom(Classroom classroom) {
     		if(classroom.getTeacher(classroom.getTeacherID()) != null) {
     			Teacher teacher = classroom.getTeacher(classroom.getTeacherID());
-    			teacher.removeClassroom(classroom);
     			classroom.removeTeacher(teacher);
     		}
     		if(classroom.getAssistantTeacherID() != null) {
     			Teacher assistantTeacher = classroom.getAssistantTeacher(classroom.getAssistantTeacherID());
-        		assistantTeacher.removeClassroom(classroom);
         		classroom.removeTeacher(assistantTeacher);
     		}
     		if(classrooms.containsKey(classroom.getClassroomID())) {

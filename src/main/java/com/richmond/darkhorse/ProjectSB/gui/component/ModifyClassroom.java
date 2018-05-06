@@ -19,6 +19,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
+//TODO figure out why you can modify the class size but you canNOT modify teachers
 public class ModifyClassroom implements AdminLayout {
 
 	private Classroom theClassroom;
@@ -72,11 +73,8 @@ public class ModifyClassroom implements AdminLayout {
 	    Label duplicateTeacherWarning = createLabel("Cannot assign lead teacher and assistant teacher to the same person","label");
 	    duplicateTeacherWarning.setTextFill(Color.RED);
 		duplicateTeacherWarning.setVisible(false);
-		Label teacherAlreadyActiveWarning = createLabel("Teacher is already active in another classroom","label");
-	    teacherAlreadyActiveWarning.setTextFill(Color.RED);
-		teacherAlreadyActiveWarning.setVisible(false);
 		ImageButton writeButton = new ImageButton(createImageWithFitHeight("images/write.png",100));
-	    writeButton.setOnAction(e -> write(stage,teacherBox,assistantTeacherBox,capacityBox,teacherAlreadyActiveWarning,duplicateTeacherWarning));
+	    writeButton.setOnAction(e -> write(stage,teacherBox,assistantTeacherBox,capacityBox,duplicateTeacherWarning));
 	    writeButton.setVisible(false);
 	    Label writeLabel = createLabel("write","label");
 	    writeLabel.setVisible(false);
@@ -92,7 +90,7 @@ public class ModifyClassroom implements AdminLayout {
 	    Button cancelButton = new Button("Cancel");
 	    cancelButton.getStyleClass().add("button");
 	    cancelButton.setOnAction(e -> stage.close());	   
-	    List<Node> nodes = Arrays.asList(teacherAlreadyActiveWarning,duplicateTeacherWarning,classroomViewer,title,classType,typeBox,centerName,centerBox,teacherName,teacherBox,assistantName,assistantTeacherBox,capacity,capacityBox,editButton,writeButton,trashButton,editLabel,writeLabel,trashLabel,cancelButton);
+	    List<Node> nodes = Arrays.asList(duplicateTeacherWarning,classroomViewer,title,classType,typeBox,centerName,centerBox,teacherName,teacherBox,assistantName,assistantTeacherBox,capacity,capacityBox,editButton,writeButton,trashButton,editLabel,writeLabel,trashLabel,cancelButton);
 		placeNodes(gridpane,nodes);
 		gridpane.getStylesheets().add("css/admin.css");
 		return gridpane;
@@ -123,26 +121,25 @@ public class ModifyClassroom implements AdminLayout {
 	 */
 	public void placeNodes(GridPane gridpane,List<Node> nodes) {
 		placeNodeSpan(gridpane,nodes.get(0),1,9,2,1,"center",null);
-		placeNodeSpan(gridpane,nodes.get(1),1,9,2,1,"center",null);
-		placeNode(gridpane,nodes.get(2),0,0,"center",null);
-		placeNodeSpan(gridpane,nodes.get(3),1,0,2,1,"center",null);
-		placeNode(gridpane,nodes.get(4),0,1,"right",null);
-		placeNodeSpan(gridpane,nodes.get(5),1,1,2,1,"left",null);
-		placeNode(gridpane,nodes.get(6),0,2,"right",null);
-		placeNodeSpan(gridpane,nodes.get(7),1,2,2,1,"left",null);
-		placeNode(gridpane,nodes.get(8),0,3,"right",null);
-		placeNodeSpan(gridpane,nodes.get(9),1,3,2,1,"left",null);
-		placeNode(gridpane,nodes.get(10),0,4,"right",null);
-		placeNodeSpan(gridpane,nodes.get(11),1,4,2,1,"left",null);
-		placeNode(gridpane,nodes.get(12),0,5,"right",null);
-		placeNodeSpan(gridpane,nodes.get(13),1,5,2,1,"left",null);
+		placeNode(gridpane,nodes.get(1),0,0,"center",null);
+		placeNodeSpan(gridpane,nodes.get(2),1,0,2,1,"center",null);
+		placeNode(gridpane,nodes.get(3),0,1,"right",null);
+		placeNodeSpan(gridpane,nodes.get(4),1,1,2,1,"left",null);
+		placeNode(gridpane,nodes.get(5),0,2,"right",null);
+		placeNodeSpan(gridpane,nodes.get(6),1,2,2,1,"left",null);
+		placeNode(gridpane,nodes.get(7),0,3,"right",null);
+		placeNodeSpan(gridpane,nodes.get(8),1,3,2,1,"left",null);
+		placeNode(gridpane,nodes.get(9),0,4,"right",null);
+		placeNodeSpan(gridpane,nodes.get(10),1,4,2,1,"left",null);
+		placeNode(gridpane,nodes.get(11),0,5,"right",null);
+		placeNodeSpan(gridpane,nodes.get(12),1,5,2,1,"left",null);
+		placeNode(gridpane,nodes.get(13),1,6,"center",null);
 		placeNode(gridpane,nodes.get(14),1,6,"center",null);
-		placeNode(gridpane,nodes.get(15),1,6,"center",null);
-		placeNode(gridpane,nodes.get(16),2,6,"center",null);
+		placeNode(gridpane,nodes.get(15),2,6,"center",null);
+		placeNode(gridpane,nodes.get(16),1,7,"center",null);
 		placeNode(gridpane,nodes.get(17),1,7,"center",null);
-		placeNode(gridpane,nodes.get(18),1,7,"center",null);
-		placeNode(gridpane,nodes.get(19),2,7,"center",null);
-		placeNodeSpan(gridpane,nodes.get(20),1,8,2,1,"center",null);
+		placeNode(gridpane,nodes.get(18),2,7,"center",null);
+		placeNodeSpan(gridpane,nodes.get(19),1,8,2,1,"center",null);
 	}
 	
 	/**
@@ -159,6 +156,7 @@ public class ModifyClassroom implements AdminLayout {
 	    		}
 	    	}
 	    typeBox.getStyleClass().add("choice-box");
+	    typeBox.setDisable(true);
 	    return typeBox;
 	}
 	
@@ -175,8 +173,8 @@ public class ModifyClassroom implements AdminLayout {
 	    			centerBox.getItems().add(activeCenter);
 	    			if(activeCenter == center) {centerBox.setValue(activeCenter);}
 	    		}
-	    		centerBox.setDisable(true);
 	    }
+		centerBox.setDisable(true);
 	    centerBox.getStyleClass().add("choice-box");
 	    return centerBox;
 	}
@@ -199,6 +197,7 @@ public class ModifyClassroom implements AdminLayout {
 	    		}else {teacherBox.getItems().add(teacherHolder);}
 	    }
 	    if(teacher == null) {teacherBox.setValue(emptyTeacherHolder);}
+	    teacherBox.setDisable(true);
 	    teacherBox.getStyleClass().add("choice-box");
 	    return teacherBox;
 	}
@@ -223,6 +222,7 @@ public class ModifyClassroom implements AdminLayout {
 	    		}
 	    }
 	    if(assistantTeacher == null) {assistantTeacherBox.setValue(emptyAssistantTeacherHolder);}
+	    assistantTeacherBox.setDisable(true);
 	    assistantTeacherBox.getStyleClass().add("choice-box");
 	    return assistantTeacherBox;
 	}
@@ -237,6 +237,7 @@ public class ModifyClassroom implements AdminLayout {
 	    		capacityBox.getItems().add(theMaxCapacity);
 	    		if(theMaxCapacity == maxCapacity) {capacityBox.setValue(theMaxCapacity);}
 	    }
+		capacityBox.setDisable(true);
 	    capacityBox.getStyleClass().add("choice-box");
 	    return capacityBox;
 	}
@@ -246,21 +247,11 @@ public class ModifyClassroom implements AdminLayout {
 	 * the thread in order to modify the existing center. Once completed, the stage closes
 	 * @param stage - the current stage 
 	 */
-	private void write(Stage stage,ChoiceBox<TeacherHolder> teacherBox,ChoiceBox<TeacherHolder> assistantTeacherBox,ChoiceBox<Integer> capacityBox,Label teacherAlreadyActiveWarning,Label duplicateTeacherWarning) {
+	private void write(Stage stage,ChoiceBox<TeacherHolder> teacherBox,ChoiceBox<TeacherHolder> assistantTeacherBox,ChoiceBox<Integer> capacityBox,Label duplicateTeacherWarning) {
 		Teacher newLeadTeacher = teacherBox.getValue().getTeacher(), newAssistantTeacher = assistantTeacherBox.getValue().getTeacher();
-		if(teacherBox.getValue() == null) {newLeadTeacher.setTeacherID(null);}
-		if(assistantTeacherBox.getValue() == null) {newAssistantTeacher.setTeacherID(null);}
 		int newMaxSize = capacityBox.getValue();
-		if(newLeadTeacher != null && newAssistantTeacher != null && newLeadTeacher.equals(newAssistantTeacher)) {
-			if(teacherAlreadyActiveWarning.isVisible()) {teacherAlreadyActiveWarning.setVisible(false);}
-	    		duplicateTeacherWarning.setVisible(true);
-	    	}else if(newLeadTeacher != null && newLeadTeacher.getClassroomID() != null && !newLeadTeacher.getClassroomID().equals(theClassroom.getClassroomID())){
-	    		if(duplicateTeacherWarning.isVisible()) {duplicateTeacherWarning.setVisible(false);}
-	    		teacherAlreadyActiveWarning.setVisible(true);
-		}else if(newAssistantTeacher != null && newAssistantTeacher.getClassroomID() != null && !newAssistantTeacher.getClassroomID().equals(theClassroom.getClassroomID())) {
-	    		if(duplicateTeacherWarning.isVisible()) {duplicateTeacherWarning.setVisible(false);}
-	    		teacherAlreadyActiveWarning.setVisible(true);
-	    	}else {
+		if(newLeadTeacher != null && newAssistantTeacher != null && newLeadTeacher.equals(newAssistantTeacher)) {duplicateTeacherWarning.setVisible(true);}
+		else {
 	    		Thread modifyExistingClassroom = new Thread(new ModifyExistingClassroom(theClassroom,newLeadTeacher,newAssistantTeacher,newMaxSize,admin));
 	    		modifyExistingClassroom.start();	
 	    		stage.close();

@@ -5,7 +5,7 @@ import java.util.Map;
 public class Teacher extends StaffMember implements Serializable {
 
 	private static final long serialVersionUID = 8453756L;
-	private String classroomID, teacherID;
+	private String teacherID;
 
 	//Constructor for a teacher WITHOUT a {@link Classroom}
 	public Teacher(String firstName, String lastName, Center center) {
@@ -17,28 +17,6 @@ public class Teacher extends StaffMember implements Serializable {
 		Credential credentials = new Credential(firstName,lastName,title);
 		this.credentials = credentials;
 		this.contact = new Contact(userID,firstName,lastName);
-	}
-	
-	//Constructor for a teacher WITH a {@link Classroom}
-	public Teacher(String firstName, String lastName, Center center,Classroom classroom) {
-		super(firstName, lastName, center);
-		title = "Teacher";
-		AccountManager accountManager = AccountManager.getInstance();
-		this.userID = accountManager.generateUserID(this);
-		this.teacherID = this.getUserID();
-		Credential credentials = new Credential(firstName,lastName,title);
-		this.credentials = credentials;
-		this.classroomID = classroom.getClassroomID();
-		this.contact = new Contact(userID,firstName,lastName);
-	}
-	
-	//Classroom methods
-	public void setClassroom(Classroom classroom) {
-		this.classroomID = classroom.getClassroomID();
-	}
-	
-	public void removeClassroom(Classroom classroom) {
-		this.classroomID = null;
 	}
 
 	/**
@@ -53,18 +31,9 @@ public class Teacher extends StaffMember implements Serializable {
 		if(classrooms.containsKey(classroomID)) {return classrooms.get(classroomID);}
 		return null;
 	}
-	
-    //Standard getters and setters
-	public String getClassroomID() {
-		return classroomID;
-	}
 
 	public String getTeacherID() {
 		return teacherID;
-	}
-
-	public void setClassroomID(String classroomID) {
-		this.classroomID = classroomID;
 	}
 
 	public void setTeacherID(String teacherID) {

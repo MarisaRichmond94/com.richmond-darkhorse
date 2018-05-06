@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Map;
 import com.richmond.darkhorse.ProjectSB.Admin;
 import com.richmond.darkhorse.ProjectSB.Center;
-import com.richmond.darkhorse.ProjectSB.Classroom;
 import com.richmond.darkhorse.ProjectSB.Teacher;
 import com.richmond.darkhorse.ProjectSB.middleman.ModifyExistingTeacher;
 import javafx.scene.Node;
@@ -23,7 +22,6 @@ public class ModifyTeacher implements AdminLayout{
 	private Teacher teacher;
 	private String theFirstName,theLastName;
 	private Center previousCenter;
-	private Classroom previousClassroom;
 		
 	public ModifyTeacher(Admin admin,Teacher teacher) { 
 		this.admin = admin;
@@ -31,7 +29,6 @@ public class ModifyTeacher implements AdminLayout{
 		this.theFirstName = teacher.getFirstName();
 		this.theLastName = teacher.getLastName();
 		this.previousCenter = teacher.getCenter(teacher.getCenterID());
-		this.previousClassroom = teacher.getClassroom(teacher.getClassroomID());
 	}
 		
 	public void display() {
@@ -63,18 +60,13 @@ public class ModifyTeacher implements AdminLayout{
 	  	titleBox.getStyleClass().add("choice-box");
 		Label centerSelection = createLabel("Center","label");
 		ChoiceBox<Center> centerBox = buildCenterBox();
-		Label classroomSelection = createLabel("Classroom:","label");
-		ChoiceBox<ClassroomHolder> classroomBox = buildClassroomBox();
-		Label activeTeacherWarning = createLabel("The classroom you have selected already has an active teacher","label");
-		activeTeacherWarning.setTextFill(Color.RED);
 		Label activeDirectorWarning = createLabel("The center you have selected already has an active director","label");
 		activeDirectorWarning.setTextFill(Color.RED);
-		activeTeacherWarning.setVisible(false);
 		activeDirectorWarning.setVisible(false);
-		List<Node> nodes = Arrays.asList(firstNameField,lastNameField,titleBox,centerBox,classroomBox);
+		List<Node> nodes = Arrays.asList(firstNameField,lastNameField,titleBox,centerBox);
 		ImageButton writeButton = new ImageButton(createImageWithFitHeight("images/write.png",100));
 		List<TextField> textFields = Arrays.asList(firstNameField,lastNameField);
-	    writeButton.setOnAction(e -> write(stage,textFields,centerBox,classroomBox,titleBox,activeDirectorWarning,activeTeacherWarning));
+	    writeButton.setOnAction(e -> write(stage,textFields,centerBox,titleBox,activeDirectorWarning));
 	    writeButton.setVisible(false);
 	    Label writeLabel = createLabel("write","label");
 	    writeLabel.setVisible(false);
@@ -90,7 +82,7 @@ public class ModifyTeacher implements AdminLayout{
 	    Button cancel = new Button("cancel");
 	    cancel.setOnAction(e -> stage.close());
 	    cancel.getStyleClass().add("button");
-		List<Node> allNodes = Arrays.asList(activeTeacherWarning,activeDirectorWarning,teacherViewer,title,teacherFirstName,firstNameField,teacherLastName,lastNameField,titleChange,titleBox,centerSelection,centerBox,classroomSelection,classroomBox,editButton,writeButton,trashButton,editLabel,writeLabel,trashLabel,cancel);
+		List<Node> allNodes = Arrays.asList(activeDirectorWarning,teacherViewer,title,teacherFirstName,firstNameField,teacherLastName,lastNameField,titleChange,titleBox,centerSelection,centerBox,editButton,writeButton,trashButton,editLabel,writeLabel,trashLabel,cancel);
 		placeNodes(gridpane,allNodes);
 		gridpane.getStylesheets().add("css/admin.css");
 		return gridpane;
@@ -101,26 +93,23 @@ public class ModifyTeacher implements AdminLayout{
 	 */
 	public void placeNodes(GridPane gridpane, List<Node> nodes) {
 		placeNodeSpan(gridpane,nodes.get(0),0,10,3,1,"center",null);
-		placeNodeSpan(gridpane,nodes.get(1),0,10,3,1,"center",null);
-		placeNode(gridpane,nodes.get(2),0,0,"center",null);
-		placeNodeSpan(gridpane,nodes.get(3),1,0,2,1,"center",null);
-		placeNode(gridpane,nodes.get(4),0,1,"right",null);
-		placeNodeSpan(gridpane,nodes.get(5),1,1,2,1,"left",null);
-		placeNode(gridpane,nodes.get(6),0,2,"right",null);
-		placeNodeSpan(gridpane,nodes.get(7),1,2,2,1,"left",null);
-		placeNode(gridpane,nodes.get(8),0,3,"right",null);
-		placeNodeSpan(gridpane,nodes.get(9),1,3,2,1,"left",null);
-		placeNode(gridpane,nodes.get(10),0,4,"right",null);
-		placeNodeSpan(gridpane,nodes.get(11),1,4,2,1,"left",null);
-		placeNode(gridpane,nodes.get(12),0,5,"right",null);
-		placeNodeSpan(gridpane,nodes.get(13),1,5,2,1,"left",null);
-		placeNode(gridpane,nodes.get(14),1,6,"center",null);
-		placeNode(gridpane,nodes.get(15),1,6,"center",null);
-		placeNode(gridpane,nodes.get(16),2,6,"center",null);
-		placeNode(gridpane,nodes.get(17),1,7,"center",null);
-		placeNode(gridpane,nodes.get(18),1,7,"center",null);
-		placeNode(gridpane,nodes.get(19),2,7,"center",null);
-		placeNodeSpan(gridpane,nodes.get(20),1,9,2,1,"center",null);
+		placeNode(gridpane,nodes.get(1),0,0,"center",null);
+		placeNodeSpan(gridpane,nodes.get(2),1,0,2,1,"center",null);
+		placeNode(gridpane,nodes.get(3),0,1,"right",null);
+		placeNodeSpan(gridpane,nodes.get(4),1,1,2,1,"left",null);
+		placeNode(gridpane,nodes.get(5),0,2,"right",null);
+		placeNodeSpan(gridpane,nodes.get(6),1,2,2,1,"left",null);
+		placeNode(gridpane,nodes.get(7),0,3,"right",null);
+		placeNodeSpan(gridpane,nodes.get(8),1,3,2,1,"left",null);
+		placeNode(gridpane,nodes.get(9),0,4,"right",null);
+		placeNodeSpan(gridpane,nodes.get(10),1,4,2,1,"left",null);
+		placeNode(gridpane,nodes.get(11),1,6,"center",null);
+		placeNode(gridpane,nodes.get(12),1,6,"center",null);
+		placeNode(gridpane,nodes.get(13),2,6,"center",null);
+		placeNode(gridpane,nodes.get(14),1,7,"center",null);
+		placeNode(gridpane,nodes.get(15),1,7,"center",null);
+		placeNode(gridpane,nodes.get(16),2,7,"center",null);
+		placeNodeSpan(gridpane,nodes.get(17),1,9,2,1,"center",null);
 	}
 	
 	/**
@@ -128,33 +117,22 @@ public class ModifyTeacher implements AdminLayout{
 	 * @param stage
 	 * @param textFields
 	 * @param centerBox
-	 * @param classroomBox
 	 * @param titleBox
 	 * @param activeDirectorWarning
-	 * @param activeTeacherWarning
 	 */
-	private void write(Stage stage,List<TextField> textFields,ChoiceBox<Center> centerBox,ChoiceBox<ClassroomHolder> classroomBox,ChoiceBox<String> titleBox,Label activeDirectorWarning,Label activeTeacherWarning) {
+	private void write(Stage stage,List<TextField> textFields,ChoiceBox<Center> centerBox,ChoiceBox<String> titleBox,Label activeDirectorWarning) {
 		String teachersFirstName = textFields.get(0).getText(), teachersLastName = textFields.get(1).getText();
 		if(textFields.get(0).getText().trim().isEmpty()) {teachersFirstName = theFirstName;}
 		if(textFields.get(1).getText().trim().isEmpty()) {teachersLastName = theLastName;}
 		Center teachersCenter = centerBox.getValue();
 		String newTitle = titleBox.getValue();
-		Classroom teachersClassroom = null;
-		if(classroomBox.getValue().getClassroom() != null) {
-			teachersClassroom = classroomBox.getValue().getClassroom();
-			if(teachersClassroom.getTeacherID() != null && teachersClassroom.getAssistantTeacherID() != null) {
-				if(activeDirectorWarning.isVisible() == true) { activeDirectorWarning.setVisible(false);}
-				activeTeacherWarning.setVisible(true);
-    		}else {
-    			Thread modifyExistingTeacher = new Thread(new ModifyExistingTeacher(admin,teacher,teachersFirstName,teachersLastName,newTitle,teachersCenter,teachersClassroom));
+		if(newTitle.equals("Teacher")) {
+			Thread modifyExistingTeacher = new Thread(new ModifyExistingTeacher(admin,teacher,teachersFirstName,teachersLastName,newTitle,teachersCenter));
     			modifyExistingTeacher.start();
     			stage.close();
-    		}
-		}else{
-	    		if(newTitle.equals("Director") && teachersCenter.getDirectorID() != null) {
-	    			if(activeTeacherWarning.isVisible() == true) { activeTeacherWarning.setVisible(false);}
-	    			activeDirectorWarning.setVisible(true);	
-	    		}else {
+    		}else{
+	    		if(newTitle.equals("Director") && teachersCenter.getDirectorID() != null) {activeDirectorWarning.setVisible(true);}
+	    		else {
 	    			Thread modifyExistingTeacher = new Thread(new ModifyExistingTeacher(admin,teacher,teachersFirstName,teachersLastName,newTitle,teachersCenter));
 	    			modifyExistingTeacher.start();
 	    			stage.close();
@@ -175,7 +153,6 @@ public class ModifyTeacher implements AdminLayout{
 		nodes.get(1).setDisable(false);
 		nodes.get(2).setDisable(false);
 		nodes.get(3).setDisable(false);
-		nodes.get(4).setDisable(false);
 		writeButton.setVisible(true);
 		writeLabel.setVisible(true);
 		editButton.setVisible(false);
@@ -200,54 +177,6 @@ public class ModifyTeacher implements AdminLayout{
 	    centerBox.setDisable(true);
 	    centerBox.getStyleClass().add("choice-box");
 		return centerBox;
-	}
-	
-	/**
-	 * Builds a ChoiceBox that holds all of the {@link Classroom}s
-	 * @return a ChoiceBox<ClassroomHolder>
-	 */
-	private ChoiceBox<ClassroomHolder> buildClassroomBox() {
-		ChoiceBox<ClassroomHolder> classroomBox = new ChoiceBox<ClassroomHolder>();
-	    ClassroomHolder emptyClassroom = new ClassroomHolder(null);
-	    classroomBox.getItems().add(emptyClassroom);
-	    Map<String,Center> centers = admin.getCenters();
-	    for(Center center : centers.values()) {
-	    		Map<String,Classroom> openClassrooms = center.getClassrooms();
-	    		for(Classroom classroom : openClassrooms.values()) {
-	    			if(classroom.getTeacherID() == null || classroom.getAssistantTeacherID() == null) {
-	    				ClassroomHolder newClassroomHolder = new ClassroomHolder(classroom);
-	    				classroomBox.getItems().add(newClassroomHolder);
-	    			}else if(classroom.getTeacherID().equals(teacher.getTeacherID()) || classroom.getAssistantTeacherID().equals(teacher.getTeacherID())) {
-	    				ClassroomHolder newClassroomHolder = new ClassroomHolder(classroom);
-	    				classroomBox.getItems().add(newClassroomHolder);
-	    				classroomBox.setValue(newClassroomHolder);
-	    			}
-	    		}
-	    }
-	    if(previousClassroom == null) {classroomBox.setValue(emptyClassroom);}
-	    classroomBox.setMaxWidth(650);
-	    classroomBox.setDisable(true);
-	    classroomBox.getStyleClass().add("choice-box");
-		return classroomBox;
-	}
-	
-	class ClassroomHolder{
-		
-		private Classroom classroom;
-		
-		public ClassroomHolder(Classroom classroom) {
-			this.classroom = classroom;
-		}
-		
-		public Classroom getClassroom() {
-			return classroom;
-		}
-		
-		@Override
-		public String toString() {
-			if(classroom == null) {return "N/A";}
-			else {return classroom.getCenter(classroom.getCenterID()) + ": " + classroom.getClassroomType();}
-		}
 	}
 		
 }

@@ -27,12 +27,12 @@ public class TeacherInfoPane extends GridPane implements DirectorLayout{
 	    Label assistantTeacherLabel = createLabel("Assistant","super-subtitle");
 	    assistantTeacherLabel.setVisible(false);
 	    List<Label> labels = populateLabels(Arrays.asList("full name:","employee id:","classroom:","e-mail:","cell number:"),"label");
-	    String name = teacher.getFirstName() + " " + teacher.getLastName(), classroom = "" + teacher.getClassroom(teacher.getClassroomID()) + "";
+	    String name = teacher.getFirstName() + " " + teacher.getLastName() + "";
 	    TextField nameField = createTextField(name,"textfield",650);
 	    nameField.setDisable(true);
 	    TextField identificationField = createTextField(teacher.getTeacherID(),"textfield",650);
 	    identificationField.setDisable(true);
-	    TextField classroomField = createTextField(classroom,"textfield",650);
+	    TextField classroomField = createTextField("Marisa was too lazy to fix me","textfield",650);
 	    classroomField.setDisable(true);
 	    TextField emailField = getEmailField(teacher);
 	    TextField phoneNumberField = getPhoneNumberField(teacher);
@@ -66,7 +66,7 @@ public class TeacherInfoPane extends GridPane implements DirectorLayout{
 		placeNode(this,nodes.get(4),0,2,"right",null);
 		placeNodeSpan(this,nodes.get(5),1,2,2,1,"left",null);
 		placeNode(this,nodes.get(6),0,3,"right",null);
-		placeNodeSpan(this,nodes.get(7),1,3,2,1,"left",null);
+//		placeNodeSpan(this,nodes.get(7),1,3,2,1,"left",null);
 		placeNode(this,nodes.get(8),0,4,"right",null);
 		placeNodeSpan(this,nodes.get(9),1,4,2,1,"left",null);
 		placeNode(this,nodes.get(10),0,5,"right",null);
@@ -121,7 +121,6 @@ public class TeacherInfoPane extends GridPane implements DirectorLayout{
 			labels.get(3).setVisible(true);
 			textfields.get(0).setPromptText(assistantTeacher.getFirstName() + " " + assistantTeacher.getLastName());
 			textfields.get(1).setPromptText(assistantTeacher.getTeacherID());
-			textfields.get(2).setPromptText("" + assistantTeacher.getClassroom(assistantTeacher.getClassroomID()));
 			if(assistantTeacher.getContact() == null || assistantTeacher.getContact().getEmail() == null) {textfields.get(3).setPromptText("e-mail");}
 			else{textfields.get(3).setPromptText(assistantTeacher.getContact().getEmail());};
 			if(assistantTeacher.getContact() == null || assistantTeacher.getContact().getCellNumber() == null) {textfields.get(4).setPromptText("(xxx)-xxx-xxxx");}
@@ -134,7 +133,6 @@ public class TeacherInfoPane extends GridPane implements DirectorLayout{
 			labels.get(3).setVisible(false);
 			textfields.get(0).setPromptText(teacher.getFirstName() + " " + teacher.getLastName());
 			textfields.get(1).setPromptText(teacher.getTeacherID());
-			textfields.get(2).setPromptText("" + teacher.getClassroom(teacher.getClassroomID()));
 			if(teacher.getContact() == null || teacher.getContact().getEmail() == null) {textfields.get(3).setPromptText("e-mail");}
 			else{textfields.get(3).setPromptText(teacher.getContact().getEmail());};
 			if(teacher.getContact() == null || teacher.getContact().getCellNumber() == null) {textfields.get(4).setPromptText("(xxx)-xxx-xxxx");}

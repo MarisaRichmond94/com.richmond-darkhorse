@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Map;
 import com.richmond.darkhorse.ProjectSB.Admin;
 import com.richmond.darkhorse.ProjectSB.Center;
-import com.richmond.darkhorse.ProjectSB.Classroom;
 import com.richmond.darkhorse.ProjectSB.StaffMember;
 import com.richmond.darkhorse.ProjectSB.Teacher;
 import com.richmond.darkhorse.ProjectSB.gui.component.AddTeacher;
@@ -95,9 +94,7 @@ public class TeacherWorkspaceScene extends Scene implements AdminLayout{
 			String firstName = theTeacher.getFirstName(), lastName = theTeacher.getLastName();
 			Center theCenter = theTeacher.getCenter(theTeacher.getCenterID());
 			String centerString = theCenter.getAbbreviatedName();
-			Classroom theClassroom = null;
-			if(theTeacher.getClassroomID() != null) {theClassroom = theTeacher.getClassroom(theTeacher.getClassroomID());}
-			String buttonText = "" + firstName + " " + lastName + "\n" + "Center: " + centerString + "\n" + "Classroom: " + theClassroom + "";
+			String buttonText = "" + firstName + " " + lastName + "\n" + "Center: " + centerString + "";
 			Button newButton = createButton(buttonText,null,0,300,500);
 			newButton.setOnAction(e -> {
 				ModifyTeacher modifyTeacher = new ModifyTeacher(admin,(Teacher)theTeacher);
@@ -125,19 +122,6 @@ public class TeacherWorkspaceScene extends Scene implements AdminLayout{
 			Teacher teacher = (Teacher)staffMember;
 			return teacher;
 		}
-		return null;
-	}
-	
-	/**
-	 * Gets the {@link Classroom} from the {@link Teacher} object
-	 * @param teacher - {@link Teacher} object
-	 * @return a {@link Classroom} if one exists or null if it does not
-	 */
-	public Classroom getClassroom(Teacher teacher) {
-		try{
-			Classroom classroom = teacher.getClassroom(teacher.getClassroomID());
-			if(classroom != null) {return classroom;}
-		}catch(NullPointerException e) {e.printStackTrace();}
 		return null;
 	}
 	

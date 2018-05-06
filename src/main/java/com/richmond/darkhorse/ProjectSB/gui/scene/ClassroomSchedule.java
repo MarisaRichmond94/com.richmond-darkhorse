@@ -243,18 +243,15 @@ public class ClassroomSchedule extends Scene implements DirectorLayout,ScheduleH
 	private ChoiceBox<StaffMember> buildStaffBox(){
 		ChoiceBox<StaffMember> staffBox = new ChoiceBox<>();
 		List<StaffMember> staffList = new ArrayList<>();
+		List<Classroom> classroomList = new ArrayList<>();
 		Map<String,StaffMember> staffMembers = director.getStaffMembers();
 		for(StaffMember staffMember : staffMembers.values()) {staffList.add(staffMember);}
+		Map<String,Classroom> classrooms = director.getClassrooms();
+		for(Classroom classroomCheck : classrooms.values()) { classroomList.add(classroomCheck);}
 		for(StaffMember staffmember : staffList) {
 			if(staffmember.getTitle().equals("Teacher")) {
 				Teacher teacher = (Teacher) staffmember;
-				if(teacher.getClassroomID() != null) {
-					if(!teacher.getClassroom(teacher.getClassroomID()).equals(classroom)) {
-						staffBox.getItems().add(staffmember);
-					}
-				}else if(teacher.getClassroomID() == null) {
-					staffBox.getItems().add(staffmember);
-				}
+				if(!classroom.getTeacherID().equals(teacher.getTeacherID())) {staffBox.getItems().add(staffmember);}
 			}else {staffBox.getItems().add(staffmember);}
 		}
 		staffBox.setValue(staffBox.getItems().get(0));

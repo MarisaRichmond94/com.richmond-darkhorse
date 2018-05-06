@@ -63,7 +63,7 @@ public class AddClassroom implements AdminLayout{
 	    teacherAlreadyActiveWarning.setTextFill(Color.RED);
 		teacherAlreadyActiveWarning.setVisible(false);
 		Button createClassroomButton = createButton("Create Classroom",null,0,0,0);
-		createClassroomButton.setOnAction(e -> createClassroom(typeBox,centerBox,teacherBox,assistantTeacherBox,capacityBox,teacherAlreadyActiveWarning,duplicateTeacherWarning,stage));
+		createClassroomButton.setOnAction(e -> createClassroom(typeBox,centerBox,teacherBox,assistantTeacherBox,capacityBox,duplicateTeacherWarning,stage));
 		Button cancelButton = new Button("Cancel");
 	    cancelButton.getStyleClass().add("button");
 	    cancelButton.setOnAction(e -> stage.close());	   
@@ -201,11 +201,10 @@ public class AddClassroom implements AdminLayout{
 	 * @param teacherBox
 	 * @param assistantTeacherBox
 	 * @param capacityBox
-	 * @param teacherAlreadyActiveWarning
 	 * @param duplicateTeacherWarning
 	 * @param stage - the current stage
 	 */
-	private void createClassroom(ChoiceBox<String> typeBox,ChoiceBox<Center> centerBox,ChoiceBox<TeacherHolder> teacherBox,ChoiceBox<TeacherHolder> assistantTeacherBox,ChoiceBox<Integer> capacityBox,Label teacherAlreadyActiveWarning,Label duplicateTeacherWarning,Stage stage) {
+	private void createClassroom(ChoiceBox<String> typeBox,ChoiceBox<Center> centerBox,ChoiceBox<TeacherHolder> teacherBox,ChoiceBox<TeacherHolder> assistantTeacherBox,ChoiceBox<Integer> capacityBox,Label duplicateTeacherWarning,Stage stage) {
 		String ageGroup = typeBox.getValue(),classroomType = null;
 		Center selectedCenter = centerBox.getValue();
 		Teacher selectedTeacher = teacherBox.getValue().getTeacher(), selectedAssistantTeacher = assistantTeacherBox.getValue().getTeacher();
@@ -215,16 +214,9 @@ public class AddClassroom implements AdminLayout{
 	    	else {classroomType = "Pre3";}
 	    	if(teacherBox.getValue() == null) {selectedTeacher.setTeacherID(null);}
 	    	if(assistantTeacherBox.getValue() == null) {selectedAssistantTeacher.setTeacherID(null);}
-	    	if(selectedTeacher != null && selectedTeacher.equals(selectedAssistantTeacher)) {
-	    		if(teacherAlreadyActiveWarning.isVisible()) {teacherAlreadyActiveWarning.setVisible(false);}
-	    		duplicateTeacherWarning.setVisible(true);
-	    	}else if(selectedTeacher != null && selectedTeacher.getClassroomID() != null) {
-	    		if(duplicateTeacherWarning.isVisible()) {duplicateTeacherWarning.setVisible(false);}
-	    		teacherAlreadyActiveWarning.setVisible(true);
-	    	}else if(selectedAssistantTeacher != null && selectedAssistantTeacher.getClassroomID() != null){
-	    		if(duplicateTeacherWarning.isVisible()) {duplicateTeacherWarning.setVisible(false);}
-	    		teacherAlreadyActiveWarning.setVisible(true);
-	    	}else {
+	    	if(selectedTeacher != null && selectedTeacher.equals(selectedAssistantTeacher)) {duplicateTeacherWarning.setVisible(true);	}
+	    	else if(selectedAssistantTeacher != null && selectedAssistantTeacher.equals(selectedTeacher)) {duplicateTeacherWarning.setVisible(true);}
+	    	else {
 		    	Thread createNewClassroom = new Thread(new CreateNewClassroom(classroomType,selectedCenter,selectedTeacher,selectedAssistantTeacher,maxCapacity,ageGroup,admin));
 		    	createNewClassroom.start();	
 		    	stage.close();

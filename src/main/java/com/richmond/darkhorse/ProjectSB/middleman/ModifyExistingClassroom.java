@@ -10,7 +10,6 @@ public class ModifyExistingClassroom implements Runnable {
 	private int maxCapacity;
 	private Admin admin;
 	
-	//Constructor for modifying a classroom with TWO {@link Teacher}s 
 	public ModifyExistingClassroom(Classroom classroom,Teacher teacher,Teacher assistantTeacher,int maxCapacity,Admin admin) {
 		this.classroom = classroom;
 		this.teacher = teacher;

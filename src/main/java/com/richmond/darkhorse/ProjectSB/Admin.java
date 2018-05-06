@@ -28,16 +28,7 @@ public class Admin implements Account,Serializable{
 		return director;
 	}
 	
-	public Teacher createTeacherWithClassroom(String firstName,String lastName,Center center,Classroom classroom) {
-		Teacher teacher = new Teacher(firstName,lastName,center,classroom);
-		center.addTeacher(teacher);
-		if(classroom.getTeacherID() == null) {
-			classroom.setTeacherID(teacher.getTeacherID());
-		}else{classroom.setAssistantTeacherID(teacher.getTeacherID());}
-		return teacher;
-	}
-	
-	public Teacher createTeacherWithoutClassroom(String firstName,String lastName,Center center) {
+	public Teacher createTeacher(String firstName,String lastName,Center center) {
 		Teacher teacher = new Teacher(firstName,lastName,center);
 		center.addTeacher(teacher);
 		return teacher;
@@ -50,14 +41,11 @@ public class Admin implements Account,Serializable{
 	
 	public Classroom createClassroomWithoutAssistant(String className,Center center,Teacher teacher,int maxSize,String ageGroup) {
 		Classroom classroom = new Classroom(className,center,teacher,maxSize,ageGroup);
-		teacher.setClassroom(classroom);
 		return classroom;
 	}
 	
 	public Classroom createClassroomWithAssistant(String className,Center center,Teacher teacher,Teacher assistantTeacher,int maxSize,String ageGroup) {
 		Classroom classroom = new Classroom(className,center,teacher,assistantTeacher,maxSize,ageGroup);
-		teacher.setClassroom(classroom);
-		assistantTeacher.setClassroom(classroom);
 		return classroom;
 	}
 	
@@ -73,21 +61,12 @@ public class Admin implements Account,Serializable{
 		Map<String,StaffMember> staffMembers = SpecialBeginnings.getInstance().getStaffMembers();
 		Center center = teacher.getCenter(teacher.getCenterID());
 		center.removeTeacher(teacher);
-		if(teacher.getClassroomID() != null) {
-			Classroom classroom = teacher.getClassroom(teacher.getClassroomID());
-			classroom.removeTeacher(teacher);
-		}
+		Map<String,Classroom> classrooms = center.getClassrooms();
+		for(Classroom classroom : classrooms.values()) {if(classroom.getTeacherID().equals(teacher.getTeacherID())) {classroom.removeTeacher(teacher);}}
 		if(staffMembers.containsKey(teacher.getUserID())) { staffMembers.remove(teacher.getUserID()); }
 	}
 	
 	public void deleteClassroom(Classroom classroom) {
-		if(classroom.getTeacherID() != null) {
-			Teacher leadTeacher = classroom.getTeacher(classroom.getTeacherID());
-			leadTeacher.removeClassroom(classroom);
-		}else if(classroom.getAssistantTeacherID() != null) {
-			Teacher assistantTeacher = classroom.getAssistantTeacher(classroom.getAssistantTeacherID());
-			assistantTeacher.removeClassroom(classroom);
-		}
 		Center center = classroom.getCenter(classroom.getCenterID());
 		center.deleteClassroom(classroom);
 	}
@@ -114,60 +93,18 @@ public class Admin implements Account,Serializable{
 		return staffMember;
 	}
 	
-	public StaffMember modifyStaffMemberTeacherWithoutClassroom(StaffMember staffMember,String title,String firstName,String lastName,Center center) {
+	public StaffMember modifyStaffMemberTeacher(StaffMember staffMember,String title,String firstName,String lastName,Center center) {
 	    Teacher modifiedTeacher = (Teacher) staffMember;
-	    if(modifiedTeacher.getClassroomID() != null) {
-	    		Classroom oldClassroom = modifiedTeacher.getClassroom(modifiedTeacher.getClassroomID());
-	    		oldClassroom.removeTeacher(modifiedTeacher);
-	    		modifiedTeacher.removeClassroom(oldClassroom);
-	    }
 	    	modifiedTeacher.setFirstName(firstName);
 	    modifiedTeacher.setLastName(lastName);
 	    modifiedTeacher.setCenterID(center.getCenterID());
 		return modifiedTeacher;
 	}
 	
-	public StaffMember modifyStaffMemberTeacherWithClassroom(StaffMember staffMember,String title,String firstName,String lastName,Center center,Classroom classroom) {
-	    Teacher modifiedTeacher = (Teacher) staffMember;
-	    modifiedTeacher.setFirstName(firstName);
-	    modifiedTeacher.setLastName(lastName);
-	    if(!modifiedTeacher.getCenterID().equals(center.getCenterID())) {
-	    		Center oldCenter = modifiedTeacher.getCenter(modifiedTeacher.getCenterID());
-	    		oldCenter.removeTeacher(modifiedTeacher);
-	    }
-	    modifiedTeacher.setCenterID(center.getCenterID());
-	    if(modifiedTeacher.getClassroomID() != null && !modifiedTeacher.getClassroomID().equals(classroom.getClassroomID())) {
-	    		Classroom oldClassroom = modifiedTeacher.getClassroom(modifiedTeacher.getClassroomID());
-	    		oldClassroom.removeTeacher(modifiedTeacher);
-	    }
-		if(classroom.getTeacherID() == null) {classroom.setTeacherID(modifiedTeacher.getTeacherID());
-	    	}else {classroom.setAssistantTeacherID(modifiedTeacher.getTeacherID());}
-		modifiedTeacher.setClassroomID(classroom.getClassroomID());
-		return modifiedTeacher;
-	}
-	
 	public Classroom modifyClassroom(Classroom classroom,Teacher teacher,Teacher assistantTeacher,int maxSize) {
 		classroom.setMaxSize(maxSize);
-		if(teacher != null) {
-			if(classroom.getTeacherID() != null && !teacher.getTeacherID().equals(classroom.getTeacherID())) {
-				Teacher oldTeacher = classroom.getTeacher(classroom.getTeacherID());
-				oldTeacher.removeClassroom(classroom);
-			}
-			teacher.setClassroom(classroom);
-			classroom.setTeacherID(teacher.getTeacherID());
-		}else {
-			if(classroom.getTeacherID() != null) {classroom.removeTeacher(classroom.getTeacher(classroom.getTeacherID()));}
-		}
-		if(assistantTeacher != null) {
-			if(classroom.getAssistantTeacherID() != null && !assistantTeacher.getTeacherID().equals(classroom.getAssistantTeacherID())) {
-				Teacher oldAssistant = classroom.getAssistantTeacher(classroom.getAssistantTeacherID());
-				oldAssistant.removeClassroom(classroom);
-			}
-			assistantTeacher.setClassroom(classroom);
-			classroom.setAssistantTeacherID(assistantTeacher.getTeacherID());
-		}else {
-			if(classroom.getAssistantTeacherID() != null) {classroom.removeTeacher(classroom.getAssistantTeacher(classroom.getAssistantTeacherID()));}
-		}
+		if(teacher != null) {classroom.setTeacherID(teacher.getTeacherID());}
+		if(assistantTeacher != null) {classroom.setAssistantTeacherID(assistantTeacher.getTeacherID());}
 		return classroom;
 	}
 	
@@ -175,11 +112,6 @@ public class Admin implements Account,Serializable{
 		if(teacher.getCenterID() != null && !teacher.getCenterID().equals(center.getCenterID())) {
 			Center oldCenter = teacher.getCenter(teacher.getCenterID());
 			oldCenter.removeTeacher(teacher);
-		}
-		if(teacher.getClassroomID() != null) {
-			Classroom classroom = teacher.getClassroom(teacher.getClassroomID());
-			classroom.removeTeacher(teacher);
-			teacher.removeClassroom(classroom);
 		}
 		String userID = teacher.getUserID(), directorID = teacher.getTeacherID(), firstName = teacher.getFirstName(), lastName = teacher.getLastName();
 		this.deleteTeacher(teacher);
