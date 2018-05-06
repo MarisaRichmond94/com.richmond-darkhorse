@@ -1,5 +1,7 @@
 package com.richmond.darkhorse.ProjectSB.gui.component;
+import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -10,18 +12,16 @@ import com.richmond.darkhorse.ProjectSB.Director;
 import com.richmond.darkhorse.ProjectSB.Schedule;
 import com.richmond.darkhorse.ProjectSB.StaffMember;
 import com.richmond.darkhorse.ProjectSB.Teacher;
-import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
-import javafx.geometry.HPos;
-import javafx.scene.Scene;
-import javafx.stage.Modality;
+import javafx.scene.paint.Color;
+import javafx.scene.Node;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
-public class ModifySchedules {
+public class ModifySchedules implements DirectorLayout{
 
 	private Director director;
-	private Map<Integer,String> startTimes,stopTimes,newStartTimes,newStopTimes;
+	private Map<Integer,LocalTime> startTimes,stopTimes,newStartTimes,newStopTimes;
 	private List<Teacher> teachers;
 	private int staffIndex;
 	private Teacher teacher;
@@ -39,257 +39,224 @@ public class ModifySchedules {
 		this.schedule = teacher.getSchedule();
 		this.startTimes = schedule.getStartTimes();
 		this.stopTimes = schedule.getStopTimes();
-		this.newStartTimes = new HashMap<Integer,String>();
-		this.newStopTimes = new HashMap<Integer,String>();
+		this.newStartTimes = new HashMap<Integer,LocalTime>();
+		this.newStopTimes = new HashMap<Integer,LocalTime>();
 	}
 	
 	public void display() {
 		Stage stage = new Stage();
-		stage.initModality(Modality.APPLICATION_MODAL);
-		stage.setTitle("Modify");
-		
-		GridPane modifySchedulesLayout = new GridPane();
-		modifySchedulesLayout.setVgap(0);
-		modifySchedulesLayout.setHgap(0);
-		ColumnConstraints columnOne = new ColumnConstraints();
-		columnOne.setPercentWidth(25);
-	    ColumnConstraints columnTwo = new ColumnConstraints();
-	    columnTwo.setPercentWidth(25);
-	    ColumnConstraints columnThree = new ColumnConstraints();
-	    columnThree.setPercentWidth(25);
-	    ColumnConstraints columnFour = new ColumnConstraints();
-	    columnFour.setPercentWidth(25);
-	    modifySchedulesLayout.getColumnConstraints().addAll(columnOne,columnTwo,columnThree,columnFour);
-	    modifySchedulesLayout.getStyleClass().add("gridpane");
-	    modifySchedulesLayout.getStylesheets().add("directorhome.css");
-	    loadDisplayPane(modifySchedulesLayout,stage);
-	    
-	    ChoiceBox<Teacher> teacherBox = new ChoiceBox<Teacher>();
+		GridPane modifySchedulesLayout = buildGridPane(stage);
+		buildPopUp(stage,modifySchedulesLayout,"Modify");
+	}
+	
+	/**
+	 * Builds the default GridPane
+	 * @param stage - the current stage
+	 * @return GridPane
+	 */
+	private GridPane buildGridPane(Stage stage) {
+		GridPane gridpane = new GridPane();
+		setConstraints(gridpane,4,0,0,0,"modulargridpane");
+	    gridpane.getStylesheets().add("css/director.css");
+	    loadDisplayPane(gridpane,stage);
+	    ChoiceBox<Teacher> teacherBox = buildTeacherBox(gridpane,stage);
+	    Label selectTeacher = createLabel("view:","label");
+	    placeNode(gridpane,selectTeacher,2,0,"right",null);
+	    placeNode(gridpane,teacherBox,3,0,"left",null);
+	    return gridpane;
+	}
+	
+	private ChoiceBox<Teacher> buildTeacherBox(GridPane gridpane,Stage stage){
+		ChoiceBox<Teacher> teacherBox = new ChoiceBox<Teacher>();
 	    for(Teacher teacher : teachers) {teacherBox.getItems().add(teacher);}
 	    teacherBox.setValue(teacherBox.getItems().get(staffIndex));
-
-        teacherBox.getSelectionModel().selectedItemProperty().addListener((ov,oldTeacher,newTeacher) -> {
-        		teacher = newTeacher;
+	    teacherBox.getSelectionModel().selectedItemProperty().addListener((ov,oldTeacher,newTeacher) -> {
+	    		teacher = newTeacher;
         		boolean match = false;
 			int count = 0;
 			while(match == false && count < teachers.size()) {
 				Teacher teacherCheck = teachers.get(count);
-				if(teacherCheck.equals(newTeacher)) {
-					match = true;
-				}
+				if(teacherCheck.equals(newTeacher)) {match = true;}
 				count++;
 			}
 			staffIndex = count-1;
 			schedule = teacher.getSchedule();
 			startTimes = schedule.getStartTimes();
 			stopTimes = schedule.getStopTimes();
-			modifySchedulesLayout.getChildren().clear();
-			buildViewMenu(modifySchedulesLayout,stage);
-			loadDisplayPane(modifySchedulesLayout,stage);
+			gridpane.getChildren().clear();
+			buildViewMenu(gridpane,stage);
+			loadDisplayPane(gridpane,stage);
         });
-		
-        modifySchedulesLayout.add(teacherBox,0,0);
-        GridPane.setHalignment(teacherBox,HPos.CENTER);
-        GridPane.setConstraints(teacherBox,0,0,4,1);
-        
-		Scene modifySchedulesScene = new Scene(modifySchedulesLayout);
-		stage.setScene(modifySchedulesScene);
-		stage.showAndWait();
+	    teacherBox.getStyleClass().add("choice-box-mini");
+	    return teacherBox;
 	}
 	
-	private void buildViewMenu(GridPane modifySchedulesLayout,Stage stage) {
-		Label selectTeacher = new Label("view:");
-	    selectTeacher.getStyleClass().add("label");
-	    ChoiceBox<Teacher> teacherBox = new ChoiceBox<Teacher>();
-	    for(Teacher teacher : teachers) {teacherBox.getItems().add(teacher);}
-	    teacherBox.setValue(teacherBox.getItems().get(staffIndex));
-	    
-	    teacherBox.getSelectionModel().selectedItemProperty().addListener((ov,oldTeacher,newTeacher) -> {
-    		teacher = newTeacher;
-    		boolean match = false;
-		int count = 0;
-		while(match == false && count < teachers.size()) {
-			Teacher teacherCheck = teachers.get(count);
-			if(teacherCheck.equals(newTeacher)) {
-				match = true;
-			}
-			count++;
+	/**
+	 * Builds the view menu
+	 * @param gridpane - GridPane
+	 * @param stage - the current stage
+	 */
+	private void buildViewMenu(GridPane gridpane,Stage stage) {
+	    ChoiceBox<Teacher> teacherBox = buildTeacherBox(gridpane,stage);
+	    placeNode(gridpane,teacherBox,3,0,"left",null);
+	}
+	
+	/**
+	 * Makes an end time TextField
+	 * @param index - index representing the day
+	 * @return TextField
+	 */
+	private TextField getStart(int index) {
+		TextField dayStart;
+		String start = " ";
+		if(startTimes.get(index) != null & startTimes.size() > 0) {
+			start = "" + startTimes.get(index) + "";
+			dayStart = new TextField(start);
+		}else {dayStart = new TextField();}
+	    dayStart.getStyleClass().add("textfield");
+	    return dayStart;
+	}
+	
+	/**
+	 * Makes a start time TextField
+	 * @param index - index representing the day
+	 * @return TextField
+	 */
+	private TextField getEnd(int index) {
+		TextField dayEnd;
+		String end = "";
+		if(stopTimes.get(index) != null & stopTimes.size() > 0) {
+			end = "" + stopTimes.get(index) + "";
+			dayEnd = new TextField(end);
+		}else {dayEnd = new TextField();}
+		dayEnd.getStyleClass().add("textfield");
+		return dayEnd;
+	}
+	
+	/**
+	 * Writes any changes made to the {@link StaffMember}'s {@link Schedule}
+	 * @param stage - the current stage
+	 * @param starts - start times
+	 * @param ends - end times
+	 */
+	private void write(Stage stage,GridPane gridpane,List<TextField> starts,List<TextField> ends) {
+		List<LocalTime> startTimes = populateStartTimes(starts);
+		List<LocalTime> endTimes = populateEndTimes(ends);
+		newStartTimes.put(1,startTimes.get(0));
+		newStartTimes.put(2,startTimes.get(1));
+		newStartTimes.put(3,startTimes.get(2));
+		newStartTimes.put(4,startTimes.get(3));
+		newStartTimes.put(5,startTimes.get(4));
+		newStopTimes.put(1,endTimes.get(0));
+		newStopTimes.put(2,endTimes.get(1));
+		newStopTimes.put(3,endTimes.get(2));
+		newStopTimes.put(4,endTimes.get(3));
+		newStopTimes.put(5,endTimes.get(4));
+		director.modifyStaffSchedule(teacher,newStartTimes,newStopTimes);
+		Label saveSuccessful = createLabel("save successful!","label");
+		saveSuccessful.setTextFill(Color.GREENYELLOW);
+		placeNodeSpan(gridpane,saveSuccessful,0,7,4,1,"center",null);
+	}
+	
+	private List<LocalTime> populateStartTimes(List<TextField> starts){
+		List<LocalTime> startTimes = new ArrayList<>();
+		for(TextField start : starts) {
+			char[] characters = start.getText().toCharArray();
+			if(characters.length == 4) {
+				int hour = Integer.parseInt(String.valueOf(characters[0])), minutes = Integer.parseInt(String.valueOf(characters[2]))*10 + Integer.parseInt(String.valueOf(characters[3]));
+				LocalTime startTime = LocalTime.of(hour,minutes);
+				startTimes.add(startTime);
+			}else if(characters.length == 5){
+				int hour = Integer.parseInt(String.valueOf(characters[0]))*10 + Integer.parseInt(String.valueOf(characters[1])), minutes = Integer.parseInt(String.valueOf(characters[3]))*10 + Integer.parseInt(String.valueOf(characters[4]));
+				LocalTime startTime = LocalTime.of(hour,minutes);
+				startTimes.add(startTime);
+			}else if(characters.length == 0) {startTimes.add(null);}
 		}
-		staffIndex = count-1;
-		schedule = teacher.getSchedule();
-		startTimes = schedule.getStartTimes();
-		stopTimes = schedule.getStopTimes();
-		modifySchedulesLayout.getChildren().clear();
-		buildViewMenu(modifySchedulesLayout,stage);
-		loadDisplayPane(modifySchedulesLayout,stage);
-    });
-		
-        modifySchedulesLayout.add(teacherBox,0,0);
-        GridPane.setHalignment(teacherBox,HPos.CENTER);
-        GridPane.setConstraints(teacherBox,0,0,4,1);
+		return startTimes;
 	}
 	
-	private void loadDisplayPane(GridPane modifySchedulesLayout,Stage stage) {
-		
+	private List<LocalTime> populateEndTimes(List<TextField> ends){
+		List<LocalTime> endTimes = new ArrayList<>();
+		for(TextField end : ends) {
+			char[] characters = end.getText().toCharArray();
+			if(characters.length == 4) {
+				int hour = Integer.parseInt(String.valueOf(characters[0])), minutes = Integer.parseInt(String.valueOf(characters[2]))*10 + Integer.parseInt(String.valueOf(characters[3]));
+				LocalTime startTime = LocalTime.of(hour,minutes);
+				endTimes.add(startTime);
+			}else if(characters.length == 5){
+				int hour = Integer.parseInt(String.valueOf(characters[0]))*10 + Integer.parseInt(String.valueOf(characters[1])), minutes = Integer.parseInt(String.valueOf(characters[3]))*10 + Integer.parseInt(String.valueOf(characters[4]));
+				LocalTime startTime = LocalTime.of(hour,minutes);
+				endTimes.add(startTime);
+			}else if(characters.length == 0) {endTimes.add(null);}
+		}
+		return endTimes;
+	}
+	
+	/**
+	 * Enables edit mode
+	 */
+	private void edit(Button editButton,Button writeButton,List<TextField> starts,List<TextField> ends) {
+		editButton.setVisible(false);
+		writeButton.setVisible(true);
+		starts.get(0).setDisable(false);
+		ends.get(0).setDisable(false);
+		starts.get(1).setDisable(false);
+		ends.get(1).setDisable(false);
+		starts.get(2).setDisable(false);
+		ends.get(2).setDisable(false);
+		starts.get(3).setDisable(false);
+		ends.get(3).setDisable(false);
+		starts.get(4).setDisable(false);
+		ends.get(4).setDisable(false);
+	}
+	
+	/**
+	 * Loads the GridPane to be displayed
+	 * @param gridpane - GridPane
+	 * @param stage - the current stage
+	 */
+	private void loadDisplayPane(GridPane gridpane,Stage stage) {
 	    Label teacherTitle = new Label(teacher.getFirstName() + " " + teacher.getLastName());
-	    teacherTitle.getStyleClass().add("subtitle");
-	    modifySchedulesLayout.add(teacherTitle,0,1);
-	    GridPane.setHalignment(teacherTitle,HPos.CENTER);
-	    GridPane.setConstraints(teacherTitle,0,1,4,1);
-	    
-	    Label monday = new Label("monday:");
-	    monday.getStyleClass().add("label");
-	    Label mondayTo = new Label("to");
-	    mondayTo.getStyleClass().add("label");
-	    TextField mondayStart;
-	    if(startTimes.size() > 0) {mondayStart = new TextField(startTimes.get(1));}
-	    else {mondayStart = new TextField();}
-	    mondayStart.getStyleClass().add("textfield");
-	    TextField mondayEnd;
-	    if(stopTimes.size() > 0) {mondayEnd = new TextField(stopTimes.get(1));}
-	    else {mondayEnd = new TextField();}
-	    mondayEnd.getStyleClass().add("textfield");
-	    placeDay(modifySchedulesLayout,monday,mondayTo,mondayStart,mondayEnd,2);
-	    
-	    Label tuesday = new Label("tuesday:");
-	    tuesday.getStyleClass().add("label");
-	    Label tuesdayTo = new Label("to");
-	    tuesdayTo.getStyleClass().add("label");
-	    TextField tuesdayStart;
-	    if(startTimes.size() > 1) {tuesdayStart = new TextField(startTimes.get(2));}
-	    else {tuesdayStart = new TextField();}
-	    tuesdayStart.getStyleClass().add("textfield");
-	    TextField tuesdayEnd;
-	    if(stopTimes.size() > 1) {tuesdayEnd = new TextField(stopTimes.get(2));}
-	    else {tuesdayEnd = new TextField();}
-	    tuesdayEnd.getStyleClass().add("textfield");
-	    placeDay(modifySchedulesLayout,tuesday,tuesdayTo,tuesdayStart,tuesdayEnd,3);
-	    
-	    Label wednesday = new Label("wednesday:");
-	    wednesday.getStyleClass().add("label");
-	    Label wednesdayTo = new Label("to");
-	    wednesdayTo.getStyleClass().add("label");
-	    TextField wednesdayStart;
-	    if(startTimes.size() > 2) {wednesdayStart = new TextField(startTimes.get(3));}
-	    else {wednesdayStart = new TextField();}
-	    wednesdayStart.getStyleClass().add("textfield");
-	    TextField wednesdayEnd;
-	    if(stopTimes.size() > 2) {wednesdayEnd = new TextField(stopTimes.get(3));}
-	    else {wednesdayEnd = new TextField();}
-	    wednesdayEnd.getStyleClass().add("textfield");
-	    placeDay(modifySchedulesLayout,wednesday,wednesdayTo,wednesdayStart,wednesdayEnd,4);
-	    
-	    Label thursday = new Label("thursday:");
-	    thursday.getStyleClass().add("label");
-	    Label thursdayTo = new Label("to");
-	    thursdayTo.getStyleClass().add("label");
-	    TextField thursdayStart;
-	    if(startTimes.size() > 3) {thursdayStart = new TextField(startTimes.get(4));}
-	    else {thursdayStart = new TextField();}
-	    thursdayStart.getStyleClass().add("textfield");
-	    TextField thursdayEnd;
-	    if(stopTimes.size() > 3) {thursdayEnd = new TextField(stopTimes.get(4));}
-	    else {thursdayEnd = new TextField();}
-	    thursdayEnd.getStyleClass().add("textfield");
-	    placeDay(modifySchedulesLayout,thursday,thursdayTo,thursdayStart,thursdayEnd,5);
-	    
-	    Label friday = new Label("friday:");
-	    friday.getStyleClass().add("label");
-	    Label fridayTo = new Label("to");
-	    fridayTo.getStyleClass().add("label");
-	    TextField fridayStart;
-	    if(startTimes.size() > 4) {fridayStart = new TextField(startTimes.get(5));}
-	    else {fridayStart = new TextField();}
-	    fridayStart.getStyleClass().add("textfield");
-	    TextField fridayEnd;
-	    if(stopTimes.size() > 4) {fridayEnd = new TextField(stopTimes.get(5));}
-	    else {fridayEnd = new TextField();}
-	    fridayEnd.getStyleClass().add("textfield");
-	    placeDay(modifySchedulesLayout,friday,fridayTo,fridayStart,fridayEnd,6);
-		
-		Button editButton = new Button("edit");
-		editButton.getStyleClass().add("button");
-		Button writeButton = new Button("write");
-		writeButton.getStyleClass().add("button");
-		writeButton.setOnAction(e -> {
-			String startMonday = nullStartCheck(mondayStart);
-			String startTuesday = nullStartCheck(tuesdayStart);
-			String startWednesday = nullStartCheck(wednesdayStart); 
-			String startThursday = nullStartCheck(thursdayStart); 
-			String startFriday = nullStartCheck(fridayStart); 
-			newStartTimes.put(1,startMonday);
-			newStartTimes.put(2,startTuesday);
-			newStartTimes.put(3,startWednesday);
-			newStartTimes.put(4,startThursday);
-			newStartTimes.put(5,startFriday);
-			String endMonday = nullEndCheck(mondayEnd); 
-			String endTuesday = nullEndCheck(tuesdayEnd); 
-			String endWednesday = nullEndCheck(wednesdayEnd); 
-			String endThursday = nullEndCheck(thursdayEnd); 
-			String endFriday = nullEndCheck(fridayEnd); 
-			newStopTimes.put(1,endMonday);
-			newStopTimes.put(2,endTuesday);
-			newStopTimes.put(3,endWednesday);
-			newStopTimes.put(4,endThursday);
-			newStopTimes.put(5,endFriday);
-			director.modifyStaffSchedule(teacher,newStartTimes,newStopTimes);
-			stage.close();
-		});
-		editButton.setOnAction(e -> {
-			editButton.setVisible(false);
-			writeButton.setVisible(true);
-			mondayStart.setDisable(false);
-			mondayEnd.setDisable(false);
-			tuesdayStart.setDisable(false);
-			tuesdayEnd.setDisable(false);
-			wednesdayStart.setDisable(false);
-			wednesdayEnd.setDisable(false);
-			thursdayStart.setDisable(false);
-			thursdayEnd.setDisable(false);
-			fridayStart.setDisable(false);
-			fridayEnd.setDisable(false);
-		});
+	    teacherTitle.getStyleClass().add("super-subtitle");
+	    placeNodeSpan(gridpane,teacherTitle,0,1,4,1,"center",null);
+	    Label selectTeacher = createLabel("view:","label");
+	    List<Label> labels = populateLabels(Arrays.asList("monday:","tuesday:","wednesday:","thursday:","friday:"),"label");
+	    TextField mondayStart = getStart(1), mondayEnd = getEnd(1), tuesdayStart = getStart(2), tuesdayEnd = getEnd(2), wednesdayStart = getStart(3), wednesdayEnd = getEnd(3);
+	    TextField thursdayStart = getStart(4), thursdayEnd = getEnd(4), fridayStart = getStart(5), fridayEnd = getEnd(5);
+	    placeDay(gridpane,labels.get(0),mondayStart,mondayEnd,2);
+	    placeDay(gridpane,labels.get(1),tuesdayStart,tuesdayEnd,3);
+	    placeDay(gridpane,labels.get(2),wednesdayStart,wednesdayEnd,4);
+	    placeDay(gridpane,labels.get(3),thursdayStart,thursdayEnd,5);
+	    placeDay(gridpane,labels.get(4),fridayStart,fridayEnd,6);
+		Button editButton = createButton("edit",null,0,0,0);
+		Button writeButton = createButton("write",null,0,0,0);
+		List<TextField> starts = Arrays.asList(mondayStart,tuesdayStart,wednesdayStart,thursdayStart,fridayStart);
+		List<TextField> ends = Arrays.asList(mondayEnd,tuesdayEnd,wednesdayEnd,thursdayEnd,fridayEnd);
+		writeButton.setOnAction(e -> write(stage,gridpane,starts,ends));
+		editButton.setOnAction(e -> edit(editButton,writeButton,starts,ends));
 		writeButton.setVisible(false);
-		Button cancelButton = new Button("cancel");
-		cancelButton.getStyleClass().add("button");
-		cancelButton.setOnAction(e -> {
-			stage.close();
-		});
-		modifySchedulesLayout.add(editButton,1,7);
-		GridPane.setHalignment(editButton,HPos.CENTER);
-		modifySchedulesLayout.add(writeButton,1,7);
-		GridPane.setHalignment(writeButton,HPos.CENTER);
-		modifySchedulesLayout.add(cancelButton,2,7);
-		GridPane.setHalignment(cancelButton,HPos.CENTER);
+		Button cancelButton = createButton("cancel",null,0,0,0);
+		cancelButton.setOnAction(e -> stage.close());
+		placeNode(gridpane,selectTeacher,2,0,"right",null);
+		placeNode(gridpane,editButton,1,8,"center",null);
+		placeNode(gridpane,writeButton,1,8,"center",null);
+		placeNode(gridpane,cancelButton,2,8,"center",null);
 	}
 	
-	private String nullStartCheck(TextField startField) {
-		String value = null;
-		if(startField.getText().isEmpty()) {value = null;}
-		else { value = startField.getText();}
-		return value;
-	}
-	
-	private String nullEndCheck(TextField endField) {
-		String value = null;
-		if(endField.getText().isEmpty()) {value = null;}
-		else { value = endField.getText();}
-		return value;
-	}
-	
-	private void placeDay(GridPane gridpane,Label day,Label dayTo,TextField dayStart,TextField dayEnd,int rowIndex) {
+	/**
+	 * Places each day's nodes
+	 */
+	private void placeDay(GridPane gridpane,Label day,TextField dayStart,TextField dayEnd,int rowIndex) {
 		dayStart.setDisable(true);
 		dayEnd.setDisable(true);
-		dayStart.setMaxWidth(100);
-		dayEnd.setMaxWidth(100);
-		gridpane.add(day,0,rowIndex);
-		GridPane.setHalignment(day,HPos.RIGHT);
-		gridpane.add(dayStart,1,rowIndex);
-		GridPane.setHalignment(dayStart,HPos.CENTER);
-		gridpane.add(dayTo,2,rowIndex);
-		GridPane.setHalignment(dayTo,HPos.CENTER);
-		gridpane.add(dayEnd,3,rowIndex);
-		GridPane.setHalignment(dayEnd,HPos.CENTER);
+		dayStart.setMaxWidth(300);
+		dayEnd.setMaxWidth(300);
+		placeNode(gridpane,day,0,rowIndex,"right",null);
+		placeNode(gridpane,dayStart,1,rowIndex,"center",null);
+		placeNode(gridpane,dayEnd,2,rowIndex,"center",null);
 	}
+
+	@Override
+	public void placeNodes(GridPane gridpane, List<Node> nodes) {}
 	
 }

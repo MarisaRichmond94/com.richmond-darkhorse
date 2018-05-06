@@ -11,6 +11,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * A container for {@link Classroom}s, {@link Student}s, {@link Teacher}s, and a {@link Director}. Each {@link Center} also possesses {@link Event}s unique to that 
+ * {@link Center} and an employee {@link Schedule} 
+ * @author marisarichmond
+ */
 public class Center implements Serializable{
 
 	private static final long serialVersionUID = 8453756L;

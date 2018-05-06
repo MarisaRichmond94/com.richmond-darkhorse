@@ -1,20 +1,19 @@
 package com.richmond.darkhorse.ProjectSB.gui.component;
+import java.util.Arrays;
+import java.util.List;
 import com.richmond.darkhorse.ProjectSB.Center;
 import com.richmond.darkhorse.ProjectSB.Director;
 import com.richmond.darkhorse.ProjectSB.Event;
 import javafx.beans.binding.Bindings;
-import javafx.geometry.HPos;
-import javafx.scene.Scene;
-import javafx.stage.Modality;
+import javafx.scene.Node;
 import javafx.stage.Stage;
-import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 
-public class AddEvent {
+public class AddEvent implements DirectorLayout {
 
 	private Director director;
 	
@@ -24,108 +23,83 @@ public class AddEvent {
 	
 	public void display() {
 		Stage stage = new Stage();
-		stage.initModality(Modality.APPLICATION_MODAL);
-		stage.setTitle("Create New Event");
-		
-		GridPane addEventLayout = new GridPane();
-		addEventLayout.setVgap(10);
-		addEventLayout.setHgap(10);
-		ColumnConstraints columnOne = new ColumnConstraints();
-		columnOne.setPercentWidth(25);
-	    ColumnConstraints columnTwo = new ColumnConstraints();
-	    columnTwo.setPercentWidth(25);
-	    ColumnConstraints columnThree = new ColumnConstraints();
-	    columnThree.setPercentWidth(25);
-	    ColumnConstraints columnFour = new ColumnConstraints();
-	    columnFour.setPercentWidth(25);
-	    addEventLayout.getColumnConstraints().addAll(columnOne,columnTwo,columnThree,columnFour);
-	    addEventLayout.getStyleClass().add("gridpane");
-	    addEventLayout.getStylesheets().add("directorhome.css");
-	    
-	    Label newEvent = new Label("Create New Event");
-	    newEvent.getStyleClass().add("med-title");
-	    Label summary = new Label("Summary:");
-	    summary.getStyleClass().add("label");
-	    TextField summaryText = new TextField();
-	    summaryText.getStyleClass().add("textfield");
-	    summaryText.setMaxWidth(600);
-	    summaryText.setPrefHeight(50);
-	    summaryText.setPromptText("summary");
-	    Label day = new Label("Day:");
-	    day.getStyleClass().add("label");
-	    ChoiceBox<String> dayBox = new ChoiceBox<String>();
-	    String monday = "Monday";
-	    String tuesday = "Tuesday";
-	    String wednesday = "Wednesday";
-	    String thursday = "Thursday";
-	    String friday = "Friday";
-	    dayBox.getItems().addAll(monday,tuesday,wednesday,thursday,friday);
-	    dayBox.setValue(dayBox.getItems().get(0));
-	    dayBox.setMaxWidth(600);
-	    Label time = new Label("Time:");
-	    time.getStyleClass().add("label");
-	    TextField timeText = new TextField();
-	    timeText.setPromptText("time (optional)");
-	    timeText.getStyleClass().add("textfield");
-	    timeText.setMaxWidth(600);
-	    timeText.setPrefHeight(50);
-	    Label details = new Label("Details:");
-	    details.getStyleClass().add("label");
-	    TextField detailsText = new TextField();
-	    detailsText.setPromptText("additional details (optional)");
-	    detailsText.getStyleClass().add("textfield");
-	    detailsText.setMaxWidth(600);
-	    detailsText.setPrefHeight(50);
-	    Button create = new Button("create");
-	    create.getStyleClass().add("button");
+		GridPane addEventLayout = buildGridPane(stage);
+		buildPopUp(stage,addEventLayout,"Create New Event");
+	}
+
+	/**
+	 * Builds a GridPane to be used for the {@link AddEvent} layout
+	 * @param stage - the current stage
+	 * @return GridPane
+	 */
+	private GridPane buildGridPane(Stage stage) {
+		GridPane gridpane = new GridPane();
+		setConstraints(gridpane,4,0,10,10,"modulargridpane");
+	    Label newEvent = createLabel("Create New Event","med-title");
+	    Label summary = createLabel("Summary:","label");
+	    TextField summaryText = createTextField("summary","textfield",650);
+	    Label day = createLabel("Day:","label");
+	    ChoiceBox<String> dayBox = buildDayBox();
+	    Label time = createLabel("Time:","label");
+	    TextField timeText = createTextField("time (optional)","textfield",650);
+	    Label details = createLabel("Details:","label");
+	    TextField detailsText = createTextField("additional details (optional)","textfield",650);
+	    Button create = createButton("create",null,0,0,0);
 	    create.disableProperty().bind(Bindings.isEmpty(summaryText.textProperty()));
-	    create.setOnAction(e -> {
-	    		String eventSummary = summaryText.getText();
-	    		String eventDay = dayBox.getValue();
-	    		String eventTime = null;
-	    		if(!timeText.getText().isEmpty()) {eventTime = timeText.getText();}
-	    		String eventDetails = null;
-	    		if(!detailsText.getText().isEmpty()) {eventDetails = detailsText.getText();}
-	    		Event event = director.createNewEvent(eventSummary,eventDay,eventTime,eventDetails);
-	    		Center center = director.getCenter(director.getCenterID());
-	    		center.getEventCalendar().addEvent(event);
-	    		stage.close();
-	    });
-	    Button cancel = new Button("cancel");
+	    List<TextField> dataNodes = Arrays.asList(summaryText,timeText,detailsText); 
+	    create.setOnAction(e -> createEvent(stage,dataNodes,dayBox));
+	    Button cancel = createButton("cancel",null,0,0,0);
 	    cancel.setOnAction(e -> stage.close());
-	    cancel.getStyleClass().add("button");
-	    
-	    addEventLayout.add(newEvent,0,0);
-	    GridPane.setHalignment(newEvent,HPos.CENTER);
-	    GridPane.setConstraints(newEvent,0,0,4,1);
-	    addEventLayout.add(summary,0,1);
-	    GridPane.setHalignment(summary,HPos.RIGHT);
-	    addEventLayout.add(summaryText,1,1);
-	    GridPane.setHalignment(summaryText,HPos.LEFT);
-	    GridPane.setConstraints(summaryText,1,1,3,1);
-	    addEventLayout.add(day,0,2);
-	    GridPane.setHalignment(day,HPos.RIGHT);
-	    addEventLayout.add(dayBox,1,2);
-	    GridPane.setHalignment(dayBox,HPos.LEFT);
-	    GridPane.setConstraints(dayBox,1,2,3,1);
-	    addEventLayout.add(time,0,3);
-	    GridPane.setHalignment(time,HPos.RIGHT);
-	    addEventLayout.add(timeText,1,3);
-	    GridPane.setHalignment(timeText,HPos.LEFT);
-	    GridPane.setConstraints(timeText,1,3,3,1);
-	    addEventLayout.add(details,0,4);
-	    GridPane.setHalignment(details,HPos.RIGHT);
-	    addEventLayout.add(detailsText,1,4);
-	    GridPane.setHalignment(detailsText,HPos.LEFT);
-	    GridPane.setConstraints(detailsText,1,4,3,1);
-	    addEventLayout.add(create,1,5);
-	    GridPane.setHalignment(create,HPos.CENTER);
-	    addEventLayout.add(cancel,2,5);
-	    GridPane.setHalignment(cancel,HPos.CENTER);
-		
-		Scene addEventScene = new Scene(addEventLayout);
-		stage.setScene(addEventScene);
-		stage.showAndWait();
+	    List<Node> nodes = Arrays.asList(newEvent,summary,summaryText,day,dayBox,time,timeText,details,detailsText,create,cancel);
+	    placeNodes(gridpane,nodes);
+	    gridpane.getStylesheets().add("css/director.css");
+	    return gridpane;
+	}
+	
+	@Override
+	public void placeNodes(GridPane gridpane, List<Node> nodes) {
+		placeNodeSpan(gridpane,nodes.get(0),0,0,4,1,"center",null);
+		placeNode(gridpane,nodes.get(1),0,1,"right",null);
+		placeNodeSpan(gridpane,nodes.get(2),1,1,3,1,"left",null);
+		placeNode(gridpane,nodes.get(3),0,2,"right",null);
+		placeNodeSpan(gridpane,nodes.get(4),1,2,3,1,"left",null);
+		placeNode(gridpane,nodes.get(5),0,3,"right",null);
+		placeNodeSpan(gridpane,nodes.get(6),1,3,3,1,"left",null);
+		placeNode(gridpane,nodes.get(7),0,4,"right",null);
+		placeNodeSpan(gridpane,nodes.get(8),1,4,3,1,"left",null);
+	    placeNode(gridpane,nodes.get(9),1,5,"center",null);
+	    placeNode(gridpane,nodes.get(10),2,5,"center",null);
+	}
+	
+	/**
+	 * Builds a ChoiceBox<String> populated with the days of the week (M-F)
+	 * @return ChoiceBox<String>
+	 */
+	private ChoiceBox<String> buildDayBox(){
+		ChoiceBox<String> dayBox = new ChoiceBox<String>();
+	    dayBox.getItems().addAll("Monday","Tuesday","Wednesday","Thursday","Friday");
+	    dayBox.setValue(dayBox.getItems().get(0));
+	    dayBox.getStyleClass().add("choice-box");
+	    return dayBox;
+	}
+	
+	/**
+	 * Creates a new {@link Event} to be added to the {@link EventCalendar} for the current {@link Director}'s {@link Center}
+	 * @param stage - the current stage
+	 * @param textfields - List<TextField>
+	 * @param dayBox - ChoiceBox<String>
+	 */
+	private void createEvent(Stage stage,List<TextField> textfields,ChoiceBox<String> dayBox) {
+		String eventSummary = textfields.get(0).getText();
+		String eventDay = dayBox.getValue();
+		String eventTime = null;
+		if(!textfields.get(1).getText().isEmpty()) {eventTime = textfields.get(1).getText();}
+		String eventDetails = null;
+		if(!textfields.get(2).getText().isEmpty()) {eventDetails = textfields.get(2).getText();}
+		Event event = director.createNewEvent(eventSummary,eventDay,eventTime,eventDetails);
+		Center center = director.getCenter(director.getCenterID());
+		center.getEventCalendar().addEvent(event);
+		stage.close();
 	}
 	
 }

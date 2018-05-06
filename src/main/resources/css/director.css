@@ -48,6 +48,10 @@
 	-fx-font: 25px Georgia;
 }
 
+.time-label{
+	-fx-font: 15px Georgia;
+}
+
 .padded-label{
 	-fx-font: 25px Georgia;
 	-fx-padding: 10,10,10,10;
@@ -123,6 +127,15 @@
     -fx-pref-width: 650;   
 }
 
+.choice-box-mini{
+	-fx-pref-width: 260;
+    -fx-background-color: #CCCCCC;
+}
+
+.choice-box-mini:hover{
+	-fx-background-color: #808080;
+}
+
 .choice-box-mini .context-menu {
     -fx-pref-width: 260;   
 }
@@ -193,6 +206,10 @@
 
 .checkbox{
 	-fx-font: 25px Georgia;
+}
+
+.wrapper{
+ 	-fx-background-color: #CCCCCC;
 }
 
 @charset "UTF-8";

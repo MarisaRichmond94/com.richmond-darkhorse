@@ -1,5 +1,4 @@
 package com.richmond.darkhorse.ProjectSB;
-
 import java.io.Serializable;
 
 public class Contact implements Serializable{

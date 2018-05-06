@@ -1,5 +1,6 @@
 package com.richmond.darkhorse.ProjectSB;
 import java.io.Serializable;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -49,7 +50,7 @@ public class Director extends StaffMember implements Serializable {
 	}
 	
 	//Modification methods
-	public void modifyStaffSchedule(StaffMember staffMember,Map<Integer,String> newStartTimes,Map<Integer,String> newStopTimes) {
+	public void modifyStaffSchedule(StaffMember staffMember,Map<Integer,LocalTime> newStartTimes,Map<Integer,LocalTime> newStopTimes) {
 		Schedule schedule = staffMember.getSchedule();
 		schedule.setStartTimes(newStartTimes);
 		schedule.setStopTimes(newStopTimes);
@@ -219,7 +220,7 @@ public class Director extends StaffMember implements Serializable {
 
 	@Override
 	public String toString() {
-		return firstName + " " + lastName + ", employee #" + userID;
+		return firstName + " " + lastName;
 	}
 	
 }

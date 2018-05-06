@@ -3,6 +3,10 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Class containing the {@link Attendance} information of a {@link Student}, including attendance plan and attendance history 
+ * @author marisarichmond
+ */
 public class Attendance implements Serializable{
 
 	private static final long serialVersionUID = 8453756L;

@@ -1,19 +1,18 @@
 package com.richmond.darkhorse.ProjectSB.gui.component;
+import java.util.Arrays;
 import java.util.List;
 import com.richmond.darkhorse.ProjectSB.Classroom;
 import com.richmond.darkhorse.ProjectSB.Director;
 import com.richmond.darkhorse.ProjectSB.Student;
-import javafx.geometry.HPos;
-import javafx.geometry.VPos;
 import javafx.scene.control.Label;
-import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.paint.Color;
 import javafx.scene.control.ToggleButton;
 
-public class AddRemovePane extends GridPane{
+public class AddRemovePane extends GridPane implements DirectorLayout{
 
 	private int count;
 	private boolean isAddPane = true;
@@ -21,218 +20,174 @@ public class AddRemovePane extends GridPane{
 	private AddStudentPane addStudentPane;
 	private RemoveStudentPane removeStudentPane;
 	
-	@SuppressWarnings("unused")
 	public AddRemovePane(Classroom classroom,Director director) {
-		
-		//Grid Pane
-		this.setVgap(10);
-		this.setHgap(10);
-		GridPane.setHalignment(this,HPos.CENTER);
-		GridPane.setValignment(this,VPos.CENTER);
-		ColumnConstraints columnOne = new ColumnConstraints();
-		columnOne.setPercentWidth(16.6);
-	    ColumnConstraints columnTwo = new ColumnConstraints();
-	    columnTwo.setPercentWidth(16.6);
-		ColumnConstraints columnThree = new ColumnConstraints();
-		columnThree.setPercentWidth(16.6);
-		ColumnConstraints columnFour = new ColumnConstraints();
-		columnFour.setPercentWidth(16.6);
-	    ColumnConstraints columnFive = new ColumnConstraints();
-	    columnFive.setPercentWidth(16.6);
-		ColumnConstraints columnSix = new ColumnConstraints();
-		columnSix.setPercentWidth(16.6);
-		this.getColumnConstraints().addAll(columnOne,columnTwo,columnThree,columnFour,columnFive,columnSix);
-		this.getStyleClass().add("gridpane");
-		this.getStylesheets().add("addremovepane.css");
-		
+		buildGridPane(director,classroom);
+	}
+	
+	/**
+	 * Builds the necessary GridPanes for the {@link AddRemovePane}
+	 * @param director - a {@link Director}
+	 * @param classroom - a {@link Classroom}
+	 */
+	private void buildGridPane(Director director,Classroom classroom) {
+		setConstraints(this,6,0,10,10,"gridpane");
+		this.getStylesheets().add("css/director.css");
 		count = 0;
 		List<String> studentsEnrolled = classroom.getStudentsEnrolled();
-		for(String student : studentsEnrolled) {
-			count++;
-		}
-		
-		Label totalEnrolled = new Label("Total:");
-		totalEnrolled.getStyleClass().add("label");
-		Label totalEnrolledStat = new Label("" + count + "");
-		totalEnrolledStat.getStyleClass().add("label");
-		
-		Label mondayRatio = new Label("Monday:");
-		mondayRatio.getStyleClass().add("label");
-		Label mondayRatioStat = new Label(classroom.getCount("Monday") + "/" + classroom.getMaxSize());
-		if(classroom.getCount("Monday") > classroom.getMaxSize()) {mondayRatioStat.setTextFill(Color.RED);}
-		else {mondayRatioStat.setTextFill(Color.BLACK);}
-		mondayRatioStat.getStyleClass().add("label");
-		
-		Label tuesdayRatio = new Label("Tuesday:");
-		tuesdayRatio.getStyleClass().add("label");
-		Label tuesdayRatioStat = new Label(classroom.getCount("Tuesday") + "/" + classroom.getMaxSize());
-		if(classroom.getCount("Tuesday") > classroom.getMaxSize()) {tuesdayRatioStat.setTextFill(Color.RED);}
-		else {tuesdayRatioStat.setTextFill(Color.BLACK);}
-		tuesdayRatioStat.getStyleClass().add("label");
-		
-		Label wednesdayRatio = new Label("Wednesday:");
-		wednesdayRatio.getStyleClass().add("label");
-		Label wednesdayRatioStat = new Label(classroom.getCount("Wednesday") + "/" + classroom.getMaxSize());
-		if(classroom.getCount("Wednesday") > classroom.getMaxSize()) {wednesdayRatioStat.setTextFill(Color.RED);}
-		else {wednesdayRatioStat.setTextFill(Color.BLACK);}
-		wednesdayRatioStat.getStyleClass().add("label");
-		
-		Label thursdayRatio = new Label("Thursday:");
-		thursdayRatio.getStyleClass().add("label");
-		Label thursdayRatioStat = new Label(classroom.getCount("Thursday") + "/" + classroom.getMaxSize());
-		if(classroom.getCount("Thursday") > classroom.getMaxSize()) {thursdayRatioStat.setTextFill(Color.RED);}
-		else {thursdayRatioStat.setTextFill(Color.BLACK);}
-		thursdayRatioStat.getStyleClass().add("label");
-		
-		Label fridayRatio = new Label("Friday:");
-		fridayRatio.getStyleClass().add("label");
-		Label fridayRatioStat = new Label(classroom.getCount("Friday") + "/" + classroom.getMaxSize());
-		if(classroom.getCount("Friday") > classroom.getMaxSize()) {fridayRatioStat.setTextFill(Color.RED);}
-		else {fridayRatioStat.setTextFill(Color.BLACK);}
-		fridayRatioStat.getStyleClass().add("label");
-		
-		//Inner GridPane
+		for(@SuppressWarnings("unused") String student : studentsEnrolled) {count++;}
+		List<Label> trackingLabels = populateLabels(Arrays.asList("Total:","Monday:","Tuesday:","Wednesday:","Thursday:","Friday:"),"label");
+		Label total = createLabel("" + count + "","label");
+		Label monday = createLabel(buildRatioString(classroom,"Monday"),"label"), tuesday = createLabel(buildRatioString(classroom,"Tuesday"),"label"), wednesday = createLabel(buildRatioString(classroom,"Wednesday"),"label"), thursday = createLabel(buildRatioString(classroom,"Thursday"),"label"), friday = createLabel(buildRatioString(classroom,"Friday"),"label");
+		List<Label> dayLabels = Arrays.asList(monday,tuesday,wednesday,thursday,friday);
+		overflowCheck(dayLabels,classroom);
+		//inner pane
 		addStudentPane = new AddStudentPane(classroom,director);
 		innerPane = addStudentPane;
 		ScrollPane scrollPane = new ScrollPane(innerPane);
 		scrollPane.setPrefHeight(500);
 		scrollPane.setPrefWidth(500);
-		
-		ToggleButton addButton = new ToggleButton("add student(s)");
-		addButton.setSelected(true);
-		addButton.setMaxHeight(50);
-		addButton.setMaxWidth(300);
-		addButton.getStyleClass().add("toggle-button");
-		
-		ToggleButton removeButton = new ToggleButton("remove student(s)");
-		removeButton.setMaxHeight(50);
-		removeButton.setMaxWidth(300);
-		removeButton.getStyleClass().add("toggle-button");
-		
-		Label add = new Label("add");
-		add.getStyleClass().add("label");
-		Button addEnterButton = new Button("",add);
-		addEnterButton.setOnAction(e -> {
-			if(isAddPane == true) {
-				List<Student> students = addStudentPane.getStudentsAdded();
-				for(Student student : students) {director.addStudentToClassroom(student,classroom);}
-				addStudentPane = (AddStudentPane) buildAddGridPane(classroom,director);
-				scrollPane.setContent(addStudentPane);
-				updateStats(classroom,totalEnrolledStat,mondayRatioStat,tuesdayRatioStat,wednesdayRatioStat,thursdayRatioStat,fridayRatioStat);
-			}
-		});
-		addEnterButton.setMaxHeight(40);
-		addEnterButton.setMaxWidth(150);
-		addEnterButton.getStyleClass().add("button");
-		
-		Label remove = new Label("remove");
-		add.getStyleClass().add("label");
-		Button removeEnterButton = new Button("",remove);
-		removeEnterButton.setMaxHeight(40);
-		removeEnterButton.setMaxWidth(150);
+		ToggleButton addButton = createToggleButton("add student(s)",true,50,300,"toggle-button");
+		ToggleButton removeButton = createToggleButton("remove student(s)",false,50,300,"toggle-button");
+		Button addEnterButton = createButton("add",null,0,40,150);
+		List<Label> labels = Arrays.asList(total,monday,tuesday,wednesday,thursday,friday);
+		addEnterButton.setOnAction(e -> addEnterButtonSelect(scrollPane,director,classroom,labels));
+		Button removeEnterButton = createButton("remove",null,0,40,150);
 		removeEnterButton.setVisible(false);
-		removeEnterButton.getStyleClass().add("button");
-		removeEnterButton.setOnAction(e -> {
-			if(isAddPane == false) {
-				List<Student> students = removeStudentPane.getStudentsRemoved();
-				for(Student student : students) {
-					director.removeStudentFromClassroom(student,classroom);
-				}
-				removeStudentPane = (RemoveStudentPane) buildRemoveGridPane(classroom,director);
-				scrollPane.setContent(removeStudentPane);
-				updateStats(classroom,totalEnrolledStat,mondayRatioStat,tuesdayRatioStat,wednesdayRatioStat,thursdayRatioStat,fridayRatioStat);
-			}
-		});
-		
-		addButton.setOnAction(e -> {
-			removeButton.setSelected(false);
-			addButton.setSelected(true);
-			addStudentPane = (AddStudentPane) buildAddGridPane(classroom,director);
-			scrollPane.setContent(addStudentPane);
-			addEnterButton.setVisible(true);
-			removeEnterButton.setVisible(false);
-			isAddPane = true;
-		});
-		
-		removeButton.setOnAction(e -> {
-			removeButton.setSelected(true);
-			addButton.setSelected(false);
-			removeStudentPane = (RemoveStudentPane) buildRemoveGridPane(classroom,director);
-			scrollPane.setContent(removeStudentPane);
-			addEnterButton.setVisible(false);
-			removeEnterButton.setVisible(true);
-			isAddPane = false;
-		});
-		
-		this.add(totalEnrolled,0,0);
-		GridPane.setHalignment(totalEnrolled,HPos.RIGHT);
-		this.add(totalEnrolledStat,1,0);
-		this.add(mondayRatio,2,0);
-		GridPane.setHalignment(mondayRatio,HPos.RIGHT);
-		this.add(mondayRatioStat,3,0);
-		this.add(tuesdayRatio,4,0);
-		GridPane.setHalignment(tuesdayRatio,HPos.RIGHT);
-		this.add(tuesdayRatioStat,5,0);
-		this.add(wednesdayRatio,0,1);
-		GridPane.setHalignment(wednesdayRatio,HPos.RIGHT);
-		this.add(wednesdayRatioStat,1,1);
-		this.add(thursdayRatio,2,1);
-		GridPane.setHalignment(thursdayRatio,HPos.RIGHT);
-		this.add(thursdayRatioStat,3,1);
-		this.add(fridayRatio,4,1);
-		GridPane.setHalignment(fridayRatio,HPos.RIGHT);
-		this.add(fridayRatioStat,5,1);
-		this.add(addButton,0,2);
-		GridPane.setConstraints(addButton,0,2,2,1);
-		GridPane.setHalignment(addButton,HPos.CENTER);
-		this.add(removeButton,2,2);
-		GridPane.setConstraints(removeButton,2,2,2,1);
-		GridPane.setHalignment(removeButton,HPos.CENTER);
-		this.add(scrollPane,0,3);
-		GridPane.setConstraints(scrollPane,0,3,6,6);
-		this.add(addEnterButton,2,10);
-		GridPane.setConstraints(addEnterButton,2,10,2,1);
-		GridPane.setHalignment(addEnterButton,HPos.CENTER);
-		this.add(removeEnterButton,2,10);
-		GridPane.setConstraints(removeEnterButton,2,10,2,1);
-		GridPane.setHalignment(removeEnterButton,HPos.CENTER);
-		
+		removeEnterButton.setOnAction(e -> removeEnterButtonSelected(scrollPane,director,classroom,labels));
+		addButton.setOnAction(e -> add(scrollPane,director,classroom,removeButton,addButton,addEnterButton,removeEnterButton));
+		removeButton.setOnAction(e -> remove(scrollPane,director,classroom,removeButton,addButton,addEnterButton,removeEnterButton));
+		List<Node> nodes = Arrays.asList(trackingLabels.get(0),total,trackingLabels.get(1),monday,trackingLabels.get(2),tuesday,trackingLabels.get(3),wednesday,trackingLabels.get(4),thursday,trackingLabels.get(5),friday,addButton,removeButton,scrollPane,addEnterButton,removeEnterButton);
+		placeNodes(this,nodes);
 	}
 	
-	public GridPane buildAddGridPane(Classroom classroom,Director director) {
+	@Override
+	public void placeNodes(GridPane gridpane, List<Node> nodes) {
+		placeNode(gridpane,nodes.get(0),0,0,"right",null);
+		placeNode(gridpane,nodes.get(1),1,0,"left",null);
+		placeNode(gridpane,nodes.get(2),2,0,"right",null);
+		placeNode(gridpane,nodes.get(3),3,0,"left",null);
+		placeNode(gridpane,nodes.get(4),4,0,"right",null);
+		placeNode(gridpane,nodes.get(5),5,0,"left",null);
+		placeNode(gridpane,nodes.get(6),0,1,"right",null);
+		placeNode(gridpane,nodes.get(7),1,1,"left",null);
+		placeNode(gridpane,nodes.get(8),2,1,"right",null);
+		placeNode(gridpane,nodes.get(9),3,1,"left",null);
+		placeNode(gridpane,nodes.get(10),4,1,"right",null);
+		placeNode(gridpane,nodes.get(11),5,1,"left",null);
+		placeNodeSpan(gridpane,nodes.get(12),0,2,2,1,"center",null);
+		placeNodeSpan(gridpane,nodes.get(13),2,2,2,1,"center",null);
+		placeNodeSpan(gridpane,nodes.get(14),0,3,6,6,null,null);
+		placeNodeSpan(gridpane,nodes.get(15),2,10,2,1,"center",null);
+		placeNodeSpan(gridpane,nodes.get(16),2,10,2,1,"center",null);
+	}
+	
+	private GridPane buildAddGridPane(Classroom classroom,Director director) {
 		AddStudentPane newAddStudentPane = new AddStudentPane(classroom,director);
 		return newAddStudentPane;
 	}
 	
-	public GridPane buildRemoveGridPane(Classroom classroom,Director director) {
+	private GridPane buildRemoveGridPane(Classroom classroom,Director director) {
 		RemoveStudentPane newRemoveStudentPane = new RemoveStudentPane(classroom,director);
 		return newRemoveStudentPane;
 	}
 	
-	@SuppressWarnings("unused")
-	public void updateStats(Classroom classroom,Label totalEnrolledStat,Label mondayRatioStat,Label tuesdayRatioStat,Label wednesdayRatioStat,Label thursdayRatioStat,Label fridayRatioStat) {
+	/**
+	 * Updates the ratios for each day for the given {@link Classroom} to check for {@link Student} overflow
+	 * @param classroom - a {@link Classroom}
+	 * @param labels - a List of Labels for each day's ratio
+	 */
+	private void updateStats(Classroom classroom,List<Label> labels) {
 		count = 0;
 		List<String> studentsEnrolled = classroom.getStudentsEnrolled();
-		for(String student : studentsEnrolled) {
-			count++;
+		for(@SuppressWarnings("unused") String student : studentsEnrolled) {count++;}
+		labels.get(0).setText("" + count + "");
+		labels.get(1).setText(classroom.getCount("Monday") + "/" + classroom.getMaxSize());
+		labels.get(2).setText(classroom.getCount("Tuesday") + "/" + classroom.getMaxSize());
+		labels.get(3).setText(classroom.getCount("Wednesday") + "/" + classroom.getMaxSize());
+		labels.get(4).setText(classroom.getCount("Thursday") + "/" + classroom.getMaxSize());
+		labels.get(5).setText(classroom.getCount("Friday") + "/" + classroom.getMaxSize());
+		overflowCheck(labels,classroom);
+	}
+	
+	/**
+	 * Puts together a String representing the given day's ratio
+	 * @param classroom - a {@link Classroom}
+	 * @param day - String representing the day of the week
+	 * @return String ratio
+	 */
+	private String buildRatioString(Classroom classroom,String day) {
+		String ratio = classroom.getCount(day) + "/" + classroom.getMaxSize();
+		return ratio;
+	}
+	
+	/**
+	 * Checks to see if the {@link Classroom} is over ratio for any day. if the {@link Classroom} exceeds its maximum capacity, the ratio label is set to red
+	 * @param labels - a list of Labels for each day of the week
+	 * @param classroom - a {@link Classroom}
+	 */
+	private void overflowCheck(List<Label> labels,Classroom classroom) {
+		List<String> daysOfTheWeek = Arrays.asList("Monday","Tuesday","Wednesday","Thursday","Friday");
+		int dayIndex = 0;
+		for(Label label : labels) {
+			if(classroom.getCount(daysOfTheWeek.get(dayIndex)) > classroom.getMaxSize()) {label.setTextFill(Color.RED);}
+			else {label.setTextFill(Color.BLACK);}
+			label.getStyleClass().add("label");
+			dayIndex++;
 		}
-		totalEnrolledStat.setText("" + count + "");
-		mondayRatioStat.setText(classroom.getCount("Monday") + "/" + classroom.getMaxSize());
-		tuesdayRatioStat.setText(classroom.getCount("Tuesday") + "/" + classroom.getMaxSize());
-		wednesdayRatioStat.setText(classroom.getCount("Wednesday") + "/" + classroom.getMaxSize());
-		thursdayRatioStat.setText(classroom.getCount("Thursday") + "/" + classroom.getMaxSize());
-		fridayRatioStat.setText(classroom.getCount("Friday") + "/" + classroom.getMaxSize());
-		
-		if(classroom.getCount("Monday") > classroom.getMaxSize()) {mondayRatioStat.setTextFill(Color.RED);}
-		else {mondayRatioStat.setTextFill(Color.BLACK);}
-		if(classroom.getCount("Tuesday") > classroom.getMaxSize()) {tuesdayRatioStat.setTextFill(Color.RED);}
-		else {tuesdayRatioStat.setTextFill(Color.BLACK);}
-		if(classroom.getCount("Wednesday") > classroom.getMaxSize()) {wednesdayRatioStat.setTextFill(Color.RED);}
-		else {wednesdayRatioStat.setTextFill(Color.BLACK);}
-		if(classroom.getCount("Thursday") > classroom.getMaxSize()) {thursdayRatioStat.setTextFill(Color.RED);}
-		else {thursdayRatioStat.setTextFill(Color.BLACK);}
-		if(classroom.getCount("Friday") > classroom.getMaxSize()) {fridayRatioStat.setTextFill(Color.RED);}
-		else {fridayRatioStat.setTextFill(Color.BLACK);}
+	}
+	
+	/**
+	 * Switches to the add {@link Student}s pane
+	 */
+	private void addEnterButtonSelect(ScrollPane scrollPane,Director director,Classroom classroom,List<Label> labels) {
+		if(isAddPane == true) {
+			List<Student> students = addStudentPane.getStudentsAdded();
+			for(Student student : students) {director.addStudentToClassroom(student,classroom);}
+			addStudentPane = (AddStudentPane) buildAddGridPane(classroom,director);
+			scrollPane.setContent(addStudentPane);
+			updateStats(classroom,labels);
+		}
+	}
+	
+	/**
+	 * Switches to the remove {@link Student}s pane
+	 */
+	private void removeEnterButtonSelected(ScrollPane scrollPane,Director director,Classroom classroom,List<Label> labels) {
+		if(isAddPane == false) {
+			List<Student> students = removeStudentPane.getStudentsRemoved();
+			for(Student student : students) {
+				director.removeStudentFromClassroom(student,classroom);
+			}
+			removeStudentPane = (RemoveStudentPane) buildRemoveGridPane(classroom,director);
+			scrollPane.setContent(removeStudentPane);
+			updateStats(classroom,labels);
+		}
+	}
+	
+	/**
+	 * Adds a {@link Student} to the passed {@link Classroom}
+	 */
+	private void add(ScrollPane scrollPane,Director director,Classroom classroom,ToggleButton removeButton,ToggleButton addButton,Button addEnterButton,Button removeEnterButton) {
+		removeButton.setSelected(false);
+		addButton.setSelected(true);
+		addStudentPane = (AddStudentPane) buildAddGridPane(classroom,director);
+		scrollPane.setContent(addStudentPane);
+		addEnterButton.setVisible(true);
+		removeEnterButton.setVisible(false);
+		isAddPane = true;
+	}
+	
+	/**
+	 * Removes a {@link Student} from the passed {@link Classroom}
+	 */
+	private void remove(ScrollPane scrollPane,Director director,Classroom classroom,ToggleButton removeButton,ToggleButton addButton,Button addEnterButton,Button removeEnterButton) {
+		removeButton.setSelected(true);
+		addButton.setSelected(false);
+		removeStudentPane = (RemoveStudentPane) buildRemoveGridPane(classroom,director);
+		scrollPane.setContent(removeStudentPane);
+		addEnterButton.setVisible(false);
+		removeEnterButton.setVisible(true);
+		isAddPane = false;
 	}
 	
 }

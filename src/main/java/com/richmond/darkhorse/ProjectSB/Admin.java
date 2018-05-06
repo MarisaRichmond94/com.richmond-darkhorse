@@ -2,6 +2,10 @@ package com.richmond.darkhorse.ProjectSB;
 import java.io.Serializable;
 import java.util.Map;
 
+/**
+ * subclass of {@link Account} in charge of the creation, modification, and deletion of {@link Center}s, {@link Director}s, {@link Teacher}s, and {@link Classroom}s
+ * @author marisarichmond
+ */
 public class Admin implements Account,Serializable{
 
 	private static final long serialVersionUID = 8453756L;
@@ -147,7 +151,7 @@ public class Admin implements Account,Serializable{
 		if(teacher != null) {
 			if(classroom.getTeacherID() != null && !teacher.getTeacherID().equals(classroom.getTeacherID())) {
 				Teacher oldTeacher = classroom.getTeacher(classroom.getTeacherID());
-				oldTeacher.removeClassroom(classroom);	
+				oldTeacher.removeClassroom(classroom);
 			}
 			teacher.setClassroom(classroom);
 			classroom.setTeacherID(teacher.getTeacherID());

@@ -1,5 +1,6 @@
 package com.richmond.darkhorse.ProjectSB.gui.scene;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import javafx.scene.control.ScrollPane;
@@ -19,17 +20,13 @@ import javafx.application.Platform;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonBase;
 import javafx.scene.control.Label;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import javafx.geometry.HPos;
-import javafx.geometry.VPos;
 
 public class DirectorMailbox extends Scene implements DirectorLayout {
 	
@@ -48,52 +45,28 @@ public class DirectorMailbox extends Scene implements DirectorLayout {
 		HBox topPane = buildTopPane(stage,director);
 		HBox bottomPane = buildBottomPane();
 		VBox leftPane = buildLeftPane(stage,director);
-		VBox rightPane = buildRightSideBar(director);
-		GridPane centerPane = buildCenterPane(director,stage);
+		VBox rightPane = buildRightPane(director);
+		GridPane centerPane = buildGridPane(director,stage);
 		directorMailboxLayout = layout;
 		setBorderPane(directorMailboxLayout,centerPane,rightPane,leftPane,topPane,bottomPane);
 		directorMailboxLayout.getStylesheets().add("css/director.css");
 	}
 	
-	public VBox buildRightSideBar(Director director) {
-		GridPane rightSideBar = new GridPane();
-		rightSideBar.getStyleClass().add("sidebar");
-		rightSideBar.getStylesheets().add("directormailbox.css");
-		
-		Label title = new Label("Signed Reports");
-		title.getStyleClass().add("subtitle");
-		ImageView sendView = new ImageView();
-		Image send = new Image("send.png");
-		sendView.setImage(send);
-		sendView.setPreserveRatio(true);
-		sendView.setFitHeight(50);
-		ImageButton sendButton = new ImageButton(sendView);
-		sendButton.getStyleClass().add("button");
-		sendButton.setOnAction(e -> {
-			director.returnAllReports();
-		});
-		
-		int row = 1;
-		Map<String,Document> signedReports = director.getMailbox().getAllSignedReports();
-		for(Document document : signedReports.values()) {
-			String documentTitle = document.getTitle();
-			String student = document.getStudentName();
-			String date = document.getStringDate();
-			ToggleButton newButton = new ToggleButton();
-			newButton.setText("" + documentTitle + "\nStudent: " + student + "\nDate: " + date);
-			newButton.setPrefSize(250,150);
-			newButton.getStyleClass().add("toggle-button");
-			rightSideBar.add(newButton,0,row);
-			GridPane.setConstraints(newButton,0,row,2,1);
-			GridPane.setHalignment(newButton,HPos.CENTER);
-			row++;
-		}
-		
-		rightSideBar.add(title,0,0);
-		GridPane.setHalignment(title,HPos.CENTER);
-		rightSideBar.add(sendButton,1,0);
-		
-		ScrollPane scrollPane = new ScrollPane(rightSideBar);
+	/**
+	 * Builds a right pane for the overall BorderPane layout
+	 * @param director - the current user
+	 * @return VBox
+	 */
+	private VBox buildRightPane(Director director) {
+		GridPane rightPane = new GridPane();
+		rightPane.getStyleClass().add("rightpane");
+		Label title = createLabel("Signed Reports","subtitle");
+		ImageButton sendButton = new ImageButton(createImageWithFitHeight("images/send.png",50));
+		sendButton.setOnAction(e -> director.returnAllReports());
+		populateReports(rightPane,director);
+		placeNode(rightPane,title,0,0,"center",null);
+		placeNode(rightPane,sendButton,1,0,"center",null);
+		ScrollPane scrollPane = new ScrollPane(rightPane);
 		scrollPane.setFitToWidth(true);
 		VBox wrapper = new VBox();
 		wrapper.getStyleClass().add("wrapper");
@@ -101,249 +74,263 @@ public class DirectorMailbox extends Scene implements DirectorLayout {
 		return wrapper;
 	}
 	
-	public GridPane buildCenterPane(Director director,Stage stage) {
-		
-		GridPane gridPane = new GridPane();
-		gridPane.setVgap(10);
-		gridPane.setHgap(10);
-		GridPane.setHalignment(gridPane,HPos.CENTER);
-		GridPane.setValignment(gridPane,VPos.CENTER);
-		ColumnConstraints columnOne = new ColumnConstraints();
-		columnOne.setPercentWidth(16.6);
-	    ColumnConstraints columnTwo = new ColumnConstraints();
-	    columnTwo.setPercentWidth(16.6);
-		ColumnConstraints columnThree = new ColumnConstraints();
-		columnThree.setPercentWidth(16.6);
-		ColumnConstraints columnFour = new ColumnConstraints();
-		columnFour.setPercentWidth(16.6);
-	    ColumnConstraints columnFive = new ColumnConstraints();
-	    columnFive.setPercentWidth(16.6);
-		ColumnConstraints columnSix = new ColumnConstraints();
-		columnSix.setPercentWidth(16.6);
-		gridPane.getColumnConstraints().addAll(columnOne,columnTwo,columnThree,columnFour,columnFive,columnSix);
-		gridPane.getStyleClass().add("gridpane");
-		gridPane.getStylesheets().add("directormailbox.css");
-		
+	/**
+	 * Builds a GridPane for the overall BorderPane layout
+	 * @param director - the current {@link Director}
+	 * @param stage - the current {@link Stage}
+	 * @return GridPane
+	 */
+	private GridPane buildGridPane(Director director,Stage stage) {
+		GridPane gridpane = new GridPane();
+		setConstraints(gridpane,6,0,10,10,"gridpane");
+		gridpane.getStylesheets().add("css/director.css");
 		kirbyAllBehaviorReports(director);
 		unsignedBehaviorReportPane = new UnsignedBehaviorReportPane(director,director.getMailbox().getUnsignedBehaviorReports());
 		innerPane = unsignedBehaviorReportPane;
 		ScrollPane scrollPane = new ScrollPane(innerPane);
 		scrollPane.setPrefHeight(500);
 		scrollPane.setPrefWidth(500);
-		
-		Label title = new Label("Unsigned Reports");
-		title.getStyleClass().add("title");
-		ImageView refreshView = new ImageView();
-		Image refresh = new Image("refresh.png");
-		refreshView.setImage(refresh);
-		refreshView.setPreserveRatio(true);
-		refreshView.setFitHeight(75);
-		ImageButton refreshButton = new ImageButton(refreshView);
-		refreshButton.getStyleClass().add("button");
-		
-		ToggleButton behaviorReportButton = new ToggleButton("behavior report(s)");
-		behaviorReportButton.setSelected(true);
-		behaviorReportButton.setMaxHeight(50);
-		behaviorReportButton.setMaxWidth(300);
-		behaviorReportButton.getStyleClass().add("toggle-button");
-		
-		ToggleButton incidentReportButton = new ToggleButton("incident report(s)");
-		incidentReportButton.setMaxHeight(50);
-		incidentReportButton.setMaxWidth(300);
-		incidentReportButton.getStyleClass().add("toggle-button");
-		
-		Label behaviorView = new Label("view");
-		behaviorView.getStyleClass().add("label");
-		Button behaviorViewButton = new Button("",behaviorView);
-		behaviorViewButton.setMaxHeight(40);
-		behaviorViewButton.setMaxWidth(150);
-		behaviorViewButton.getStyleClass().add("button");
-		
-		Label incidentView = new Label("view");
-		incidentView.getStyleClass().add("label");
-		Button incidentViewButton = new Button("",incidentView);
-		incidentViewButton.setMaxHeight(40);
-		incidentViewButton.setMaxWidth(150);
-		incidentViewButton.setVisible(false);
-		incidentViewButton.getStyleClass().add("button");
-		
-		Label behaviorSign = new Label("sign");
-		behaviorSign.getStyleClass().add("label");
-		Button behaviorSignButton = new Button("",behaviorSign);
-		behaviorSignButton.setMaxHeight(40);
-		behaviorSignButton.setMaxWidth(150);
-		behaviorSignButton.getStyleClass().add("button");
-		
-		Label incidentSign = new Label("sign");
-		incidentSign.getStyleClass().add("label");
-		Button incidentSignButton = new Button("",incidentSign);
-		incidentSignButton.setMaxHeight(40);
-		incidentSignButton.setMaxWidth(150);
+		Label title = createLabel("Unsigned Reports","title");
+		ImageButton refreshButton = new ImageButton(createImageWithFitHeight("images/refresh.png",75));
+		ToggleButton behaviorReportButton = createToggleButton("behavior report(s)",true,50,300,"toggle-button");
+		ToggleButton incidentReportButton = createToggleButton("incident report(s)",false,50,300,"toggle-button");
+		Label behaviorView = createLabel("view","label");
+		Button behaviorViewButton = createButtonWithLabel(behaviorView,40,150);
+		Label incidentView = createLabel("view","label");
+		Button incidentViewButton = createButtonWithLabel(incidentView,40,150);
+		Label behaviorSign = createLabel("sign","label");
+		Button behaviorSignButton = createButtonWithLabel(behaviorSign,40,150);
+		Label incidentSign = createLabel("sign","label");
+		Button incidentSignButton = createButtonWithLabel(incidentSign,40,150);
 		incidentSignButton.setVisible(false);
-		incidentSignButton.getStyleClass().add("button");
-		
-		behaviorReportButton.setOnAction(e -> {
-			incidentReportButton.setSelected(false);
-			behaviorReportButton.setSelected(true);
-			unsignedBehaviorReportPane = (UnsignedBehaviorReportPane) buildBehaviorReport(director);
-			scrollPane.setContent(unsignedBehaviorReportPane);
-			behaviorViewButton.setVisible(true);
-			incidentViewButton.setVisible(false);
-			behaviorSignButton.setVisible(true);
-			incidentSignButton.setVisible(false);
-			isBehaviorReportPane = true;
-		});
-		
-		incidentReportButton.setOnAction(e -> {
-			incidentReportButton.setSelected(true);
-			behaviorReportButton.setSelected(false);
-			unsignedIncidentReportPane = (UnsignedIncidentReportPane) buildIncidentReport(director);
-			scrollPane.setContent(unsignedIncidentReportPane);
-			behaviorViewButton.setVisible(false);
-			incidentViewButton.setVisible(true);
-			behaviorSignButton.setVisible(false);
-			incidentSignButton.setVisible(true);
-			isBehaviorReportPane = false;
-		});
-		
-		behaviorViewButton.setOnAction(e -> {
-			List<BehaviorReport> selectedReports = new ArrayList<BehaviorReport>();
-			if(isBehaviorReportPane == true) {
-				Map<String,BehaviorReport> selectedBRs = unsignedBehaviorReportPane.getSelectedBehaviorReports();
-				for(BehaviorReport behaviorReport : selectedBRs.values()) {selectedReports.add(behaviorReport);}
-				Platform.runLater(new ChangeScene(stage,new ModifyBehaviorReports(stage,null,director,selectedReports)));
-			}
-		});
-		
-		behaviorSignButton.setOnAction(e -> {
-			if(isBehaviorReportPane == true) {
-				Map<String,BehaviorReport> selectedBRs = unsignedBehaviorReportPane.getSelectedBehaviorReports();
-				for(BehaviorReport behaviorReport : selectedBRs.values()) {
-					behaviorReport.setDirectorSignature(true);
-					director.getMailbox().addSignedBehaviorReport(behaviorReport);
-				}
-				VBox rightSideBar = buildRightSideBar(director);
-				directorMailboxLayout.setRight(rightSideBar);
-				unsignedBehaviorReportPane = (UnsignedBehaviorReportPane) buildBehaviorReport(director);
-				scrollPane.setContent(unsignedBehaviorReportPane);
-			}
-		});
-		
-		incidentViewButton.setOnAction(e -> {
-			List<IncidentReport> selectedReports = new ArrayList<IncidentReport>();
-			if(isBehaviorReportPane == false) {
-				Map<String,IncidentReport> selectedIRs = unsignedIncidentReportPane.getSelectedIncidentReports();
-				for(IncidentReport incidentReport : selectedIRs.values()) {selectedReports.add(incidentReport);}
-				Platform.runLater(new ChangeScene(stage,new ModifyIncidentReports(stage,null,director,selectedReports)));
-			}
-		});
-		
-		incidentSignButton.setOnAction(e -> {
-			if(isBehaviorReportPane == false) {
-				Map<String,IncidentReport> selectedIRs = (Map<String, IncidentReport>) unsignedIncidentReportPane.getSelectedIncidentReports();
-				for(IncidentReport incidentReport : selectedIRs.values()) {
-					incidentReport.setDirectorSignature(true);
-					director.getMailbox().addSignedIncidentReport(incidentReport);
-				}
-				VBox rightSideBar = buildRightSideBar(director);
-				directorMailboxLayout.setRight(rightSideBar);
-				unsignedIncidentReportPane = (UnsignedIncidentReportPane) buildIncidentReport(director);
-				scrollPane.setContent(unsignedIncidentReportPane);
-			}
-		});
-		
-		refreshButton.setOnAction(e -> {
-			if(isBehaviorReportPane == true) {
-				kirbyAllBehaviorReports(director);
-				UnsignedBehaviorReportPane newBRPane = (UnsignedBehaviorReportPane) buildBehaviorReport(director);
-				unsignedBehaviorReportPane = newBRPane;
-				scrollPane.setContent(unsignedBehaviorReportPane);
-			}else {
-				kirbyAllIncidentReports(director);
-				UnsignedIncidentReportPane newIRPane = (UnsignedIncidentReportPane) buildIncidentReport(director);
-				unsignedIncidentReportPane = newIRPane;
-				scrollPane.setContent(unsignedIncidentReportPane);
-			}
-		});
-		
-		gridPane.add(title,0,0);
-		GridPane.setHalignment(title,HPos.RIGHT);
-		GridPane.setConstraints(title,0,0,4,1);
-		gridPane.add(refreshButton,4,0);
-		GridPane.setHalignment(refreshButton,HPos.LEFT);
-		gridPane.add(behaviorReportButton,0,1);
-		GridPane.setConstraints(behaviorReportButton,0,1,2,1);
-		GridPane.setHalignment(behaviorReportButton,HPos.LEFT);
-		gridPane.add(incidentReportButton,2,1);
-		GridPane.setConstraints(incidentReportButton,2,1,2,1);
-		GridPane.setHalignment(incidentReportButton,HPos.LEFT);
-		gridPane.add(scrollPane,0,3);
-		GridPane.setConstraints(scrollPane,0,3,6,6);
-		gridPane.add(behaviorViewButton,4,9);
-		GridPane.setHalignment(behaviorViewButton,HPos.CENTER);
-		gridPane.add(incidentViewButton,4,9);
-		GridPane.setHalignment(incidentViewButton,HPos.CENTER);
-		gridPane.add(behaviorSignButton,5,9);
-		GridPane.setHalignment(behaviorSignButton,HPos.CENTER);
-		gridPane.add(incidentSignButton,5,9);
-		GridPane.setHalignment(incidentSignButton,HPos.CENTER);
-		
-		return gridPane;
+		List<ButtonBase> buttons = Arrays.asList(incidentReportButton,behaviorReportButton,behaviorViewButton,incidentViewButton,behaviorSignButton,incidentSignButton);
+		behaviorReportButton.setOnAction(e -> selectBehaviorReport(scrollPane,director,buttons));
+		incidentReportButton.setOnAction(e -> selectIncidentReport(scrollPane,director,buttons));
+		behaviorViewButton.setOnAction(e -> viewBehaviorReport(stage,director));
+		behaviorSignButton.setOnAction(e -> signBehaviorReport(director,scrollPane));
+		incidentViewButton.setOnAction(e -> viewIncidentReport(stage,director));
+		incidentSignButton.setOnAction(e -> signIncidentReport(director,scrollPane));
+		refreshButton.setOnAction(e -> refresh(director,scrollPane));
+		List<Node> nodes = Arrays.asList(title,refreshButton,behaviorReportButton,incidentReportButton,scrollPane,behaviorViewButton,incidentViewButton,behaviorSignButton,incidentSignButton);
+		placeNodes(gridpane,nodes);
+		return gridpane;
 	}
 	
-	public GridPane buildBehaviorReport(Director director) {
+	/**
+	 * Populates the given GridPane with any signed {@link BehaviorReport}s or {@link IncidentReport}s
+	 * @param rightPane - GridPane
+	 * @param director - the current {@link Director}
+	 */
+	private void populateReports(GridPane rightPane,Director director) {
+		int row = 1;
+		Map<String,Document> signedReports = director.getMailbox().getAllSignedReports();
+		for(Document document : signedReports.values()) {
+			String documentTitle = document.getTitle(), student = document.getStudentName(), date = document.getStringDate(), buttonText = "" + documentTitle + "\nStudent: " + student + "\nDate: " + date;
+			ToggleButton newButton = createToggleButton(buttonText,false,250,150,"toggle-button");
+			newButton.setText("" + documentTitle + "\nStudent: " + student + "\nDate: " + date);
+			placeNodeSpan(rightPane,newButton,0,row,2,1,"center",null);
+			row++;
+		}
+	}
+	
+	/**
+	 * Changes the inner ScrollPane to a Pane displaying unsigned {@link BehaviorReport}s
+	 * @param scrollPane - ScrollPane
+	 * @param director - the current {@link Director}
+	 * @param buttons - a List<ButtonBase>
+	 */
+	private void selectBehaviorReport(ScrollPane scrollPane,Director director,List<ButtonBase> buttons) {
+		((ToggleButton) buttons.get(0)).setSelected(false);
+		((ToggleButton) buttons.get(1)).setSelected(true);
+		unsignedBehaviorReportPane = (UnsignedBehaviorReportPane) buildBehaviorReport(director);
+		scrollPane.setContent(unsignedBehaviorReportPane);
+		buttons.get(2).setVisible(true);
+		buttons.get(3).setVisible(false);
+		buttons.get(4).setVisible(true);
+		buttons.get(5).setVisible(false);
+		isBehaviorReportPane = true;
+	}
+	
+	/**
+	 * Changes the inner ScrollPane to a Pane displaying unsigned {@link IncidentReport}s
+	 * @param scrollPane - ScrollPane
+	 * @param director - the current {@link Director}
+	 * @param buttons - a List<ButtonBase>
+	 */
+	private void selectIncidentReport(ScrollPane scrollPane,Director director,List<ButtonBase> buttons) {
+		((ToggleButton) buttons.get(0)).setSelected(true);
+		((ToggleButton) buttons.get(1)).setSelected(false);
+		unsignedIncidentReportPane = (UnsignedIncidentReportPane) buildIncidentReport(director);
+		scrollPane.setContent(unsignedIncidentReportPane);
+		buttons.get(2).setVisible(false);
+		buttons.get(3).setVisible(true);
+		buttons.get(4).setVisible(false);
+		buttons.get(5).setVisible(true);
+		isBehaviorReportPane = false;
+	}
+	
+	/**
+	 * Opens the selected {@link BehaviorReport} in a new Stage
+	 * @param director - the current {@link Director}
+	 * @param stage - the current {@link Stage}
+	 */
+	private void viewBehaviorReport(Stage stage,Director director) {
+		List<BehaviorReport> selectedReports = new ArrayList<BehaviorReport>();
+		if(isBehaviorReportPane == true) {
+			Map<String,BehaviorReport> selectedBRs = unsignedBehaviorReportPane.getSelectedBehaviorReports();
+			for(BehaviorReport behaviorReport : selectedBRs.values()) {selectedReports.add(behaviorReport);}
+			Platform.runLater(new ChangeScene(stage,new ModifyBehaviorReports(stage,null,director,selectedReports)));
+		}
+	}
+	
+	/**
+	 * Signs the current {@link BehaviorReport}
+	 * @param director - the current {@link Director}
+	 * @param scrollPane - ScrollPane
+	 */
+	private void signBehaviorReport(Director director,ScrollPane scrollPane) {
+		if(isBehaviorReportPane == true) {
+			Map<String,BehaviorReport> selectedBRs = unsignedBehaviorReportPane.getSelectedBehaviorReports();
+			for(BehaviorReport behaviorReport : selectedBRs.values()) {
+				behaviorReport.setDirectorSignature(true);
+				director.getMailbox().addSignedBehaviorReport(behaviorReport);
+			}
+			VBox rightSideBar = buildRightPane(director);
+			directorMailboxLayout.setRight(rightSideBar);
+			unsignedBehaviorReportPane = (UnsignedBehaviorReportPane) buildBehaviorReport(director);
+			scrollPane.setContent(unsignedBehaviorReportPane);
+		}
+	}
+	
+	/**
+	 * Opens the selected {@link IncidentReport} in a new Stage
+	 * @param director - the current {@link Director}
+	 * @param stage - the current {@link Stage}
+	 */
+	private void viewIncidentReport(Stage stage,Director director) {
+		List<IncidentReport> selectedReports = new ArrayList<IncidentReport>();
+		if(isBehaviorReportPane == false) {
+			Map<String,IncidentReport> selectedIRs = unsignedIncidentReportPane.getSelectedIncidentReports();
+			for(IncidentReport incidentReport : selectedIRs.values()) {selectedReports.add(incidentReport);}
+			Platform.runLater(new ChangeScene(stage,new ModifyIncidentReports(stage,null,director,selectedReports)));
+		}
+	}
+	
+	/**
+	 * Signs the current {@link IncidentReport}
+	 * @param director - the current {@link Director}
+	 * @param scrollPane - ScrollPane
+	 */
+	private void signIncidentReport(Director director,ScrollPane scrollPane) {
+		if(isBehaviorReportPane == false) {
+			Map<String,IncidentReport> selectedIRs = (Map<String, IncidentReport>) unsignedIncidentReportPane.getSelectedIncidentReports();
+			for(IncidentReport incidentReport : selectedIRs.values()) {
+				incidentReport.setDirectorSignature(true);
+				director.getMailbox().addSignedIncidentReport(incidentReport);
+			}
+			VBox rightSideBar = buildRightPane(director);
+			directorMailboxLayout.setRight(rightSideBar);
+			unsignedIncidentReportPane = (UnsignedIncidentReportPane) buildIncidentReport(director);
+			scrollPane.setContent(unsignedIncidentReportPane);
+		}
+	}
+	
+	/**
+	 * Refreshes the page to check for more unsigned {@link BehaviorReport}s and {@link IncidentReport}s
+	 * @param director - the current {@link Director}
+	 * @param scrollPane - ScrollPane
+	 */
+	private void refresh(Director director,ScrollPane scrollPane) {
+		if(isBehaviorReportPane == true) {
+			kirbyAllBehaviorReports(director);
+			UnsignedBehaviorReportPane newBRPane = (UnsignedBehaviorReportPane) buildBehaviorReport(director);
+			unsignedBehaviorReportPane = newBRPane;
+			scrollPane.setContent(unsignedBehaviorReportPane);
+		}else {
+			kirbyAllIncidentReports(director);
+			UnsignedIncidentReportPane newIRPane = (UnsignedIncidentReportPane) buildIncidentReport(director);
+			unsignedIncidentReportPane = newIRPane;
+			scrollPane.setContent(unsignedIncidentReportPane);
+		}
+	}
+	
+	/**
+	 * Builds a new {@link BehaviorReport} pane
+	 * @param director - the current {@link Director}
+	 * @return GridPane
+	 */
+	private GridPane buildBehaviorReport(Director director) {
 		kirbyAllBehaviorReports(director);
 		UnsignedBehaviorReportPane unsignedBRPane = new UnsignedBehaviorReportPane(director,director.getMailbox().getUnsignedBehaviorReports());
 		unsignedBehaviorReportPane = unsignedBRPane;
 		return unsignedBehaviorReportPane;
 	}
 	
-	public GridPane buildIncidentReport(Director director) {
+	/**
+	 * Builds a new {@link IncidentReport} pane
+	 * @param director - the current {@link Director}
+	 * @return GridPane
+	 */
+	private GridPane buildIncidentReport(Director director) {
 		kirbyAllIncidentReports(director);
 		UnsignedIncidentReportPane unsignedIRPane = new UnsignedIncidentReportPane(director,director.getMailbox().getUnsignedIncidentReports());
 		unsignedIncidentReportPane = unsignedIRPane;
 		return unsignedIncidentReportPane;
 	}
 	
-	public List<Teacher> getTeachers(Director director){
+	/**
+	 * Gets all {@link Teacher}s
+	 * @param director - the current {@link Director}
+	 * @return a List<Teacher>
+	 */
+	private List<Teacher> getTeachers(Director director){
 		Map<String,StaffMember> staffMembers = director.getStaffMembers();
 		List<Teacher> teachers = new ArrayList<Teacher>();
 		for(StaffMember staffMember : staffMembers.values()) {
-			if(staffMember.getCenterID() == director.getCenterID() && staffMember.getTitle().equals("Teacher")) {
-				teachers.add((Teacher)staffMember);
-			}
+			if(staffMember.getCenterID() == director.getCenterID() && staffMember.getTitle().equals("Teacher")) {teachers.add((Teacher)staffMember);}
 		}
 		return teachers;
 	}
 	
-	public void kirbyAllBehaviorReports(Director director) {
+	/**
+	 * Checks for {@link BehaviorReport}s in each {@link Teacher}'s {@link Mailbox}. If found, they are pulled back into the {@link Director}'s {@link Mailbox}
+	 * @param director - the current {@link Director}
+	 */
+	private void kirbyAllBehaviorReports(Director director) {
 		List<Teacher> teachers = getTeachers(director);
 		for(Teacher teacher : teachers) {
 			Map<String,BehaviorReport> unsignedBehaviorReports = teacher.getMailbox().getUnsignedBehaviorReports();
 			if(unsignedBehaviorReports.size() > 0) {
-				for(BehaviorReport behaviorReport : unsignedBehaviorReports.values()) {
-					director.getMailbox().addUnsignedBehaviorReport(behaviorReport);
-				}
+				for(BehaviorReport behaviorReport : unsignedBehaviorReports.values()) {director.getMailbox().addUnsignedBehaviorReport(behaviorReport);}
 			}
 		}
 	}
 	
-	public void kirbyAllIncidentReports(Director director){
+	/**
+	 * Checks for {@link IncidentReport}s in each {@link Teacher}'s {@link Mailbox}. If found, they are pulled back into the {@link Director}'s {@link Mailbox}
+	 * @param director - the current {@link Director}
+	 */
+	private void kirbyAllIncidentReports(Director director){
 		List<Teacher> teachers = getTeachers(director);
 		for(Teacher teacher : teachers) {
 			Map<String,IncidentReport> unsignedIncidentReports = teacher.getMailbox().getUnsignedIncidentReports();
 			if(unsignedIncidentReports.size() > 0) {
-				for(IncidentReport incidentReport : unsignedIncidentReports.values()) {
-					director.getMailbox().addUnsignedIncidentReport(incidentReport);
-				}
+				for(IncidentReport incidentReport : unsignedIncidentReports.values()) {director.getMailbox().addUnsignedIncidentReport(incidentReport);}
 			}
 		}
 	}
 
 	@Override
 	public void placeNodes(GridPane gridpane, List<Node> nodes) {
-		// TODO Auto-generated method stub
-		
+		placeNodeSpan(gridpane,nodes.get(0),0,0,4,1,"right",null);
+		placeNode(gridpane,nodes.get(1),4,0,"left",null);
+		placeNodeSpan(gridpane,nodes.get(2),0,1,2,1,"left",null);
+		placeNodeSpan(gridpane,nodes.get(3),2,1,2,1,"left",null);
+		placeNodeSpan(gridpane,nodes.get(4),0,3,6,6,"center",null);
+		placeNode(gridpane,nodes.get(5),4,9,"center",null);
+		placeNode(gridpane,nodes.get(6),4,9,"center",null);
+		placeNode(gridpane,nodes.get(7),5,9,"center",null);
+		placeNode(gridpane,nodes.get(8),5,9,"center",null);
 	}
 	
 }

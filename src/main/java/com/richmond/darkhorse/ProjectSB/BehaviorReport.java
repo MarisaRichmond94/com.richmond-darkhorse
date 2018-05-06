@@ -3,6 +3,10 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.Map;
 
+/**
+ * subclass of {@link Document} containing a snapshot of a {@link Student}'s behavior
+ * @author marisarichmond
+ */
 public class BehaviorReport extends Document implements Serializable{
 
 	private static final long serialVersionUID = 8453756L;

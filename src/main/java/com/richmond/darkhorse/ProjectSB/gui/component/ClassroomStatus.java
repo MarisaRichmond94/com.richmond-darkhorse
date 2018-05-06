@@ -113,7 +113,7 @@ public class ClassroomStatus implements DirectorLayout {
 	private void populateStudentsPresent(GridPane gridpane) {
 		List<String> studentsPresentList = classroom.getStudentsPresent();
 	    if(studentsPresentList.size() < 1) {
-		    	Label noStudents = createLabel("no active student(s)","label");
+		    	Label noStudents = createLabel("no active students","label");
 		    	placeNodeSpan(gridpane,noStudents,0,1,2,1,"center",null);
 	    }else {
 	    		int rowIndex = 1;
@@ -129,29 +129,37 @@ public class ClassroomStatus implements DirectorLayout {
 	}
 	
 	/**
-	 * Builds a ScrollPane containing the names of all {@link Student}s in the {@link Classroom} that are expected to arrive for the day but have not yet been 
-	 * marked present by the {@link Teacher}
+	 * Builds a {@link ScrollPane} containing the names of all {@link Student}s in the {@link Classroom} that are expected to arrive for the day but have not yet 
+	 * been marked present by the {@link Teacher}. If no {@link Student}s are found on the {@link Classroom} {@link List}, the {@link GridPane} will display a 
+	 * message indicated that no students are expected
 	 * @return ScrollPane
 	 */
 	private ScrollPane buildStudentsExpectedPane() {
 		List<String> expected = classroom.getStudentsExpected(), present = classroom.getStudentsPresent();
 	    Map<String,Student> presentMap = new HashMap<String,Student>();
-	    for(String presentStudent : present) { if(allStudents.containsKey(presentStudent)) {presentMap.put(presentStudent,allStudents.get(presentStudent));}}
+	    for(String presentStudent : present) { 
+	    		if(allStudents.containsKey(presentStudent)) {presentMap.put(presentStudent,allStudents.get(presentStudent));}
+	    	}
 	    List<String> stillExpected = new ArrayList<String>();
 	    for(String studentExpected : expected) {if(!presentMap.containsKey(studentExpected)) {stillExpected.add(studentExpected);}}
 	    GridPane gridpane = new GridPane();
 	    Label expectedStudentsLabel = createLabel("Students Expected","subtitle");
 	    gridpane.getStyleClass().add("gridpane");
 	    placeNodeSpan(gridpane,expectedStudentsLabel,0,0,2,1,"center",null);
-		int row = 1;
-		for(String expectedID : stillExpected) {
-			if(allStudents.containsKey(expectedID)) {
-				Student theStudent = allStudents.get(expectedID);
-				Label newLabel = createLabel(theStudent.toString(),"label");
-				placeNodeSpan(gridpane,newLabel,0,row,2,1,"center",null);
-				row++;
+	    if(expected.size() == 0) {
+	    		Label noneExpected = createLabel("no students expected","label");
+	    		placeNodeSpan(gridpane,noneExpected,0,1,2,1,"center",null);
+	    }else {
+			int row = 1;
+			for(String expectedID : stillExpected) {
+				if(allStudents.containsKey(expectedID)) {
+					Student theStudent = allStudents.get(expectedID);
+					Label newLabel = createLabel(theStudent.toString(),"label");
+					placeNodeSpan(gridpane,newLabel,0,row,2,1,"center",null);
+					row++;
+				}
 			}
-		}
+	    }
 	    ScrollPane scrollPane = new ScrollPane(gridpane);
 	    scrollPane.getStyleClass().add("scrollpane");
 	    scrollPane.setFitToHeight(true);

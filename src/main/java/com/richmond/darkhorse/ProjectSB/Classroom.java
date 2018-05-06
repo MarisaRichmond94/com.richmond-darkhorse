@@ -1,10 +1,16 @@
 package com.richmond.darkhorse.ProjectSB;
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * A container for {@link Student}s and {@link Teacher}s
+ * @author marisarichmond
+ *
+ */
 public class Classroom implements Serializable{
 
 	private static final long serialVersionUID = 8453756L;
@@ -15,7 +21,6 @@ public class Classroom implements Serializable{
 	private List<String> studentsEnrolled, studentsExpected, studentsPresent, teachersPresent;
 	private Map<String,DailySheet> dailySheets;
 	
-	//Constructor for a classroom WITHOUT a {@link Teacher}
 	public Classroom(String classroomType,Center center,int maxSize,String ageGroup) {
 		this.classroomTypes = new HashMap<String,String>();
 		this.classroomTypes = populateClassroomTypes();
@@ -32,7 +37,6 @@ public class Classroom implements Serializable{
 		this.dailySheets = new HashMap<String,DailySheet>();
 	}
 	
-	//Constructor for a classroom WITH a {@link Teacher}
 	public Classroom(String classroomType,Center center,Teacher teacher,int maxSize,String ageGroup) {
 		this.classroomTypes = new HashMap<String,String>();
 		this.classroomTypes = populateClassroomTypes();
@@ -50,7 +54,6 @@ public class Classroom implements Serializable{
 		this.dailySheets = new HashMap<String,DailySheet>();
 	}
 	
-	//Constructor for a classroom with TWO {@link Teacher}s
 	public Classroom(String classroomType,Center center,Teacher teacher,Teacher assistantTeacher,int maxSize,String ageGroup) { 
 		this.classroomTypes = new HashMap<String,String>();
 		this.classroomTypes = populateClassroomTypes();
@@ -80,7 +83,6 @@ public class Classroom implements Serializable{
 		classroomTypes.put(classroomName,ageGroup);
 	}
 	
-	//Teacher-related methods
 	public Teacher getTeacher(String teacherID) {
 		SpecialBeginnings sB = SpecialBeginnings.getInstance();
 		Map<String,StaffMember> staffMembers = sB.getStaffMembers();
@@ -100,14 +102,16 @@ public class Classroom implements Serializable{
 		else if(assistantTeacherID != null && this.assistantTeacherID.equals(teacher.getTeacherID())) {this.assistantTeacherID = null;	}
 	}
 	
-	//Student-related methods
-	public List<String> generateClassList(String day,List<String> studentsEnrolled){
+	/**
+	 * Generates a {@link List} of {@link Student}s expected in the {@link Classroom} based on the provided {@link String} day
+	 * @param day - {@link String}
+	 * @return a {@link List} of {@link Student}s
+	 */
+	public List<String> generateClassList(String day){
 		List<String> studentsExpected = new ArrayList<String>();
 		for(String studentID : studentsEnrolled) {
 			Student student = this.getStudent(studentID);
-			Record record = student.getRecord();
-			Attendance attendance = record.getAttendance();
-			Map<String,Boolean> attendancePlan = attendance.getAttendancePlan();
+			Map<String,Boolean> attendancePlan = student.getRecord().getAttendance().getAttendancePlan();
 			if(attendancePlan.containsKey(day) && attendancePlan.get(day) == true) {studentsExpected.add(studentID);}
 		}
 		this.studentsExpected = studentsExpected;
@@ -177,7 +181,6 @@ public class Classroom implements Serializable{
 		setStudentsExpected(clearedStudentsExpected);
 	}
 	
-	//Standard getters and setters
 	public int getCount(String day) {
 		int count = 0;
 		List<String> studentsEnrolled = this.getStudentsEnrolled();
@@ -215,7 +218,23 @@ public class Classroom implements Serializable{
 		this.studentsEnrolled = studentsEnrolled;
 	}
 
+	/**
+	 * Populates the {@link List} of {@link Student}s expected in the {@link Classroom} based on the current {@link LocalDate}
+	 */
+	private void populateStudentsExpected() {
+		LocalDate now = LocalDate.now();
+		String dayOfWeek = now.getDayOfWeek().toString(), day = dayOfWeek.substring(0,1) + dayOfWeek.substring(1).toLowerCase();
+		if(day.equals("Saturday") || day.equals("Sunday")) {System.out.println("Invalid day");}
+		this.studentsExpected = new ArrayList<>();
+		for(String studentID : studentsEnrolled) {
+			Student student = this.getStudent(studentID);
+			Map<String,Boolean> attendancePlan = student.getRecord().getAttendance().getAttendancePlan();
+			if(attendancePlan.containsKey(day) && attendancePlan.get(day) == true) {studentsExpected.add(studentID);}
+		}
+	}
+	
 	public List<String> getStudentsExpected() {
+		populateStudentsExpected();
 		return studentsExpected;
 	}
 

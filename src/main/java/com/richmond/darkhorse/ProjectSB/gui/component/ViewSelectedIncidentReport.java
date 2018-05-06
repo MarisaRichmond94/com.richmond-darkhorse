@@ -1,15 +1,15 @@
 package com.richmond.darkhorse.ProjectSB.gui.component;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import com.richmond.darkhorse.ProjectSB.Director;
 import com.richmond.darkhorse.ProjectSB.IncidentReport;
-import javafx.geometry.HPos;
+import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 
-public class ViewSelectedIncidentReport extends GridPane{
+public class ViewSelectedIncidentReport extends GridPane implements DirectorLayout{
 
 	private List<TextField> enabledTextFields = new ArrayList<TextField>();
 	private IncidentReport incidentReport;
@@ -17,141 +17,80 @@ public class ViewSelectedIncidentReport extends GridPane{
 	
 	public ViewSelectedIncidentReport(Director director,IncidentReport incidentReport) {
 		this.incidentReport = incidentReport;
-		
-		this.setVgap(10);
-		this.setHgap(10);
-		ColumnConstraints columnOne = new ColumnConstraints();
-		columnOne.setPercentWidth(16.6);
-	    ColumnConstraints columnTwo = new ColumnConstraints();
-	    columnTwo.setPercentWidth(16.6);
-	    ColumnConstraints columnThree = new ColumnConstraints();
-	    columnThree.setPercentWidth(16.6);
-	    ColumnConstraints columnFour = new ColumnConstraints();
-	    columnFour.setPercentWidth(16.6);
-	    ColumnConstraints columnFive = new ColumnConstraints();
-	    columnFive.setPercentWidth(16.6);
-	    ColumnConstraints columnSix = new ColumnConstraints();
-	    columnSix.setPercentWidth(16.6);
-	    this.getColumnConstraints().addAll(columnOne,columnTwo,columnThree,columnFour,columnFive,columnSix);
+		buildGridPane(director);
+	}
+	
+	private void buildGridPane(Director director) {
+		setConstraints(this,6,0,10,10,"modulargridpane");
 	    this.setStyle("-fx-background-color: #CCCCCC;");
-	    this.getStyleClass().add("gridpane");
-	    this.getStylesheets().add("directormailbox.css");
-		
-	    Label title = new Label("Incident Report Form");
-	    title.getStyleClass().add("subtitle");
-	    
-	    this.add(title,0,0);
-	    GridPane.setHalignment(title,HPos.CENTER);
-	    GridPane.setConstraints(title,0,0,6,2);
-	    
-	    Label childsName = new Label("Student:");
-	    childsName.getStyleClass().add("label");
-	    TextField nameText = new TextField(incidentReport.getStudentName());
-	    nameText.getStyleClass().add("textfield");
-	    
-	    this.add(childsName,0,2);
-	    GridPane.setHalignment(childsName,HPos.RIGHT);
-	    this.add(nameText,1,2);
-	    
-	    Label date = new Label("Date:");
-	    date.getStyleClass().add("label");
-	    TextField dateText = new TextField(incidentReport.getStringDate());
-	    dateText.getStyleClass().add("textfield");
-	    Label time = new Label("Time:");
-	    time.getStyleClass().add("label");
-	    TextField timeText = new TextField(incidentReport.getStringTime());
-	    timeText.getStyleClass().add("textfield");
-	    
-	    this.add(date,2,2);
-	    GridPane.setHalignment(date,HPos.RIGHT);
-	    this.add(dateText,3,2);
-	    GridPane.setHalignment(dateText,HPos.LEFT);
-	    this.add(time,4,2);
-	    GridPane.setHalignment(time,HPos.RIGHT);
-	    this.add(timeText,5,2);
-	    GridPane.setHalignment(timeText,HPos.LEFT);
-	    
-	    Label description = new Label("Description:");
-	    description.getStyleClass().add("label");
-	    TextField descriptionText = new TextField(incidentReport.getIncidentDescription());
-	    descriptionText.getStyleClass().add("textfield");
+	    this.getStylesheets().add("css/director.css");
+	    Label title = createLabel("Incident Report Form","subtitle");
+	    List<Label> labels = populateLabels(Arrays.asList("Student:","Date:","Time:","Description:","Action taken:","Appearance:","Medical:","Comments:","Teachers:"),"label");
+	    TextField nameText = createTextField(incidentReport.getStudentName(),"textfield",650), dateText = createTextField(incidentReport.getStringDate(),"textfield",650);
+	    TextField timeText = createTextField(incidentReport.getStringTime(),"textfield",650), descriptionText = createTextField(incidentReport.getIncidentDescription(),"textfield",650);
+	    TextField actionText = createTextField(incidentReport.getActionTaken(),"textfield",650), appearanceText = createTextField(incidentReport.getStudentCondition(),"textfield",650);
+	    TextField medicalText = medicalResponse(), commentsText = createTextField(incidentReport.getComments(),"textfield",650), teacherText = createTextField(incidentReport.getTeachersPresent(),"textfield",650);
 	    this.descriptionText = descriptionText;
-	    
-	    this.add(description,0,3);
-	    GridPane.setHalignment(description,HPos.RIGHT);
-	    this.add(descriptionText,1,3);
-	    GridPane.setHalignment(descriptionText,HPos.LEFT);
-	    GridPane.setConstraints(descriptionText,1,3,5,1);
-	    
-	    Label action = new Label("Action taken:");
-	    action.getStyleClass().add("label");
-	    TextField actionText = new TextField(incidentReport.getActionTaken());
-	    actionText.getStyleClass().add("textfield");
 	    this.actionText = actionText;
-	    
-	    this.add(action,0,4);
-	    GridPane.setHalignment(action,HPos.RIGHT);
-	    this.add(actionText,1,4);
-	    GridPane.setHalignment(actionText,HPos.LEFT);
-	    GridPane.setConstraints(actionText,1,4,5,1);
-	    
-	    Label appearance = new Label("Appearance:");
-	    appearance.getStyleClass().add("label");
-	    TextField appearanceText = new TextField(incidentReport.getStudentCondition());
-	    appearanceText.getStyleClass().add("textfield");
 	    this.appearanceText = appearanceText;
-	    
-	    this.add(appearance,0,5);
-	    GridPane.setHalignment(appearance,HPos.RIGHT);
-	    this.add(appearanceText,1,5);
-	    GridPane.setHalignment(appearanceText,HPos.LEFT);
-	    GridPane.setConstraints(appearanceText,1,5,5,1);
-	    
-	    Label medical = new Label("Medical:");
-	    medical.getStyleClass().add("label");
-	    String medicalResponse;
+	    this.commentsText = commentsText;
+	    disableAll(nameText,dateText,timeText,teacherText,descriptionText,actionText,appearanceText,commentsText,medicalText);
+	    enable();
+	    List<Node> nodes = Arrays.asList(title,labels.get(0),nameText,labels.get(1),dateText,labels.get(2),timeText,labels.get(3),descriptionText,labels.get(4),actionText,labels.get(5),appearanceText,labels.get(6),medicalText,labels.get(7),commentsText,labels.get(8),teacherText);
+	    placeNodes(this,nodes);
+	}
+	
+	@Override
+	public void placeNodes(GridPane gridpane, List<Node> nodes) {
+		placeNodeSpan(gridpane,nodes.get(0),0,0,6,2,"center",null);
+		placeNode(gridpane,nodes.get(1),0,2,"right",null);
+		placeNode(gridpane,nodes.get(2),1,2,"left",null);
+		placeNode(gridpane,nodes.get(3),2,2,"right",null);
+		placeNode(gridpane,nodes.get(4),3,2,"left",null);
+		placeNode(gridpane,nodes.get(5),4,2,"right",null);
+		placeNode(gridpane,nodes.get(6),5,2,"left",null);
+		placeNode(gridpane,nodes.get(7),0,3,"right",null);
+		placeNodeSpan(gridpane,nodes.get(8),1,3,5,1,"left",null);
+		placeNode(gridpane,nodes.get(9),0,4,"right",null);
+		placeNodeSpan(gridpane,nodes.get(10),1,4,5,1,"left",null);
+		placeNode(gridpane,nodes.get(11),0,5,"right",null);
+		placeNodeSpan(gridpane,nodes.get(12),1,5,5,1,"left",null);
+		placeNode(gridpane,nodes.get(13),0,6,"right",null);
+		placeNodeSpan(gridpane,nodes.get(14),1,6,5,1,"left",null);
+		placeNode(gridpane,nodes.get(15),0,7,"right",null);
+		placeNodeSpan(gridpane,nodes.get(16),1,7,5,1,"left",null);
+		placeNode(gridpane,nodes.get(17),0,8,"right",null);
+		placeNodeSpan(gridpane,nodes.get(18),1,8,2,1,"left",null);
+	}
+	
+	/**
+	 * Creates a TextField based on the information stored in a {@link Student}'s {@link IncidentReport}
+	 * @return TextField
+	 */
+	private TextField medicalResponse() {
+		String medicalResponse;
 	    if(incidentReport.isMedicalAttention() == true && incidentReport.isOnSite() == false) {medicalResponse = incidentReport.getStudentName() + " required off-site medical attention";}
 	    else if(incidentReport.isMedicalAttention() == true && incidentReport.isOnSite() == true){ medicalResponse = incidentReport.getStudentName() + " required on-site medical attention";}
 	    else { medicalResponse = incidentReport.getStudentName() + " did not require any immediate medical attention";}
 	    TextField medicalText = new TextField(medicalResponse);
+	    medicalText.setMaxWidth(650);
 	    medicalText.getStyleClass().add("textfield");
-
-	    this.add(medical,0,6);
-	    GridPane.setHalignment(medical,HPos.RIGHT);
-	    this.add(medicalText,1,6);
-	    GridPane.setHalignment(medicalText,HPos.LEFT);
-	    GridPane.setConstraints(medicalText,1,6,5,1);
-	    
-	    Label comments = new Label("Comments:");
-	    comments.getStyleClass().add("label");
-	    TextField commentsText = new TextField(incidentReport.getComments());
-	    commentsText.getStyleClass().add("textfield");
-	    this.commentsText = commentsText;
-	    
-	    this.add(comments,0,7);
-	    GridPane.setHalignment(comments,HPos.RIGHT);
-	    this.add(commentsText,1,7);
-	    GridPane.setHalignment(commentsText,HPos.LEFT);
-	    GridPane.setConstraints(commentsText,1,7,5,1);
-	    
-	    Label teacher = new Label("Teacher:");
-	    teacher.getStyleClass().add("label");
-	    TextField teacherText = new TextField(incidentReport.getTeachersPresent());
-	    teacherText.getStyleClass().add("textfield");
-	    
-	    this.add(teacher,0,8);
-	    GridPane.setHalignment(teacher,HPos.RIGHT);
-	    this.add(teacherText,1,8);
-	    GridPane.setHalignment(teacherText,HPos.LEFT);
-	    GridPane.setConstraints(teacherText,1,8,2,1);
-	    
-	    disableAll(nameText,dateText,timeText,teacherText,descriptionText,actionText,appearanceText,commentsText,medicalText);
-	    enabledTextFields.add(descriptionText);
+	    return medicalText;
+	}
+	
+	/**
+	 * Enables the given TextFields
+	 */
+	private void enable() {
+		enabledTextFields.add(descriptionText);
 	    enabledTextFields.add(actionText);
 	    enabledTextFields.add(appearanceText);
 	    enabledTextFields.add(commentsText);
 	}
 	
+	/**
+	 * Enables all TextFields
+	 */
 	public void enableAll() {
 		for(TextField textField : enabledTextFields) {
 			textField.setDisable(false);
@@ -162,6 +101,9 @@ public class ViewSelectedIncidentReport extends GridPane{
 		return incidentReport;
 	}
 	
+	/**
+	 * Disables all TextFields
+	 */
 	public void disableAll(TextField nameText,TextField dateText,TextField timeText,TextField teacherText,TextField descriptionText,TextField actionText,TextField appearanceText,TextField commentsText,TextField medicalText) {
 		nameText.setDisable(true);
 		dateText.setDisable(true);

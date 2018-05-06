@@ -196,9 +196,7 @@ public class ModifyClassroom implements AdminLayout {
 	    		if(theTeacher.equals(teacher)) {
 	    			teacherBox.getItems().add(teacherHolder);
 	    			teacherBox.setValue(teacherHolder);
-	    		}else {
-	    			teacherBox.getItems().add(teacherHolder);
-	    		}
+	    		}else {teacherBox.getItems().add(teacherHolder);}
 	    }
 	    if(teacher == null) {teacherBox.setValue(emptyTeacherHolder);}
 	    teacherBox.getStyleClass().add("choice-box");

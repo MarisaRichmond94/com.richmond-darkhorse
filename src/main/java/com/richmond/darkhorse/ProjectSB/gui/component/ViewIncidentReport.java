@@ -1,158 +1,84 @@
 package com.richmond.darkhorse.ProjectSB.gui.component;
+import java.util.Arrays;
+import java.util.List;
 import com.richmond.darkhorse.ProjectSB.IncidentReport;
 import com.richmond.darkhorse.ProjectSB.Student;
-import javafx.geometry.HPos;
-import javafx.scene.Scene;
+import javafx.scene.Node;
 import javafx.scene.control.Label;
-import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
 
-public class ViewIncidentReport {
+public class ViewIncidentReport implements DirectorLayout{
 	
 	private Student student;
 	private IncidentReport incidentReport;
 
 	public ViewIncidentReport(Student student,IncidentReport incidentReport) {
-		
 		this.student = student;
 		this.incidentReport = incidentReport;
 	}
 	
 	public void display() {
-		
 		Stage stage = new Stage();
-		stage.initModality(Modality.APPLICATION_MODAL);
-		stage.setTitle("Incident Report - " + student.getFirstName() + " " + student.getLastName() + ", " + incidentReport.getStringDate());
-		
-		GridPane viewIncidentReportLayout = new GridPane();
-		viewIncidentReportLayout.setVgap(10);
-		viewIncidentReportLayout.setHgap(10);
-		ColumnConstraints columnOne = new ColumnConstraints();
-		columnOne.setPercentWidth(16.6);
-	    ColumnConstraints columnTwo = new ColumnConstraints();
-	    columnTwo.setPercentWidth(16.6);
-	    ColumnConstraints columnThree = new ColumnConstraints();
-	    columnThree.setPercentWidth(16.6);
-	    ColumnConstraints columnFour = new ColumnConstraints();
-	    columnFour.setPercentWidth(16.6);
-	    ColumnConstraints columnFive = new ColumnConstraints();
-	    columnFive.setPercentWidth(16.6);
-	    ColumnConstraints columnSix = new ColumnConstraints();
-	    columnSix.setPercentWidth(16.6);
-	    viewIncidentReportLayout.getColumnConstraints().addAll(columnOne,columnTwo,columnThree,columnFour,columnFive,columnSix);
-	    viewIncidentReportLayout.getStyleClass().add("gridpane");
-	    viewIncidentReportLayout.getStylesheets().add("modifystudentinfo.css");
-	    
-	    Label title = new Label("Incident Report Form");
-	    title.getStyleClass().add("subtitle");
-	    
-	    viewIncidentReportLayout.add(title,0,0);
-	    GridPane.setHalignment(title,HPos.CENTER);
-	    GridPane.setConstraints(title,0,0,6,2);
-	    
-	    Label childsName = new Label("Student:");
-	    childsName.getStyleClass().add("label");
-	    Label nameText = new Label();
-	    nameText.setText(student.getFirstName() + " " + student.getLastName());
-	    nameText.getStyleClass().add("response-label");
-	    
-	    viewIncidentReportLayout.add(childsName,0,2);
-	    GridPane.setHalignment(childsName,HPos.RIGHT);
-	    viewIncidentReportLayout.add(nameText,1,2);
-	    
-	    Label date = new Label("Date:");
-	    date.getStyleClass().add("label");
-	    Label dateText = new Label(incidentReport.getStringDate());
-	    dateText.getStyleClass().add("response-label");
-	    Label time = new Label("Time:");
-	    time.getStyleClass().add("label");
-	    Label timeText = new Label(incidentReport.getStringTime());
-	    timeText.getStyleClass().add("response-label");
-	    
-	    viewIncidentReportLayout.add(date,2,2);
-	    GridPane.setHalignment(date,HPos.RIGHT);
-	    viewIncidentReportLayout.add(dateText,3,2);
-	    GridPane.setHalignment(dateText,HPos.LEFT);
-	    viewIncidentReportLayout.add(time,4,2);
-	    GridPane.setHalignment(time,HPos.RIGHT);
-	    viewIncidentReportLayout.add(timeText,5,2);
-	    GridPane.setHalignment(timeText,HPos.LEFT);
-	    
-	    Label description = new Label("Description:");
-	    description.getStyleClass().add("label");
-	    Label descriptionText = new Label(incidentReport.getIncidentDescription());
-	    descriptionText.getStyleClass().add("response-label");
-	    
-	    viewIncidentReportLayout.add(description,0,3);
-	    GridPane.setHalignment(description,HPos.RIGHT);
-	    viewIncidentReportLayout.add(descriptionText,1,3);
-	    GridPane.setHalignment(descriptionText,HPos.LEFT);
-	    GridPane.setConstraints(descriptionText,1,3,5,1);
-	    
-	    Label action = new Label("Action taken:");
-	    action.getStyleClass().add("label");
-	    Label actionText = new Label(incidentReport.getActionTaken());
-	    actionText.getStyleClass().add("response-label");
-	    
-	    viewIncidentReportLayout.add(action,0,4);
-	    GridPane.setHalignment(action,HPos.RIGHT);
-	    viewIncidentReportLayout.add(actionText,1,4);
-	    GridPane.setHalignment(actionText,HPos.LEFT);
-	    GridPane.setConstraints(actionText,1,4,5,1);
-	    
-	    Label appearance = new Label("Appearance:");
-	    appearance.getStyleClass().add("label");
-	    Label appearanceText = new Label(incidentReport.getStudentCondition());
-	    appearanceText.getStyleClass().add("response-label");
-	    
-	    viewIncidentReportLayout.add(appearance,0,5);
-	    GridPane.setHalignment(appearance,HPos.RIGHT);
-	    viewIncidentReportLayout.add(appearanceText,1,5);
-	    GridPane.setHalignment(appearanceText,HPos.LEFT);
-	    GridPane.setConstraints(appearanceText,1,5,5,1);
-	    
-	    Label medical = new Label("Medical:");
-	    medical.getStyleClass().add("label");
-	    String medicalResponse;
+		GridPane viewIncidentReportLayout = buildGridPane();
+		String title = "Incident Report - " + student.getFirstName() + " " + student.getLastName() + ", " + incidentReport.getStringDate();
+		buildPopUp(stage,viewIncidentReportLayout,title);
+	}
+	
+	/**
+	 * Builds the central GridPane for {@link ViewIncidentReport}
+	 * @return GridPane
+	 */
+	private GridPane buildGridPane() {
+		GridPane gridpane = new GridPane();
+		setConstraints(gridpane,6,0,10,10,"modulargridpane");
+	    gridpane.getStylesheets().add("css/director.css");
+	    Label title = createLabel("Incident Report Form","subtitle");
+	    String nameText = student.getFirstName() + " " + student.getLastName();
+	    List<Label> labels = populateLabels(Arrays.asList("Student:","Date:","Time:","Description:","Action taken:","Appearance:","Medical:","Comments:","Teacher:"),"label");
+	    Label name = createLabel(nameText,"response-label"), date = createLabel(incidentReport.getStringDate(),"response-label"), time = createLabel(incidentReport.getStringTime(),"response-label");
+	    Label description = createLabel(incidentReport.getIncidentDescription(),"response-label"), action = createLabel(incidentReport.getActionTaken(),"response-label");
+	    Label appearance = createLabel(incidentReport.getStudentCondition(),"response-label"), medical = getMedical(), comments = createLabel(incidentReport.getComments(),"response-label"), teacher = createLabel(incidentReport.getTeachersPresent(),"response-label");
+	    List<Node> nodes = Arrays.asList(title,labels.get(0),name,labels.get(1),date,labels.get(2),time,labels.get(3),description,labels.get(4),action,labels.get(5),appearance,labels.get(6), medical,labels.get(7),comments,labels.get(8),teacher);
+	    placeNodes(gridpane,nodes);
+	    return gridpane;
+	}
+
+	@Override
+	public void placeNodes(GridPane gridpane, List<Node> nodes) {
+		placeNodeSpan(gridpane,nodes.get(0),0,0,6,2,"center",null);
+		placeNode(gridpane,nodes.get(1),0,2,"right",null);
+		placeNode(gridpane,nodes.get(2),1,2,"left",null);
+		placeNode(gridpane,nodes.get(3),2,2,"right",null);
+		placeNode(gridpane,nodes.get(4),3,2,"left",null);
+		placeNode(gridpane,nodes.get(5),4,2,"right",null);
+		placeNode(gridpane,nodes.get(6),5,2,"left",null);
+		placeNode(gridpane,nodes.get(7),0,3,"right",null);
+		placeNodeSpan(gridpane,nodes.get(8),1,3,5,1,"left",null);
+		placeNode(gridpane,nodes.get(9),0,4,"right",null);
+		placeNodeSpan(gridpane,nodes.get(10),1,4,5,1,"left",null);
+		placeNode(gridpane,nodes.get(11),0,5,"right",null);
+		placeNodeSpan(gridpane,nodes.get(12),1,5,5,1,"left",null);
+		placeNode(gridpane,nodes.get(13),0,6,"right",null);
+		placeNodeSpan(gridpane,nodes.get(14),1,6,5,1,"left",null);
+		placeNode(gridpane,nodes.get(15),0,7,"right",null);
+		placeNodeSpan(gridpane,nodes.get(16),1,7,5,1,"left",null);
+		placeNode(gridpane,nodes.get(17),0,8,"right",null);
+		placeNodeSpan(gridpane,nodes.get(18),1,8,2,1,"left",null);
+	}
+	
+	/**
+	 * Creates a Label based on information contained in the {@link Student}'s {@link DailySheet}
+	 * @return Label
+	 */
+	private Label getMedical() {
+		String medicalResponse;
 	    if(incidentReport.isMedicalAttention() == true && incidentReport.isOnSite() == false) {medicalResponse = student.getFirstName() + "required off-site medical attention";}
 	    else if(incidentReport.isMedicalAttention() == true && incidentReport.isOnSite() == true){ medicalResponse = student.getFirstName() + "required on-site medical attention";}
 	    else { medicalResponse = student.getFirstName() + "did not require any immediate medical attention";}
 	    Label medicalText = new Label(medicalResponse);
 	    medicalText.getStyleClass().add("response-label");
-
-	    viewIncidentReportLayout.add(medical,0,6);
-	    GridPane.setHalignment(medical,HPos.RIGHT);
-	    viewIncidentReportLayout.add(medicalText,1,6);
-	    GridPane.setHalignment(medicalText,HPos.LEFT);
-	    GridPane.setConstraints(medicalText,1,6,5,1);
-	    
-	    Label comments = new Label("Comments:");
-	    comments.getStyleClass().add("label");
-	    Label commentsText = new Label(incidentReport.getComments());
-	    commentsText.getStyleClass().add("response-label");
-	    
-	    viewIncidentReportLayout.add(comments,0,7);
-	    GridPane.setHalignment(comments,HPos.RIGHT);
-	    viewIncidentReportLayout.add(commentsText,1,7);
-	    GridPane.setHalignment(commentsText,HPos.LEFT);
-	    GridPane.setConstraints(commentsText,1,7,5,1);
-	    
-	    Label teacher = new Label("Teacher:");
-	    teacher.getStyleClass().add("label");
-	    Label teacherText = new Label(incidentReport.getTeachersPresent());
-	    teacherText.getStyleClass().add("response-label");
-	    
-	    viewIncidentReportLayout.add(teacher,0,8);
-	    GridPane.setHalignment(teacher,HPos.RIGHT);
-	    viewIncidentReportLayout.add(teacherText,1,8);
-	    GridPane.setHalignment(teacherText,HPos.LEFT);
-	    GridPane.setConstraints(teacherText,1,8,2,1);
-	    
-		Scene viewIncidentReportScene = new Scene(viewIncidentReportLayout);
-		stage.setScene(viewIncidentReportScene);
-		stage.showAndWait();
+	    return medicalText;
 	}
 	
 }

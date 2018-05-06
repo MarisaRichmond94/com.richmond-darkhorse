@@ -11,6 +11,11 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Random;
 
+/**
+ * Manages the various {@link Admin}, {@link Director}, and {@link Teacher} {@link Account}s and generates unique IDs for the former, as well as {@link Student}s,
+ * {@link Classroom}s, and {@link Document}s 
+ * @author marisarichmond
+ */
 public class AccountManager implements Serializable {
 
 	private static final long serialVersionUID = 8453756L;

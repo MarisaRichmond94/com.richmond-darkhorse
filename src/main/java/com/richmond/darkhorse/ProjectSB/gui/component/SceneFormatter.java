@@ -283,6 +283,15 @@ public interface SceneFormatter {
 		return newButton;
 	}
 	
+	public default Button createButtonWithLabel(Label label,int height,int width) {
+		Button newButton = new Button();
+		newButton.getStyleClass().add("button");
+		newButton.setGraphic(label);
+		newButton.setPrefHeight(height);
+		newButton.setPrefWidth(width);
+		return newButton;
+	}
+	
 	/**
 	 * Creates a List of labels
 	 * @param labelNames - the text for the labels

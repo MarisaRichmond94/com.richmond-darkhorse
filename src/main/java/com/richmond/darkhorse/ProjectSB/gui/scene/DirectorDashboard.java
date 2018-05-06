@@ -16,6 +16,9 @@ import com.richmond.darkhorse.ProjectSB.gui.component.Description;
 import com.richmond.darkhorse.ProjectSB.gui.component.DirectorLayout;
 import com.richmond.darkhorse.ProjectSB.gui.component.ImageButton;
 import com.richmond.darkhorse.ProjectSB.gui.component.ModifySchedules;
+import com.richmond.darkhorse.ProjectSB.gui.component.ScheduleHelper;
+import com.richmond.darkhorse.ProjectSB.middleman.ChangeScene;
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.Node;
@@ -32,7 +35,7 @@ import javafx.scene.control.ChoiceBox;
 import java.util.Calendar;
 import java.time.*;
 
-public class DirectorDashboard extends Scene implements DirectorLayout{
+public class DirectorDashboard extends Scene implements DirectorLayout, ScheduleHelper{
 	
 	private BorderPane directorDashboardLayout;
 	private ScrollPane scrollPane;
@@ -120,15 +123,13 @@ public class DirectorDashboard extends Scene implements DirectorLayout{
 		GridPane gridpane = new GridPane();
 		setConstraints(gridpane,4,0,10,10,"gridpane");
 		Button modSchedule = createButton("modify schedule",null,0,0,0);
-	    modSchedule.setVisible(false);
-	    modSchedule.setOnAction(e -> modifySchedule(director));
+	    modSchedule.setOnAction(e -> modifySchedule(stage,director));
 	    Button clearSchedule = createButton("clear schedule",null,0,0,0);
-	    clearSchedule.setOnAction(e -> director.clearSchedules());
-	    clearSchedule.setVisible(false);
-	    Button addButton = createButton("add event",null,0,0,0);
-	    Button removeButton = createButton("remove event",null,0,0,0);
-	    Button clearButton = createButton("clear all",null,0,0,0);
-	    Button cancelButton = createButton("cancel",null,0,0,0);
+	    clearSchedule.setOnAction(e -> {
+	    		director.clearSchedules();
+	    		refreshSchedulePane(stage,director);
+	    });
+	    Button addButton = createButton("add event",null,0,0,0), removeButton = createButton("remove event",null,0,0,0), clearButton = createButton("clear all",null,0,0,0), cancelButton = createButton("cancel",null,0,0,0);
 	    defaultButtons.add(addButton);
 	    defaultButtons.add(removeButton);
 	    editButtons.add(clearButton);
@@ -136,13 +137,15 @@ public class DirectorDashboard extends Scene implements DirectorLayout{
 	    scheduleButtons.add(modSchedule);
 	    scheduleButtons.add(clearSchedule);
 	    addButton.setOnAction(e -> addEvent(director));
-	    clearButton.setOnAction(e -> clear(director,clearButton,removeButton));
+	    clearButton.setOnAction(e -> clear(director));
 	    removeButton.setOnAction(e -> remove());
 	    cancelButton.setOnAction(e -> cancel());
 	    clearButton.setVisible(false);
 	    cancelButton.setVisible(false);
+	    addButton.setVisible(false);
+	    removeButton.setVisible(false);
 	    ChoiceBox<String> viewBox = new ChoiceBox<String>();
-	    viewBox.getItems().addAll("event view","schedule view");
+	    viewBox.getItems().addAll("schedule view","event view");
 	    viewBox.setValue(viewBox.getItems().get(0));
 	    viewBox.getStyleClass().add("choice-box-mini");
 	    ChangeListener<String> changeListener = new ChangeListener<String>() {
@@ -155,7 +158,7 @@ public class DirectorDashboard extends Scene implements DirectorLayout{
 					for(Button defaultButton : defaultButtons) {defaultButton.setVisible(true);}
 					for(Button scheduleButton : scheduleButtons) {scheduleButton.setVisible(false);}
 				}else if(newValue == "schedule view") {
-					innerPane = buildSchedulePane(director);
+					innerPane = buildSchedulePane(stage,director);
 					scrollPane.setContent(innerPane);
 					for(Button editButton : editButtons) {editButton.setVisible(false);}
 					for(Button defaultButton : defaultButtons) {defaultButton.setVisible(false);}
@@ -170,7 +173,7 @@ public class DirectorDashboard extends Scene implements DirectorLayout{
 	    ImageButton scheduleButton = new ImageButton(createImageWithFitHeight("images/schedule.png",100));
 	    List<Node> nodes = Arrays.asList(viewBox,monthLabel,scheduleButton);
 	    placeNodes(gridpane,nodes);
-	    innerPane = buildEventPane(director);
+	    innerPane = buildSchedulePane(stage,director);
 	    scrollPane = new ScrollPane(innerPane);
 	    scrollPane.setFitToHeight(true);
 	    scrollPane.setFitToWidth(true);
@@ -196,10 +199,10 @@ public class DirectorDashboard extends Scene implements DirectorLayout{
 	 * Modifies the {@link Schedule}
 	 * @param director - the current user
 	 */
-	private void modifySchedule(Director director) {
+	private void modifySchedule(Stage stage,Director director) {
 		ModifySchedules modifySchedules = new ModifySchedules(director);
 		modifySchedules.display();
-		refreshSchedulePane(director);
+		refreshSchedulePane(stage,director);
 	}
 	
 	/**
@@ -218,10 +221,10 @@ public class DirectorDashboard extends Scene implements DirectorLayout{
 	 * @param clearButton
 	 * @param removeButton
 	 */
-	private void clear(Director director,Button clearButton,Button removeButton) {
+	private void clear(Director director) {
 		eventCalendar.clear();
-		clearButton.setVisible(false);
-		removeButton.setVisible(true);
+		for(Button defaultButton : defaultButtons) {defaultButton.setVisible(true);}
+		for(Button editButton : editButtons) {editButton.setVisible(false);}
 		refreshEventPane(director);
 	}
 	
@@ -260,72 +263,43 @@ public class DirectorDashboard extends Scene implements DirectorLayout{
 	 * @param director - the current user
 	 * @return GridPane
 	 */
-	private GridPane buildSchedulePane(Director director) {
+	private GridPane buildSchedulePane(Stage stage,Director director) {
 		GridPane schedulePane = new GridPane();
 		buildCalendarView(schedulePane);
-		populateClassroomButtons(director,schedulePane);
+		populateClassroomButtons(stage,director,schedulePane);
 		return schedulePane;
 	}
 	
-	//TODO If you run into any problems, check here first. This is probably the problem
-	/**
+	 /**
 	 * Populates the {@link Schedule} with the {@link Classroom} buttons as well as the {@link Teacher}s and each of their {@link Schedule}s
 	 * @param director - the current user
 	 * @param gridpane - the layout
 	 */
-	public void populateClassroomButtons(Director director,GridPane gridpane) {
-		int rowIndex = 1;
+	public void populateClassroomButtons(Stage stage,Director director,GridPane gridpane) {
+		int rowIndex = 1, columnCount = 1, dayCount = 0;
 		Center center = director.getCenter(director.getCenterID());
 		Map<String,Classroom> classrooms = center.getClassrooms();
-		int columnCount = 1;
+		List<String> days = Arrays.asList("Monday","Tuesday","Wednesday","Thursday","Friday");
 		while(columnCount < 6) {
 			for(Classroom classroom : classrooms.values()) {
-				int columnIndex = getColumnIndex(columnCount);
+				Teacher leadTeacher = classroom.getTeacher(classroom.getTeacherID());
+				Teacher assistantTeacher = classroom.getAssistantTeacher(classroom.getAssistantTeacherID());
 				Button newButton = new Button();
-				newButton.getStyleClass().add("button");
-				Teacher leadTeacher = null;
-				String lead = "N/A", leadSchedule = "N/A";
-				if(classroom.getTeacherID() != null) {
-					leadTeacher = classroom.getTeacher(classroom.getTeacherID());
-					lead = leadTeacher.getFirstName() + " " + leadTeacher.getLastName();
-					leadSchedule = leadTeacher.getSchedule().getStartTimes().get(columnCount) + "-" + leadTeacher.getSchedule().getStopTimes().get(columnCount);
-				}
-				Teacher assistantTeacher = null;
-				String assistant = "N/A", assistantSchedule = "N/A";
-				if(classroom.getAssistantTeacherID() != null) {
-					if(classroom.getAssistantTeacher(classroom.getAssistantTeacherID()).getSchedule().getStartTimes().get(columnCount) != null) {
-						assistantTeacher = classroom.getAssistantTeacher(classroom.getAssistantTeacherID());
-						assistant = assistantTeacher.getFirstName() + " " + assistantTeacher.getLastName();
-						assistantSchedule = assistantTeacher.getSchedule().getStartTimes().get(columnCount) + "-" + assistantTeacher.getSchedule().getStopTimes().get(columnCount);
-					}
-				}
-				if(classroom.getMaxSize() > 12) {
-					newButton.setPrefSize(300,300);
-					if(leadTeacher != null && leadTeacher.getSchedule().getStartTimes().get(columnCount) != null && assistantTeacher != null && assistantTeacher.getSchedule().getStartTimes().get(columnCount) != null) {
-						newButton.setText(classroom.toString() + "\n" + lead + "\n" + leadSchedule + "\n" + assistant + "\n" + assistantSchedule);
-						newButton.getStyleClass().add("goodbutton");
-					}else if(leadTeacher != null && leadTeacher.getSchedule().getStartTimes().get(columnCount) != null){
-						newButton.setText(classroom.toString() + "\n" + lead + "\n" + leadSchedule);
-						newButton.getStyleClass().add("badbutton");
-					}else{
-						newButton.setText(classroom.toString());
-						newButton.getStyleClass().add("badbutton");
-					}
-					placeNodeSpan(gridpane,newButton,columnIndex,rowIndex,2,5,"center",null);
-					rowIndex = rowIndex+5;
-				}else if(classroom.getMaxSize() <= 12) {
+				if(leadTeacher == null && assistantTeacher == null) {
+					newButton.setText(classroom.toString());
 					newButton.setPrefSize(300,200);
-					if(leadTeacher.getSchedule().getStartTimes().get(columnCount) != null){
-						newButton.setText(classroom.toString() + "\n" + lead + "\n" + leadSchedule);
-						newButton.getStyleClass().add("goodbutton");
-					}else {
-						newButton.setText(classroom.toString());
-						newButton.getStyleClass().add("badbutton");
-					}
-					placeNodeSpan(gridpane,newButton,columnIndex,rowIndex,2,3,"center",null);
-					rowIndex = rowIndex+3;
-				}
+					newButton.getStyleClass().add("badbutton");
+				}else if(assistantTeacher == null ^ leadTeacher == null) {
+					if(assistantTeacher == null) {newButton = isInRatio(classroom,leadTeacher,columnCount,days.get(dayCount));}
+					else if(leadTeacher == null) {newButton = isInRatio(classroom,assistantTeacher,columnCount,days.get(dayCount));}
+				}else if(leadTeacher != null && assistantTeacher != null) {newButton = isInRatio(classroom,leadTeacher,assistantTeacher,columnCount,days.get(dayCount));}
+				int columnIndex = getColumnIndex(columnCount);
+				String day = days.get(dayCount);
+				newButton.setOnAction(e -> Platform.runLater(new ChangeScene(stage,new ClassroomSchedule(stage,null,director,classroom,day))));
+				placeNodeSpan(gridpane,newButton,columnIndex,rowIndex,2,3,"center",null);
+				rowIndex = rowIndex+3;
 			}
+			dayCount++;
 			rowIndex = 1;
 			columnCount++;
 		}
@@ -585,8 +559,8 @@ public class DirectorDashboard extends Scene implements DirectorLayout{
 	 * Reloads the schedule pane
 	 * @param director - the current user
 	 */
-	public void refreshSchedulePane(Director director) {
-		innerPane = buildSchedulePane(director);
+	public void refreshSchedulePane(Stage stage,Director director) {
+		innerPane = buildSchedulePane(stage,director);
 		scrollPane.setContent(innerPane);
 	}
 	

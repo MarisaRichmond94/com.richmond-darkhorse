@@ -29,21 +29,32 @@ public class LoginScene extends Scene implements SceneFormatter {
 	
 	public LoginScene(Stage stage,BorderPane layout,Scene nextScene) {
 		super(layout);
-		
-		//Top Pane
-		HBox topBar = new HBox();
+		HBox topPane = buildTopPane();
+		HBox bottomPane = buildBottomPane();
+		GridPane centerPane = buildCenterPane();
+		BorderPane loginLayout = layout;
+		setBorderPane(loginLayout,centerPane,null,null,topPane,bottomPane);
+		loginLayout.getStylesheets().add("css/loginscene.css");
+	}
+	
+	private HBox buildTopPane() {
+		HBox topPane = new HBox();
 		ImageView logoViewer = createImageWithFitHeight("images/logo.png",250);
-		topBar.getChildren().add(logoViewer);
-		topBar.getStyleClass().add("hbox");
-		
-		//Bottom Pane
-		HBox bottomBar = new HBox();
+		topPane.getChildren().add(logoViewer);
+		topPane.getStyleClass().add("hbox");
+		return topPane;
+	}
+	
+	private HBox buildBottomPane() {
+		HBox bottomPane = new HBox();
 		Label signature = new Label("Created by Marisa Richmond");
 		signature.getStyleClass().add("text");
-		bottomBar.getChildren().add(signature);
-		bottomBar.getStyleClass().add("hbox");
-		
-		//Center Pane
+		bottomPane.getChildren().add(signature);
+		bottomPane.getStyleClass().add("hbox");
+		return bottomPane;
+	}
+	
+	private GridPane buildCenterPane() {
 		GridPane gridpane = new GridPane();
 		gridpane.getStyleClass().add("gridpane");
 		ImageView loginViewer = createImageWithFitHeight("images/loginwithsmile.png",150);
@@ -73,12 +84,7 @@ public class LoginScene extends Scene implements SceneFormatter {
 		placeNode(gridpane,eidTextField,1,3,"left",null);
 		placeNode(gridpane,loginButton,1,5,"center",null);
 		placeNode(gridpane,failedLogin,1,6,"center",null);
-		
-		//Formatting
-		BorderPane loginLayout = layout;
-		setBorderPane(loginLayout,gridpane,null,null,topBar,bottomBar);
-		loginLayout.getStylesheets().add("css/loginscene.css");
-	
+		return gridpane;
 	}
 	
 	/**
