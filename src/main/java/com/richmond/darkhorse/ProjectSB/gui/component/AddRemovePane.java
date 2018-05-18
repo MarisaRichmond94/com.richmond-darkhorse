@@ -129,6 +129,7 @@ public class AddRemovePane extends GridPane implements DirectorLayout{
 		List<String> daysOfTheWeek = Arrays.asList("Monday","Tuesday","Wednesday","Thursday","Friday");
 		int dayIndex = 0;
 		for(Label label : labels) {
+			if(dayIndex == 5) {continue;}
 			if(classroom.getCount(daysOfTheWeek.get(dayIndex)) > classroom.getMaxSize()) {label.setTextFill(Color.RED);}
 			else {label.setTextFill(Color.BLACK);}
 			label.getStyleClass().add("label");

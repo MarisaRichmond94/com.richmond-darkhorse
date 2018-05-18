@@ -331,7 +331,8 @@ public class ClassroomSchedule extends Scene implements DirectorLayout,ScheduleH
 					hole.getStyleClass().add("badbutton");
 					placeNodeSpan(gridpane,hole,start,rowNum,columnSpan,1,null,null);
 				}
-				if(teacherEnd.isBefore(LocalTime.of(17,0))) {
+				//Changes teacherEnd.isBefore(LocalTime.of(17,0) to teacherEnd.isBefore(LocalTime.of(5,0)
+				if(teacherEnd.isBefore(LocalTime.of(5,0))) {
 					int columnSpan = determineHoleSpan(teacherEnd.plusHours(loopCheck(teacherEnd)));
 					int start = columnSelector.get(teacherEnd.plusHours(isLoop(teacherEnd)));
 					Button hole = createButton("Hole",null,0,0,0);

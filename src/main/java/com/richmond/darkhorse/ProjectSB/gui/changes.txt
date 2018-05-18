@@ -1,5 +1,0 @@
-DirectorDashboard (Schedule View)
-3.) Allow holes to be filled by float employees 
-	-Create a HashMap of <LocalTime,Integer> the key should be the the time (start or stop), which will correlate with the value, an integer representing the column
-	-To determine if a {@link Teacher} is present during the core hours, find some way to check if a node exists at a row, column coordinate and set up a way to check
-	that there are always the correct number of nodes between the core hours (e.g. one for a class of 12 and two for a class of 12+

@@ -2,7 +2,6 @@ package com.richmond.darkhorse.ProjectSB.gui.component;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javafx.scene.control.Button;
@@ -21,7 +20,7 @@ import javafx.stage.Stage;
 public class ModifySchedules implements DirectorLayout{
 
 	private Director director;
-	private Map<Integer,LocalTime> startTimes,stopTimes,newStartTimes,newStopTimes;
+	private Map<Integer,LocalTime> startTimes,stopTimes;
 	private List<Teacher> teachers;
 	private int staffIndex;
 	private Teacher teacher;
@@ -39,8 +38,6 @@ public class ModifySchedules implements DirectorLayout{
 		this.schedule = teacher.getSchedule();
 		this.startTimes = schedule.getStartTimes();
 		this.stopTimes = schedule.getStopTimes();
-		this.newStartTimes = new HashMap<Integer,LocalTime>();
-		this.newStopTimes = new HashMap<Integer,LocalTime>();
 	}
 	
 	public void display() {
@@ -140,19 +137,9 @@ public class ModifySchedules implements DirectorLayout{
 	 * @param ends - end times
 	 */
 	private void write(Stage stage,GridPane gridpane,List<TextField> starts,List<TextField> ends) {
-		List<LocalTime> startTimes = populateStartTimes(starts);
-		List<LocalTime> endTimes = populateEndTimes(ends);
-		newStartTimes.put(1,startTimes.get(0));
-		newStartTimes.put(2,startTimes.get(1));
-		newStartTimes.put(3,startTimes.get(2));
-		newStartTimes.put(4,startTimes.get(3));
-		newStartTimes.put(5,startTimes.get(4));
-		newStopTimes.put(1,endTimes.get(0));
-		newStopTimes.put(2,endTimes.get(1));
-		newStopTimes.put(3,endTimes.get(2));
-		newStopTimes.put(4,endTimes.get(3));
-		newStopTimes.put(5,endTimes.get(4));
-		director.modifyStaffSchedule(teacher,newStartTimes,newStopTimes);
+		List<LocalTime> startingTimes = populateStartTimes(starts);
+		List<LocalTime> endingTimes = populateEndTimes(ends);
+		director.modifyStaffSchedule(teacher,startingTimes,endingTimes);
 		Label saveSuccessful = createLabel("save successful!","label");
 		saveSuccessful.setTextFill(Color.GREENYELLOW);
 		placeNodeSpan(gridpane,saveSuccessful,0,7,4,1,"center",null);

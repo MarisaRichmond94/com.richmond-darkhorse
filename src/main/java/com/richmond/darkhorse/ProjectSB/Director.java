@@ -2,6 +2,7 @@ package com.richmond.darkhorse.ProjectSB;
 import java.io.Serializable;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -50,8 +51,20 @@ public class Director extends StaffMember implements Serializable {
 	}
 	
 	//Modification methods
-	public void modifyStaffSchedule(StaffMember staffMember,Map<Integer,LocalTime> newStartTimes,Map<Integer,LocalTime> newStopTimes) {
+	public void modifyStaffSchedule(StaffMember staffMember,List<LocalTime> startTimes,List<LocalTime> stopTimes) {
 		Schedule schedule = staffMember.getSchedule();
+		Map<Integer,LocalTime> newStartTimes = new HashMap<Integer,LocalTime>();
+		Map<Integer,LocalTime> newStopTimes = new HashMap<Integer,LocalTime>();
+		newStartTimes.put(1,startTimes.get(0));
+		newStartTimes.put(2,startTimes.get(1));
+		newStartTimes.put(3,startTimes.get(2));
+		newStartTimes.put(4,startTimes.get(3));
+		newStartTimes.put(5,startTimes.get(4));
+		newStopTimes.put(1,stopTimes.get(0));
+		newStopTimes.put(2,stopTimes.get(1));
+		newStopTimes.put(3,stopTimes.get(2));
+		newStopTimes.put(4,stopTimes.get(3));
+		newStopTimes.put(5,stopTimes.get(4));
 		schedule.setStartTimes(newStartTimes);
 		schedule.setStopTimes(newStopTimes);
 	}
@@ -103,9 +116,11 @@ public class Director extends StaffMember implements Serializable {
 	
 	//Removal methods
 	public void deleteStudent(Student student) {
-		Classroom classroom = student.getClassroom(student.getClassroomID());
-		Center center = classroom.getCenter(classroom.getCenterID());
-		classroom.removeStudentEnrolled(student);
+		if(student.getClassroomID() != null) {
+			Classroom classroom = student.getClassroom(student.getClassroomID());
+			classroom.removeStudentEnrolled(student);
+		}
+		Center center = this.getCenter(this.getCenterID());
 		center.removeStudent(student);
 	}
 	

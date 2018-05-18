@@ -26,7 +26,7 @@ public class TeacherInfoPane extends GridPane implements DirectorLayout{
 		Label leadTeacherLabel = createLabel("Lead Teacher","super-subtitle");
 	    Label assistantTeacherLabel = createLabel("Assistant","super-subtitle");
 	    assistantTeacherLabel.setVisible(false);
-	    List<Label> labels = populateLabels(Arrays.asList("full name:","employee id:","classroom:","e-mail:","cell number:"),"label");
+	    List<Label> labels = populateLabels(Arrays.asList("full name:","employee id:","e-mail:","cell number:"),"label");
 	    String name = teacher.getFirstName() + " " + teacher.getLastName() + "";
 	    TextField nameField = createTextField(name,"textfield",650);
 	    nameField.setDisable(true);
@@ -51,7 +51,7 @@ public class TeacherInfoPane extends GridPane implements DirectorLayout{
 	    ImageButton editButton = new ImageButton(createImageWithFitHeight("images/edit.png",125));
 	    editButton.setOnAction(e -> edit(editButton,editLabel,writeButton,writeLabel,emailField,phoneNumberField));
 	    writeButton.setOnAction(e -> write(teacher,assistantTeacher,editButton,editLabel,writeButton,writeLabel,emailField,phoneNumberField));
-	    List<Node> nodes = Arrays.asList(leadTeacherLabel,assistantTeacherLabel,labels.get(0),nameField,labels.get(1),identificationField,labels.get(2),classroomField,labels.get(3),emailField,labels.get(4),phoneNumberField,arrowButton,isLeadTeacher,isAssistantTeacher,editButton,editLabel,writeButton,writeLabel);
+	    List<Node> nodes = Arrays.asList(leadTeacherLabel,assistantTeacherLabel,labels.get(0),nameField,labels.get(1),identificationField,labels.get(2),emailField,labels.get(3),phoneNumberField,arrowButton,isLeadTeacher,isAssistantTeacher,editButton,editLabel,writeButton,writeLabel);
 	    placeNodes(this,nodes);
 	    this.getStylesheets().add("css/director.css");
 	
@@ -66,18 +66,16 @@ public class TeacherInfoPane extends GridPane implements DirectorLayout{
 		placeNode(this,nodes.get(4),0,2,"right",null);
 		placeNodeSpan(this,nodes.get(5),1,2,2,1,"left",null);
 		placeNode(this,nodes.get(6),0,3,"right",null);
-//		placeNodeSpan(this,nodes.get(7),1,3,2,1,"left",null);
+		placeNodeSpan(this,nodes.get(7),1,3,2,1,"left",null);
 		placeNode(this,nodes.get(8),0,4,"right",null);
 		placeNodeSpan(this,nodes.get(9),1,4,2,1,"left",null);
-		placeNode(this,nodes.get(10),0,5,"right",null);
-		placeNodeSpan(this,nodes.get(11),1,5,2,1,"left",null);
+		placeNode(this,nodes.get(10),3,2,"center",null);
+		placeNode(this,nodes.get(11),3,3,"center",null);
 		placeNode(this,nodes.get(12),3,3,"center",null);
-		placeNode(this,nodes.get(13),3,4,"center",null);
-		placeNode(this,nodes.get(14),3,4,"center",null);
-		placeNodeSpan(this,nodes.get(15),1,6,2,1,"center",null);
-		placeNodeSpan(this,nodes.get(16),1,7,2,1,"center",null);
-		placeNodeSpan(this,nodes.get(17),1,6,2,1,"center",null);
-		placeNodeSpan(this,nodes.get(18),1,7,2,1,"center",null);
+		placeNodeSpan(this,nodes.get(13),1,5,2,1,"center",null);
+		placeNodeSpan(this,nodes.get(14),1,6,2,1,"center",null);
+		placeNodeSpan(this,nodes.get(15),1,5,2,1,"center",null);
+		placeNodeSpan(this,nodes.get(16),1,6,2,1,"center",null);
 	}
 	
 	/**

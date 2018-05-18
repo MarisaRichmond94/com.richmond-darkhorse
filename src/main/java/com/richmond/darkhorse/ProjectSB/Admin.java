@@ -9,7 +9,7 @@ import java.util.Map;
 public class Admin implements Account,Serializable{
 
 	private static final long serialVersionUID = 8453756L;
-	private String userID = "123456789",firstName = "Marisa",lastName = "Richmond",title = "Admin";
+	private String userID = "002251994",firstName = "Super",lastName = "User",title = "Admin";
 	private Credential credentials;
 	
 	public Admin() {

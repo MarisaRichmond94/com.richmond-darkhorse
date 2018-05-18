@@ -191,7 +191,7 @@ public class ModifyClassSizePane extends GridPane implements DirectorLayout{
     		modifyExistingClassSize.start();	
     		Label saveSuccessful = createLabel("save successful!","centrallabel");
     		saveSuccessful.setTextFill(Color.RED);
-    		placeNode(this,saveSuccessful,1,7,"center",null);
+    		placeNode(this,saveSuccessful,1,8,"center",null);
 	}
 	
 	/**
