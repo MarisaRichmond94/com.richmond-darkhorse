@@ -41,6 +41,16 @@ public class AccountManager implements Serializable {
 		return instance;
 	}
 	
+	public StaffMember grabAdmin() {
+		StaffMember admin = null;
+		for(Account account : userIDToAccount.values()) {
+			System.out.println(account.getCredentials().getTitle());
+			if(account.getCredentials().getTitle().equals("Admin")) {admin = (StaffMember) account;}
+		}
+		System.out.println(admin);
+		return admin;
+	}
+	
 	/**
 	 * Generates a userID for a new {@link StaffMember}
 	 * @param newStaffMember - a new director or teacher 

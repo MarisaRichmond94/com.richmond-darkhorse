@@ -5,6 +5,7 @@ import com.richmond.darkhorse.ProjectSB.AccountManager;
 import com.richmond.darkhorse.ProjectSB.Admin;
 import com.richmond.darkhorse.ProjectSB.Center;
 import com.richmond.darkhorse.ProjectSB.SpecialBeginnings;
+import com.richmond.darkhorse.ProjectSB.gui.scene.AdminSetUp;
 import com.richmond.darkhorse.ProjectSB.gui.scene.LoadingScene;
 import com.richmond.darkhorse.ProjectSB.gui.scene.LoginScene;
 import javafx.application.Application;
@@ -19,9 +20,6 @@ public class Main extends Application implements EventHandler<ActionEvent> {
 	private Stage stage;
 
 	public static void main(String args[]) {
-		AccountManager accountManager = AccountManager.getInstance();
-		Admin superUser = new Admin();
-		accountManager.addUser(superUser.getUserID(), superUser);
 		launch(args);
 	}
 
@@ -34,17 +32,16 @@ public class Main extends Application implements EventHandler<ActionEvent> {
 		stage.setY(primaryScreenBounds.getMinY());
 		stage.setWidth(primaryScreenBounds.getWidth());
 		stage.setHeight(primaryScreenBounds.getHeight());
-
-		// Scenes
 		LoginScene loginScene = new LoginScene(stage, null);
-		LoadingScene loadingScene = new LoadingScene(stage, loginScene);
-
+		LoadingScene loadingScene;
+		AdminSetUp adminSetup = new AdminSetUp(stage,null);
+		try {Admin.loadAdmin();}
+		catch(NullPointerException e) {};
+		if(Admin.getInstance().getUserID() == null) { loadingScene = new LoadingScene(stage, adminSetup);}
+		else {loadingScene = new LoadingScene(stage,loginScene);}
 		stage.setScene(loadingScene);
 		stage.show();
-		if (loadingScene.isProgressComplete() == true) {
-			changeScene(loginScene);
-		}
-		
+		if (loadingScene.isProgressComplete() == true) {changeScene(loginScene);}
 		stage.setOnCloseRequest(e -> closeProgram());
 	}
 

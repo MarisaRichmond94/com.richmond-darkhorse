@@ -33,6 +33,14 @@ public class Login implements Runnable {
 		this.thisScene = scene;
 		this.nextScene = null;
 	}
+	
+	public Login(String firstName, String lastName, String userID, Stage stage) {
+		this.firstName = firstName;
+		this.lastName = lastName;
+		this.userID = userID;
+		this.stage = stage;
+		this.nextScene = null;
+	}
 
 	@Override
 	public void run() {

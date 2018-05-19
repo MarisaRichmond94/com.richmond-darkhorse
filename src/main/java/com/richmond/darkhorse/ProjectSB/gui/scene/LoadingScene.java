@@ -22,7 +22,6 @@ public class LoadingScene extends Scene implements SceneFormatter {
 	}
 	
 	public LoadingScene(final Stage stage,BorderPane layout,Scene nextScene) {
-		
 		super(layout);
 		this.nextScene = nextScene;
 		this.stage = stage; 
@@ -30,24 +29,19 @@ public class LoadingScene extends Scene implements SceneFormatter {
 		GridPane gridpane = new GridPane();
 		setConstraints(gridpane,4,0,0,0,"gridpane");
 		gridpane.getStyleClass().add("gridpane");
-		
 		ImageView loadingViewer = createImage("images/plainlogowithsmile.png");
 		loadingViewer.fitWidthProperty().bind(stage.widthProperty());
 		placeNodeSpan(gridpane,loadingViewer,0,0,4,2,"center","center");
-
 		progressBar = new ProgressBar(0.0);
 		progressBar.setMaxSize(1500,100);
 		progressBar.setPrefHeight(50);
 		placeNodeSpan(gridpane,progressBar,0,2,4,2,"center","center");
-		
 		setBorderPane(loadingLayout,gridpane,null,null,null,null);
 		loadingLayout.getStylesheets().add("css/loadingscene.css");
-		
 		Thread progressThread = new Thread(new LoadingSceneProgressUpdater(this,3f));
 		progressThread.start();
 		Thread loadData = new Thread(new LoadData());
 		loadData.start();
-		
 		}
 	
 	/**

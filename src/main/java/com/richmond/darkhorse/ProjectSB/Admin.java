@@ -1,4 +1,10 @@
 package com.richmond.darkhorse.ProjectSB;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.Map;
 
@@ -9,12 +15,25 @@ import java.util.Map;
 public class Admin implements Account,Serializable{
 
 	private static final long serialVersionUID = 8453756L;
-	private String userID = "002251994",firstName = "Super",lastName = "User",title = "Admin";
+	private static Admin instance;
+	private String userID, firstName, lastName, title = "Admin";
 	private Credential credentials;
 	
-	public Admin() {
+	private Admin() {
+	}
+	
+	public void initializeCredentials(String firstName,String lastName,String userID) {
+		this.firstName = firstName;
+		this.lastName = lastName;
+		this.userID = userID;
 		Credential credentials = new Credential(firstName,lastName,title);
 		this.credentials = credentials;
+		AccountManager.getInstance().addUser(userID,this);
+	}
+	
+	public static Admin getInstance() {
+		if (instance == null) {instance = new Admin();}
+		return instance;
 	}
 	
 	public Center createCenter(String centerName,String abbreviatedName,String licenseName,String licenseNumber,String address,String city,String county) {
@@ -166,5 +185,29 @@ public class Admin implements Account,Serializable{
 	public Map<String,Classroom> getClassrooms(Center center){
 		return center.getClassrooms();
 	}
+	
+	public void saveAdmin() {
+		try {
+			ObjectOutputStream output = new ObjectOutputStream(new FileOutputStream("admin.ser"));
+			output.writeObject(this);
+			output.flush();
+			output.close();
+		} catch (IOException e) {e.printStackTrace();}
+	}
+	
+	public static void loadAdmin() {
+		try {
+			ObjectInputStream objectInput = new ObjectInputStream(new FileInputStream("admin.ser"));
+			Admin superUser = (Admin) objectInput.readObject();
+			instance = superUser;
+		    objectInput.close();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
+    	}
 
 }

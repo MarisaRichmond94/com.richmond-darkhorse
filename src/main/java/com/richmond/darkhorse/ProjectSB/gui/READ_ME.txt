@@ -24,11 +24,11 @@ FEATURES (** - features in place * - features to come)
 
 SET-UP
 1.) Before the application can be used by directors and teachers at your Early Learning Center, someone must fill out the necessary information (e.g. create the center,
-classrooms, as well as director and teacher accounts). In order to do this, the initial user must sign in using the following information:
+classrooms, as well as director and teacher accounts). In order to do this, the initial user must set up the following information to create the single administrator account:
 
-First Name: Super
-Last Name: User
-ID: 002251994
+First Name: John
+Last Name: Doe
+ID: 000000000
 
 2.) Create your center, filling out the name, license number, location, etc. 
 3.) Once you have completed the above two steps, you are free to set up directors, teachers, and classrooms 
